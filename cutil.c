@@ -71,6 +71,7 @@ struct tm *
 gmtime_r_(const time_t *clock, struct tm *result)
 {
   gmtime_r(clock, result);
+  return(result);
 }
 time_t time_(void)
 {
