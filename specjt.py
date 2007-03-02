@@ -9,8 +9,12 @@ import Audio
 import g
 import string
 import cPickle
-#import Numeric
-from Numeric import zeros, multiarray
+try:
+    from numpy.oldnumeric import zeros, multiarray
+#    print "specjt importing from numpy"
+except:
+    from Numeric import zeros, multiarray
+#    print "specjt importing from Numeric"
 import Image, ImageTk, ImageDraw
 from palettes import colormapblue, colormapgray0, colormapHot, \
      colormapAFMHot, colormapgray1, colormapLinrad, Colormap2Palette

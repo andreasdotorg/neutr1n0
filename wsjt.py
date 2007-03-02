@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #------------------------------------------------------------------ WSJT
 # $Date$ $Revision$
 #
@@ -8,7 +9,12 @@ from tkMessageBox import showwarning
 import g,os,time
 import Audio
 from math import log10
-from Numeric import zeros
+try:
+    from numpy.oldnumeric import zeros
+#    print "importing from numpy"
+except: 
+    from Numeric import zeroes
+#    print "importing from Numeric"
 import dircache
 import Image,ImageTk  #, ImageDraw
 from palettes import colormapblue, colormapgray0, colormapHot, \
