@@ -13,7 +13,7 @@ try:
     from numpy.oldnumeric import zeros
 #    print "importing from numpy"
 except: 
-    from Numeric import zeroes
+    from Numeric import zeros
 #    print "importing from Numeric"
 import dircache
 import Image,ImageTk  #, ImageDraw
