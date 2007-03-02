@@ -20,7 +20,7 @@ dnl Make sure autoconf doesn't interfere with cflags -jmallett
 CFLAGS="$OLD_CFLAGS"
 
 dnl Lets guess at some likely places for extra libs/includes XXX -db
-CPPFLAGS="-Iportaudio-v19/include -I/usr/local/include -I/usr/include/alsa -I/usr/local/include/alsa ${CPPFLAGS}"
+CPPFLAGS="-I/usr/local/include -I/usr/include/alsa -I/usr/local/include/alsa ${CPPFLAGS}"
 LDFLAGS="-L/usr/local/lib ${LDFLAGS}"
 LIBS=" -lpthread ${LIBS}"
 
@@ -111,14 +111,9 @@ AC_HEADER_TIME
 AC_CHECK_HEADER([sys/soundcard.h], [HAS_SOUNDCARD_H=1], [HAS_SOUNDCARD_H=0])
 AC_CHECK_HEADER([alsa/asoundlib.h], [HAS_ASOUNDLIB_H=1], [HAS_ASOUNDLIB_H=0])
 AC_CHECK_HEADER([jack/jack.h], [HAS_JACK_H=1], [HAS_JACK_H=0])
-if test -e "portaudio-v19/include/portaudio.h" ; then
-	echo "Checking for portaudio...yes"
-	HAS_PORTAUDIO_H=1
-else
-	echo "Checking for portaudio...no"
-	HAS_PORTAUDIO_H=0
-fi
 AC_CHECK_HEADER([samplerate.h], [HAS_SAMPLERATE_H=1], [HAS_SAMPLERATE_H=0])
+HAS_PORTAUDIO_H=0
+HAS_PORTAUDIO_LIB=0
 
 dnl See whether we can include both string.h and strings.h.
 AC_CACHE_CHECK([whether string.h and strings.h may both be included],
@@ -215,6 +210,32 @@ AC_CONFIG_FILES(		\
 	Makefile		
 )
 
+dnl Do I dare assume a default for these? -db
+dnl =========================================
+portaudio_lib_dir=""
+portaudio_include_dir=""
+
+AC_ARG_WITH([portaudio-include-dir],
+AC_HELP_STRING([--with-portaudio-include-dir=<path>],
+    [path to portaudio include files]),
+    [portaudio_include_dir=$with_portaudio_include_dir])
+
+AC_ARG_WITH([portaudio-lib-dir],
+AC_HELP_STRING([--with-portaudio-lib-dir=<path>],
+    [path to portaudio lib files]),
+    [portaudio_lib_dir=$with_portaudio_lib_dir])
+
+dnl make sure portaudio dirs are valid
+dnl ==================================
+if test -e ${portaudio_lib_dir}/libportaudio.so;then
+	HAS_PORTAUDIO_LIB=1
+fi
+if test -e ${portaudio_include_dir}/portaudio.h; then
+	HAS_PORTAUDIO_H=1
+fi
+if test $HAS_PORTAUDIO_H -eq 1 -a $HAS_PORTAUDIO_LIB -eq 1; then
+	HAS_PORTAUDIO=1
+fi
 dnl alsa soundsupport
 dnl =================
 
@@ -311,14 +332,9 @@ fi
 if test "$portaudio" = yes; then
 	AC_DEFINE(USE_PORTAUDIO, 1, [Define if you want PORTAUDIO used.])
 	AC_SUBST(AUDIO, "a2d.f90 jtaudio.c resample.c start_portaudio.c")
-	AC_SUBST(NEEDPORTAUDIO, "portaudio-v19/lib/.libs/libportaudio.a")
-dnl
-dnl	new portaudio-v19 on linux will be referencing alsa.
-dnl
-	LIBS="${LIBS} ${RTLIBS} -lsamplerate ./portaudio-v19/lib/.libs/libportaudio.a"
-	LIBS="${LIBS} ${ASOUNDLIBS}"
-else
-	AC_SUBST(NEEDPORTAUDIO, "")
+	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
+	LIBS="${LIBS} ${RTLIBS} -lsamplerate -lportaudio"
+	CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
 fi
 
 dnl set conf flags
@@ -362,6 +378,9 @@ fi
 if test "$portaudio" = yes; then
 	if test $HAS_PORTAUDIO_H -eq 0; then
 		AC_MSG_ERROR([You need portaudio.h to use --enable-portaudio])
+	fi
+	if test $HAS_PORTAUDIO_LIB -eq 0; then
+		AC_MSG_ERROR([You need libportaudio to use --enable-portaudio])
 	fi
 	if test $HAS_SAMPLERATE_H -eq 0; then
 		AC_MSG_ERROR([You need samplerate.h to use --enable-portaudio])
