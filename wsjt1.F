@@ -1,7 +1,7 @@
 	subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,MinSigdB,
-     +    NQRN,DFTolerance,MouseButton,NClearAve,
+     +    NQRN,DFTolerance,MouseButton,NClearAve,nforce,
      +    Mode,NFreeze,NAFC,NZap,mode65,idf,
-     +    MyCall,HisCall,HisGrid,neme,nsked,ntx2,s2,
+     +    MyCall,HisCall,HisGrid,neme,nhf,ntx2,s2,
      +    ps0,npkept,lumsg,basevb,rmspower,nslim2,psavg,ccf,Nseg,
      +    MouseDF,NAgain,LDecoded,nspecial,ndf,ss1,ss2)
 
@@ -150,7 +150,8 @@ C  Intentionally degrade SNR by -nclip dB.
 
 	pick=.false.
 	if(istart.gt.1) pick=.true. !This is a mouse-picked decoding
-   	if(.not.pick .and. (basevb.lt.-15.0 .or. basevb.gt.20.0)) goto 900
+   	if(.not.pick .and. nforce.eq.0 .and. 
+     +     (basevb.lt.-15.0 .or. basevb.gt.20.0)) goto 900
 	nchan=64                   !Save 64 spectral channels
 	nstep=221                  !Set step size to ~20 ms
 	nz=jz/nstep - 1            !# of spectra to compute
@@ -190,7 +191,7 @@ C  Intentionally degrade SNR by -nclip dB.
 !  Offset data by about 1 s.
  	   if(jz.ge.126*2048) call wsjt65(dat(4097),jz-4096,cfile6,
      +        NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode65,Nseg,
-     +        MouseDF2,NAgain,ndepth,neme,nsked,idf,idfsh,
+     +        MouseDF2,NAgain,ndepth,neme,idf,idfsh,
      +        mycall,hiscall,hisgrid,lumsg,lcum,nspecial,ndf,
      +        nstest,dfsh,snrsh,
      +        NSyncOK,ccf,psavg,ndiag,nwsh)

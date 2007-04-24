@@ -1,4 +1,4 @@
-      subroutine decode65(dat,npts,dtx,dfx,flip,ndepth,neme,nsked,
+      subroutine decode65(dat,npts,dtx,dfx,flip,ndepth,neme,
      +  mycall,hiscall,hisgrid,mode65,nafc,decoded,ncount,
      +  deepmsg,qual)
 
@@ -34,7 +34,7 @@ C  Compute spectra of the channel symbols
       call extract(s3,nadd,ncount,decoded)     !Extract the message
       qual=0.
       if(ndepth.ge.1) call deep65(s3,mode65,neme,
-     +    nsked,flip,mycall,hiscall,hisgrid,deepmsg,qual)
+     +    flip,mycall,hiscall,hisgrid,deepmsg,qual)
 
       if(ncount.lt.0) decoded='                      '
 

@@ -89,7 +89,7 @@ nhotabetter=0
 nopen=0
 nosh441=IntVar()
 noshjt65=IntVar()
-nsked=IntVar()
+nhf=IntVar()
 setseq=IntVar()
 ShOK=IntVar()
 slabel="Sync   "
@@ -222,15 +222,25 @@ def stopmon(event=NONE):
 def dbl_click_text(event):
     t=text.get('1.0',END)           #Entire contents of text box
     t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
-    dbl_click_call(t,t1,event)
+    dbl_click_call(t,t1,'OOO',event)
+
+#------------------------------------------------------ dbl_click3_text
+def dbl_click3_text(event):
+    t=text.get('1.0',END)           #Entire contents of text box
+    t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
+    n=t1.rfind("\n")
+    rpt=t1[n+12:n+15]
+    dbl_click_call(t,t1,rpt,event)
+
 #------------------------------------------------------ dbl_click_ave
 def dbl_click_ave(event):
     t=avetext.get('1.0',END)           #Entire contents of text box
     t1=avetext.get('1.0',CURRENT)      #Contents from start to mouse pointer
-    dbl_click_call(t,t1,event)
+    dbl_click_call(t,t1,'OOO',event)
 #------------------------------------------------------ dbl_click_call
-def dbl_click_call(t,t1,event):
+def dbl_click_call(t,t1,rpt,event):
     global hiscall
+#    print rpt
     i=len(t1)                       #Length to mouse pointer
     i1=t1.rfind(' ')+1              #index of preceding space
     i2=i1+t[i1:].find(' ')          #index of next space
@@ -246,6 +256,17 @@ def dbl_click_call(t,t1,event):
         if setseq.get(): TxFirst.set((nsec/Audio.gcom1.trperiod)%2)
         lookup()
         GenStdMsgs()
+        if rpt <> "OOO":
+            n=tx1.get().rfind(" ")
+            t=tx1.get()[0:n+1]
+            tx2.delete(0,END)
+            tx2.insert(0,t+rpt)
+            tx3.delete(0,END)
+            tx3.insert(0,t+"R"+rpt)
+            tx4.delete(0,END)
+            tx4.insert(0,t+"RRR")
+            tx5.delete(0,END)
+            tx5.insert(0,t+"73")
         i3=t[:i1].strip().rfind(' ')+1
         if t[i3:i1].strip() == 'CQ':
             ntx.set(1)
@@ -258,6 +279,12 @@ def textkey(event=NONE):
 def avetextkey(event=NONE):
     avetext.configure(state=DISABLED)
 
+#------------------------------------------------------ force_decode
+def force_decode(event=NONE):
+#    print event.keysym
+    Audio.gcom2.nforce=1
+    decode()
+    
 #------------------------------------------------------ decode
 def decode(event=NONE):
     if Audio.gcom2.ndecoding==0:        #If already busy, ignore request
@@ -525,7 +552,7 @@ def ModeFSK441(event=NONE):
         bexclude.configure(state=DISABLED)
         cbfreeze.configure(state=DISABLED)
         cbafc.configure(state=DISABLED)
-        sked.configure(state=DISABLED)
+        hf.configure(state=DISABLED)
         report.configure(state=NORMAL)
         shmsg.configure(state=NORMAL)
         graph2.configure(bg='black')
@@ -554,7 +581,7 @@ def ModeJT65():
     bexclude.configure(state=NORMAL)
     cbfreeze.configure(state=NORMAL)
     cbafc.configure(state=NORMAL)
-    sked.configure(state=NORMAL)
+    hf.configure(state=NORMAL)
     report.configure(state=DISABLED)
     shmsg.configure(state=DISABLED)
     graph2.configure(bg='#66FFFF')
@@ -624,7 +651,7 @@ def ModeCW(event=NONE):
         bexclude.configure(state=DISABLED)
         cbfreeze.configure(state=DISABLED)
         cbafc.configure(state=DISABLED)
-        sked.configure(state=DISABLED)
+        hf.configure(state=DISABLED)
         report.configure(state=NORMAL)
         ntx.set(1)
         GenStdMsgs()
@@ -695,9 +722,12 @@ Ctrl+F8	Set JT65C mode
 Shift+Ctrl+F8	Set CW mode
 F10	Show SpecJT
 Shift+F10   Show astronomical data
+F11	Decrement Freeze DF
+F12	Increment Freeze DF
 Alt+1 to Alt+6	Tx1 to Tx6
 Alt+A	Toggle Auto On/Off
 Alt+D	Decode
+Ctrl+D	Force Decode 
 Alt+E	Erase
 Alt+F	Toggle Freeze
 Alt+G	Generate Standard Messages
@@ -712,7 +742,6 @@ Alt+S	Stop Monitoring or Decoding
 Alt+V	Save Last
 Alt+X	Exclude
 Alt+Z	Toggle Zap
-Right/Left Arrow	Increase/decrease Freeze DF
 """
     Label(scwid,text=t,justify=LEFT).pack(padx=20)
     scwid.focus_set()
@@ -1434,7 +1463,6 @@ def update():
     if Audio.gcom1.transmitting:
         nmsg=int(Audio.gcom2.nmsg)
         t=g.ftnstr(Audio.gcom2.sending)
-        if t[:3]=="CQ ": nsked.set(0)
         t="Txing:  "+t[:nmsg]
         bgcolor='yellow'
         if Audio.gcom2.sendingsh==1:  bgcolor='#66FFFF'    #Shorthand (lt blue)
@@ -1540,7 +1568,7 @@ def update():
     Audio.gcom2.dftolerance=ntol[itol]
     Audio.gcom2.neme=neme.get()
     Audio.gcom2.ndepth=ndepth.get()
-    Audio.gcom2.nsked=nsked.get()
+    Audio.gcom2.nhf=nhf.get()
     try:
         Audio.gcom2.idinterval=options.IDinterval.get()
     except:
@@ -1747,7 +1775,7 @@ iframe2.pack(expand=1, fill=X, padx=4)
 iframe4 = Frame(frame, bd=1, relief=SUNKEN)
 text=Text(iframe4, height=6, width=80)
 text.bind('<Double-Button-1>',dbl_click_text)
-#text.bind('<Double-Button-3>',dbl_click_text)
+text.bind('<Double-Button-3>',dbl_click3_text)
 text.bind('<Key>',textkey)
 
 root.bind_all('<F1>', shortcuts)
@@ -1768,6 +1796,9 @@ root.bind_all('<Shift-Control-F8>', ModeCW)
 #root.bind_all('<F9>', ModeEcho)
 root.bind_all('<F10>', showspecjt)
 root.bind_all('<Shift-F10>', astro1)
+root.bind_all('<F11>', left_arrow)
+root.bind_all('<F12>', right_arrow)
+
 
 root.bind_all('<Alt-Key-1>',btx1)
 root.bind_all('<Alt-Key-2>',btx2)
@@ -1782,6 +1813,8 @@ root.bind_all('<Alt-c>',clear_avg)
 root.bind_all('<Alt-C>',clear_avg)
 root.bind_all('<Alt-d>',decode)
 root.bind_all('<Alt-D>',decode)
+root.bind_all('<Control-d>',force_decode)
+root.bind_all('<Control-D>',force_decode)
 root.bind_all('<Alt-e>',erase)
 root.bind_all('<Alt-E>',erase)
 root.bind_all('<Alt-f>',toggle_freeze)
@@ -1812,8 +1845,8 @@ root.bind_all('<Alt-z>',toggle_zap)
 root.bind_all('<Alt-Z>',toggle_zap)
 root.bind_all('<Control-l>',lookup_gen)
 root.bind_all('<Control-L>',lookup_gen)
-root.bind_all('<Left>',left_arrow)
-root.bind_all('<Right>',right_arrow)
+#root.bind_all('<Left>',left_arrow)
+#root.bind_all('<Right>',right_arrow)
 
 text.pack(side=LEFT, fill=X, padx=1)
 sb = Scrollbar(iframe4, orient=VERTICAL, command=text.yview)
@@ -1942,7 +1975,7 @@ labreport.pack(side=RIGHT,expand=1,fill=BOTH)
 report.pack(side=RIGHT,expand=1,fill=BOTH)
 shmsg=Checkbutton(f5c,text='Sh Msg',justify=RIGHT,variable=ShOK,
             command=restart2)
-sked=Checkbutton(f5c,text='Sked',justify=RIGHT,variable=nsked)
+hf=Checkbutton(f5c,text='HF',justify=RIGHT,variable=nhf)
 genmsg=Button(f5c,text='GenStdMsgs',underline=0,command=GenStdMsgs,
             padx=1,pady=1)
 auto=Button(f5c,text='Auto is Off',underline=0,command=toggleauto,
@@ -1952,7 +1985,7 @@ auto.focus_set()
 txfirst.grid(column=0,row=0,sticky='W',padx=4)
 f5c2.grid(column=0,row=1,sticky='W',padx=4)
 shmsg.grid(column=0,row=2,sticky='W',padx=4)
-sked.grid(column=0,row=3,sticky='W',padx=4)
+hf.grid(column=0,row=3,sticky='W',padx=4)
 genmsg.grid(column=0,row=4,sticky='W',padx=4)
 auto.grid(column=0,row=5,sticky='EW',padx=4)
 #txstop.grid(column=0,row=6,sticky='EW',padx=4)
@@ -2026,7 +2059,7 @@ ldate.after(100,update)
 lauto=0
 isync=1
 ntx.set(1)
-ndepth.set(1)
+ndepth.set(0)
 import options
 options.defaults()
 ModeFSK441()
@@ -2034,6 +2067,7 @@ lookup()
 balloon.unbind(ToRadio)
 g.astro_geom0="+0+0"
 Audio.gcom1.mute=0
+Audio.gcom2.nforce=1
 
 #---------------------------------------------------------- Process INI file
 try:
@@ -2144,7 +2178,7 @@ try:
         elif key == 'Zap': nzap.set(value)
         elif key == 'NB': nblank.set(value)
         elif key == 'NAFC': nafc.set(value)
-        elif key == 'Sked': nsked.set(value)
+        elif key == 'HF': nhf.set(value)
         elif key == 'NoSh441': nosh441.set(value)
         elif key == 'NoShJT65': noshjt65.set(value)
         elif key == 'NEME': neme.set(value)
@@ -2238,7 +2272,7 @@ f.write("Clip " + str(iclip) + "\n")
 f.write("Zap " + str(nzap.get()) + "\n")
 f.write("NB " + str(nblank.get()) + "\n")
 f.write("NAFC " + str(nafc.get()) + "\n")
-f.write("Sked " + str(nsked.get()) + "\n")
+f.write("HF " + str(nhf.get()) + "\n")
 f.write("NoSh441 " + str(nosh441.get()) + "\n")
 f.write("NoShJT65 " + str(noshjt65.get()) + "\n")
 f.write("NEME " + str(neme.get()) + "\n")

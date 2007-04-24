@@ -1,6 +1,6 @@
       subroutine wsjt65(dat,npts,cfile6,NClearAve,MinSigdB,
      +  DFTolerance,NFreeze,NAFC,mode65,Nseg,MouseDF,NAgain,
-     +  ndepth,neme,nsked,idf,idfsh,mycall,hiscall,hisgrid,
+     +  ndepth,neme,idf,idfsh,mycall,hiscall,hisgrid,
      +  lumsg,lcum,nspecial,ndf,nstest,dfsh,
      +  snrsh,NSyncOK,ccfblue,ccfred,ndiag,nwsh)
 
@@ -110,7 +110,7 @@ C  If we get here, we have achieved sync!
          cooo='O ?'
       endif
 
-      call decode65(dat,npts,dtx,dfx,flip,ndepth,neme,nsked,
+      call decode65(dat,npts,dtx,dfx,flip,ndepth,neme,
      +   mycall,hiscall,hisgrid,mode65,nafc,decoded,
      +   ncount,deepmsg,qual)
       if(ncount.eq.-999) qual=0                 !Bad data
@@ -154,10 +154,10 @@ C  Write decoded msg unless this is an "Exclude" request:
       if(MinSigdB.lt.99) write(lumsg,1011) line
 
       if(nsave.ge.1) call avemsg65(1,mode65,ndepth,avemsg1,nused1,
-     +   nq1,nq2,neme,nsked,mycall,hiscall,hisgrid,qual1,
+     +   nq1,nq2,neme,mycall,hiscall,hisgrid,qual1,
      +   ns1,ncount1)
       if(nsave.ge.1) call avemsg65(2,mode65,ndepth,avemsg2,nused2,
-     +   nq1,nq2,neme,nsked,mycall,hiscall,hisgrid,qual2,
+     +   nq1,nq2,neme,mycall,hiscall,hisgrid,qual2,
      +   ns2,ncount2)
       nqual1=qual1
       nqual2=qual2
