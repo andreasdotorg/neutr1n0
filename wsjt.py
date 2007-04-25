@@ -240,7 +240,6 @@ def dbl_click_ave(event):
 #------------------------------------------------------ dbl_click_call
 def dbl_click_call(t,t1,rpt,event):
     global hiscall
-#    print rpt
     i=len(t1)                       #Length to mouse pointer
     i1=t1.rfind(' ')+1              #index of preceding space
     i2=i1+t[i1:].find(' ')          #index of next space
@@ -258,15 +257,15 @@ def dbl_click_call(t,t1,rpt,event):
         GenStdMsgs()
         if rpt <> "OOO":
             n=tx1.get().rfind(" ")
-            t=tx1.get()[0:n+1]
+            t2=tx1.get()[0:n+1]
             tx2.delete(0,END)
-            tx2.insert(0,t+rpt)
+            tx2.insert(0,t2+rpt)
             tx3.delete(0,END)
-            tx3.insert(0,t+"R"+rpt)
+            tx3.insert(0,t2+"R"+rpt)
             tx4.delete(0,END)
-            tx4.insert(0,t+"RRR")
+            tx4.insert(0,t2+"RRR")
             tx5.delete(0,END)
-            tx5.insert(0,t+"73")
+            tx5.insert(0,t2+"73")
         i3=t[:i1].strip().rfind(' ')+1
         if t[i3:i1].strip() == 'CQ':
             ntx.set(1)
@@ -281,10 +280,11 @@ def avetextkey(event=NONE):
 
 #------------------------------------------------------ force_decode
 def force_decode(event=NONE):
-#    print event.keysym
     Audio.gcom2.nforce=1
+    if event.keysym == 'd': Audio.gcom2.ntx2=0
+    if event.keysym == 'D': Audio.gcom2.ntx2=1
     decode()
-    
+
 #------------------------------------------------------ decode
 def decode(event=NONE):
     if Audio.gcom2.ndecoding==0:        #If already busy, ignore request
@@ -1358,6 +1358,9 @@ def update():
                 g.ndop=g.ndop00
                 g.dfdt=g.dfdt0
 
+            Audio.gcom2.ntx2=0
+            if ntx.get()==1 and noshjt65.get()==1: Audio.gcom2.ntx2=1
+
         if mode.get()[:4]=='JT65' or mode.get()[:2]=='CW' :
             graph2.delete(ALL)
             graph2.create_text(80,13,anchor=CENTER,text="Moon",font=g2font)
@@ -1573,10 +1576,8 @@ def update():
         Audio.gcom2.idinterval=options.IDinterval.get()
     except:
         Audio.gcom2.idinterval=0
-    Audio.gcom2.ntx2=0
 #    Audio.gcom1.rxdelay=float('0'+options.RxDelay.get())
 #    Audio.gcom1.txdelay=float('0'+options.TxDelay.get())
-    if ntx.get()==1 and noshjt65.get()==1: Audio.gcom2.ntx2=1
     Audio.gcom2.nslim2=isync-4
     if nosh441.get()==1 and mode.get()=='FSK441': Audio.gcom2.nslim2=99
     try:

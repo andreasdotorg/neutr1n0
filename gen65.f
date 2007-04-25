@@ -1,5 +1,5 @@
       subroutine gen65(message,mode65,samfac,iwave,nwave,sendingsh,
-     +  msgsent)
+     +  msgsent,nmsg)
 
 C  Encodes a JT65 message into a wavefile.
 
@@ -76,6 +76,10 @@ C  Set up necessary constants
          enddo
  10      msgsent=msgsent(1:i)//' OOO'
       endif
+      do i=22,1,-1
+         if(msgsent(i:i).ne.' ') goto 20
+      enddo
+ 20   nmsg=i
 
       return
       end

@@ -122,7 +122,7 @@ subroutine wsjtgen
      if(mode(5:5).eq.'A') mode65=1
      if(mode(5:5).eq.'B') mode65=2
      if(mode(5:5).eq.'C') mode65=4
-     call gen65(msg,mode65,samfacout,iwave,nwave,sendingsh,msgsent)
+     call gen65(msg,mode65,samfacout,iwave,nwave,sendingsh,msgsent,nmsg0)
 
      if(lcwid) then
 !  Generate and insert the CW ID.
@@ -232,6 +232,6 @@ subroutine wsjtgen
      nwave=trperiod*fsample_out
   endif
 
-999  return
+999 return
 end subroutine wsjtgen
 
