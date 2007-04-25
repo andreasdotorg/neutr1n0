@@ -48,6 +48,7 @@ integer ntx2           !Is "No shorthands if Tx1" checked?      GUI
 integer nslim2         !2nd Decoder threshold for FSK441. JT6M  GUI
 integer nagain         !Decode same file again?                 GUI
 integer nsavelast      !Save last file?                         GUI
+integer ntxdf          !Tx frequency offset                     GUI
 integer shok           !Shorthand messages OK?                  GUI
 integer sendingsh      !Sending a shorthand message?            SoundIn
 integer*2 d2a          !Rx data, extracted from y1              Decoder
@@ -91,7 +92,7 @@ common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      ndecdone,npingtime,ierr,lauto,mantx,nrestart,ntr,nmsg,nsave,nadd5, &
      dftolerance,LDecoded,rxdone,monitoring,nzap,nsavecum,minsigdb,   &
      nclearave,nfreeze,nafc,nmode,mode65,nclip,ndebug,nblank,nport,   &
-     mousedf,neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,     &
+     mousedf,neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,ntxdf, &
      shok,sendingsh,d2a(661500),d2b(661500),b(60000),jza,jzb,ntime,   &
      idinterval,msmax,lenappdir,idf,ndiskdat,nlines,nflat,ntxreq,ntxnow,  &
      ndepth,nspecial,ndf,nfmid,nforce,nfrange,ss1(-224:224),ss2(-224:224),   &

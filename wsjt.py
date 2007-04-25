@@ -23,7 +23,7 @@ from types import *
 import array
 
 root = Tk()
-Version="5.9.6 r" + "$Rev$"[6:-1]
+Version="5.9.7 r" + "$Rev$"[6:-1]
 print "******************************************************************"
 print "WSJT Version " + Version + ", by K1JT"
 print "Revision date: " + \
@@ -59,6 +59,7 @@ ntol=(10,25,50,100,200,400,600)              #List of available tolerances
 idsec=0
 #irdsec=0
 lauto=0
+ltxdf=0
 altmsg=0
 cmap0="Linrad"
 fileopened=""
@@ -89,7 +90,6 @@ nhotabetter=0
 nopen=0
 nosh441=IntVar()
 noshjt65=IntVar()
-nhf=IntVar()
 setseq=IntVar()
 ShOK=IntVar()
 slabel="Sync   "
@@ -552,7 +552,7 @@ def ModeFSK441(event=NONE):
         bexclude.configure(state=DISABLED)
         cbfreeze.configure(state=DISABLED)
         cbafc.configure(state=DISABLED)
-        hf.configure(state=DISABLED)
+        btxdf.configure(state=DISABLED)
         report.configure(state=NORMAL)
         shmsg.configure(state=NORMAL)
         graph2.configure(bg='black')
@@ -581,7 +581,7 @@ def ModeJT65():
     bexclude.configure(state=NORMAL)
     cbfreeze.configure(state=NORMAL)
     cbafc.configure(state=NORMAL)
-    hf.configure(state=NORMAL)
+    btxdf.configure(state=NORMAL)
     report.configure(state=DISABLED)
     shmsg.configure(state=DISABLED)
     graph2.configure(bg='#66FFFF')
@@ -651,7 +651,7 @@ def ModeCW(event=NONE):
         bexclude.configure(state=DISABLED)
         cbfreeze.configure(state=DISABLED)
         cbafc.configure(state=DISABLED)
-        hf.configure(state=DISABLED)
+        btxdf.configure(state=DISABLED)
         report.configure(state=NORMAL)
         ntx.set(1)
         GenStdMsgs()
@@ -1022,6 +1022,20 @@ def toggleauto(event=NONE):
     if lauto==0: auto.configure(text='Auto is OFF',bg='gray85',relief=RAISED)
     if lauto==1: auto.configure(text='Auto is ON',bg='red',relief=SOLID)
     
+#------------------------------------------------------ toggletxdf
+def toggletxdf(event=NONE):
+    global ltxdf
+    ltxdf=1-ltxdf
+    if ltxdf:
+        Audio.gcom2.ntxdf=Audio.gcom2.mousedf
+        t="TxDF = %d" % (int(Audio.gcom2.mousedf),)
+        btxdf.configure(text=t,bg='red',relief=SOLID)
+    else:
+        Audio.gcom2.ntxdf=0
+        btxdf.configure(text='TxDF = 0',bg='gray85',relief=RAISED)
+    if Audio.gcom1.transmitting:
+        txstop()
+
 #----------------------------------------------------- dtdf_change
 # Readout of graphical cursor location
 def dtdf_change(event):
@@ -1571,7 +1585,6 @@ def update():
     Audio.gcom2.dftolerance=ntol[itol]
     Audio.gcom2.neme=neme.get()
     Audio.gcom2.ndepth=ndepth.get()
-    Audio.gcom2.nhf=nhf.get()
     try:
         Audio.gcom2.idinterval=options.IDinterval.get()
     except:
@@ -1976,7 +1989,8 @@ labreport.pack(side=RIGHT,expand=1,fill=BOTH)
 report.pack(side=RIGHT,expand=1,fill=BOTH)
 shmsg=Checkbutton(f5c,text='Sh Msg',justify=RIGHT,variable=ShOK,
             command=restart2)
-hf=Checkbutton(f5c,text='HF',justify=RIGHT,variable=nhf)
+btxdf=Button(f5c,text='TxDF = 0',command=toggletxdf,
+            padx=1,pady=1)
 genmsg=Button(f5c,text='GenStdMsgs',underline=0,command=GenStdMsgs,
             padx=1,pady=1)
 auto=Button(f5c,text='Auto is Off',underline=0,command=toggleauto,
@@ -1986,7 +2000,7 @@ auto.focus_set()
 txfirst.grid(column=0,row=0,sticky='W',padx=4)
 f5c2.grid(column=0,row=1,sticky='W',padx=4)
 shmsg.grid(column=0,row=2,sticky='W',padx=4)
-hf.grid(column=0,row=3,sticky='W',padx=4)
+btxdf.grid(column=0,row=3,sticky='EW',padx=4)
 genmsg.grid(column=0,row=4,sticky='W',padx=4)
 auto.grid(column=0,row=5,sticky='EW',padx=4)
 #txstop.grid(column=0,row=6,sticky='EW',padx=4)
@@ -2179,7 +2193,6 @@ try:
         elif key == 'Zap': nzap.set(value)
         elif key == 'NB': nblank.set(value)
         elif key == 'NAFC': nafc.set(value)
-        elif key == 'HF': nhf.set(value)
         elif key == 'NoSh441': nosh441.set(value)
         elif key == 'NoShJT65': noshjt65.set(value)
         elif key == 'NEME': neme.set(value)
@@ -2273,7 +2286,6 @@ f.write("Clip " + str(iclip) + "\n")
 f.write("Zap " + str(nzap.get()) + "\n")
 f.write("NB " + str(nblank.get()) + "\n")
 f.write("NAFC " + str(nafc.get()) + "\n")
-f.write("HF " + str(nhf.get()) + "\n")
 f.write("NoSh441 " + str(nosh441.get()) + "\n")
 f.write("NoShJT65 " + str(noshjt65.get()) + "\n")
 f.write("NEME " + str(neme.get()) + "\n")
