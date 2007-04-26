@@ -230,6 +230,7 @@ def dbl_click3_text(event):
     t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
     n=t1.rfind("\n")
     rpt=t1[n+12:n+15]
+    if rpt[0:1] == " ": rpt=rpt[1:]
     dbl_click_call(t,t1,rpt,event)
 
 #------------------------------------------------------ dbl_click_ave
