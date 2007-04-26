@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------ WSJT
+#------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -230,7 +230,6 @@ def dbl_click3_text(event):
     t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
     n=t1.rfind("\n")
     rpt=t1[n+12:n+15]
-    if rpt[0:1] == " ": rpt=rpt[1:]
     dbl_click_call(t,t1,rpt,event)
 
 #------------------------------------------------------ dbl_click_ave
@@ -688,7 +687,7 @@ four operating modes:
   3. JT65   - for EME and troposcatter
   4. CW     - 15 WPM Morse code, messages structured for EME
 
-Copyright (c) 2001-2006 by Joseph H. Taylor, Jr., K1JT, with
+Copyright (c) 2001-2007 by Joseph H. Taylor, Jr., K1JT, with
 contributions from additional authors.  WSJT is Open Source 
 software, licensed under the GNU General Public License (GPL).
 Source code and programming information may be found at 
