@@ -1,91 +1,62 @@
 To:      Users of WSJT
 From:    Joe Taylor, K1JT
-Subject: WSJT 5.9.0
-Date:    November 14, 2005
+Subject: WSJT 5.9.7
+Date:    April 30 (???), 2007
 
-I am pleased to announce that WSJT 5.9.0 is available for free
+I am pleased to announce that WSJT 5.9.7 (r373) is available for free
 download from the WSJT Home Page,
-http://pulsar.princeton.edu/~joe/K1JT.  It should appear soon
-on the European mirror site, http://www.dk5ya.de, as well.
+http://physics.princeton.edu/pulsar/K1JT.  It should appear soon on
+the European mirror site, http://www.dk5ya.de, as well.
 
-I believe that all reported bugs found in beta-release version 5.8.6
-have been fixed.  In addition, new enhancements have taken the program
-well beyond the capabilities of the baseline comparison versions,
-4.9.8 and 5.8.6.
+Many of the changes from Version 5.9.6 (r309) are motivated by the
+recent explosion of activity using JT65A on the HF bands.  Some
+changes will also be useful in the EME world.
 
-The new WSJT 5.9.0 is faster and better than previous versions in a
-number of ways.  A brief description of the enhancements since version
-5.8.6 can be found at
-http://pulsar.princeton.edu/~joe/K1JT/UpdateHistory.txt.  There are
-many program changes, so be sure to read this information carefully
-before trying to use WSJT 5.9.0!
+1. Since WSJT 5.9.0, double-clicking on a callsign in either one of
+   the decoded text windows will cause that callsign to be copied into
+   the "To Radio" box and inserted appropriately into the transmit
+   message boxes Tx1 and Tx2, and will activate "Auto On".  This
+   feature makes it easy to call a station you have just copied
+   calling CQ, or responding to your CQ.  In version 5.9.7 the feature
+   is expanded so that in JT65 mode, if you double-right-click on a
+   callsign the Tx messages will be configured with numerical signal
+   reports (in dB) and full-length messages including callsigns.  The
+   numerical signal report is extracted automatically from the same
+   line of decoded text.
 
-Of course there may be some new bugs, and perhaps I have overlooked an
-existing problem that you already know about.  Please let me know if
-you find shortcomings in version 5.9.0, or if you have suggestions for
-further improvements.
+2. The little-used "Sked" box has been deleted.  In its place just
+   above the "GenStdMsgs" button is a new button labeled "TXDF = 0".
+   Clicking this button toggles between transmitting at the standard
+   JT65 frequency (sync tone at 1270.46 Hz) and transmitting at an
+   offset frequency determined by "Freeze DF".  This feature is
+   intended primarily for HF use.  If you are tuned to dial frequency
+   14.076 MHz, for example, and find someone calling CQ at DF=-450 Hz,
+   click on the sync tone to set Freeze DF appropriately, then click
+   the TxDF button.  Its label will change to "TxDF = -450" (or whatever
+   the appropriate number is), and your transmission will be very close
+   to zero-beat with the other station.
 
-Sorry, I have not yet found time to implement EME Echo mode.  When
-that is done, and when I have finished some further enhancements to
-the decoders, WSJT 6.0 will be born.  With some luck, there may also
-be a new User's Guide at about that time.
+3. Earlier versions of WSJT have used the Right/Left arrow keys to
+   adjust "Freeze DF" in 5 Hz steps.  This use conflicts with standard
+   use of the arrow keys for text editing, with the effect that Freeze
+   DF could be changed unintentionally (for example, when editing a Tx
+   message).
 
-With best wishes,
-			-- 73, Joe, K1JT
+4. In past versions Alt-D has been available as an alternative to
+   clicking the Decode button.  Related keyboard shortcuts have now
+   been added: Ctrl-d forces the decoder to consider data that would
+   normally be rejected because they do not meet the standard
+   signal-level requirements.  Shift-Ctrl-D does the same thing, but
+   also forces an attempt to decode a standard (as opposed to
+   shorthand) message.
 
+5. The "Band" menu now has entries for all bands from 1.8 to 2304 MHz.
 
-Additional Information for Programmers
------------------------------------------------------------------------
+6. An optional menu item "Decode -> JT65 -> Quick Decode" has been
+   added.  If this item is checked, decoding will start at t=48 s
+   (rather than t=52 or 53 s).  Decoding will also be slightly faster,
+   and (very) slightly less sensitive.
 
-WSJT versions 5.8+ are the result of a complete re-write of the user
-interface, timing control, and audio I/O portions of WSJT 4.9.8.  My
-principal motivation was to make the program multi-threaded, both for
-real-time operational convenience and for performance reasons.
-Another strong motivation was a desire to move the program away from
-its dependence on a proprietary compiler (Microsoft Visual Basic) and
-a single computer platform (Windows).
-
-The user interface of WSJT 5.8+ is written in Python -- an elegant,
-open, cross-platform language that has been a pleasure for me to
-learn.  The remainder of the program is written mostly in Fortran,
-with some routines coded in C; much of that code has been carried over
-directly from WSJT 4.9.8.  
-
-I hope soon to release the source code for WSJT under the GNU General
-Public License (GPL).  To this end, I have separated out the one piece
-of proprietary code formerly in the program -- the soft-decision Reed
-Solomon decoder licensed from CodeVector Technologies (CVT).  A driver
-for this decoder, optimized for JT65, has been compiled into a
-stand-alone executable that is now distributed as part of the WSJT
-installation package, but not part of the program itself.  With this
-approach I can honor all provisions of the CVT license, and at the
-same time release everything else as an open source program under the
-GPL.
-
-WSJT 5.9.0 now includes an open source hard-decision Reed Solomon
-decoder based on code written by Phil Karn, KA9Q .  WSJT uses this
-decoder automatically if the proprietary CVT decoder is unavailable.
-In such instances the "deep search" decodes retain their full
-sensitivity, but fully general decoding independent of the callsign
-database will be less sensitive by 2 or more dB, depending on signal
-fading characteristics.  Separation of the program into two executable
-units is transparent to the user.
-
-WSJT 5.9.0 uses the following open source libraries, which are also
-available under the GPL:
-
-  1. FFTW, by Matteo Frigo and Steven Johnson, for computing Fourier
-     transforms
-
-  2. "Secret Rabbit Code" or "libsamplerate", by Erik de Castro, for
-     accomplishing band-limited resampling of data
-
-  3. RS, by Phil Karn, KA9Q, for Reed Solomon encoding and
-     hard-decision decoding.
-
-I hope that the open release of WSJT source code will encourage others
-to read and understand the code, get involved in improving WSJT, and
-perhaps porting it to other platforms.  Versions of the CVT
-soft-decision decoder for Linux or Macintosh will be easy to compile
-and distribute, if there is demand for them.
-
+7. A one-page summary of WSJT keyboard shortcuts has been added to the
+   standard distribution.  Print it and keep a copy handy at your
+   operating position.

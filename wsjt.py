@@ -230,12 +230,13 @@ def dbl_click_text(event):
 
 #------------------------------------------------------ dbl_click3_text
 def dbl_click3_text(event):
-    t=text.get('1.0',END)           #Entire contents of text box
-    t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
-    n=t1.rfind("\n")
-    rpt=t1[n+12:n+15]
-    if rpt[0:1] == " ": rpt=rpt[1:]
-    dbl_click_call(t,t1,rpt,event)
+    if mode.get()[:4]=='JT65':
+        t=text.get('1.0',END)           #Entire contents of text box
+        t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
+        n=t1.rfind("\n")
+        rpt=t1[n+12:n+15]
+        if rpt[0:1] == " ": rpt=rpt[1:]
+        dbl_click_call(t,t1,rpt,event)
 
 #------------------------------------------------------ dbl_click_ave
 def dbl_click_ave(event):
@@ -724,15 +725,16 @@ Shift+F7	Set JT6M mode
 F8	Set JT65A mode
 Shift+F8	Set JT65B mode
 Ctrl+F8	Set JT65C mode
-Shift+Ctrl+F8	Set CW mode
+Shift+Ctrl+F8 Set CW mode
 F10	Show SpecJT
-Shift+F10   Show astronomical data
+Shift+F10  Show astronomical data
 F11	Decrement Freeze DF
 F12	Increment Freeze DF
-Alt+1 to Alt+6	Tx1 to Tx6
+Alt+1 to Alt+6  Tx1 to Tx6
 Alt+A	Toggle Auto On/Off
 Alt+D	Decode
 Ctrl+D	Force Decode 
+Shift+Ctrl+D  Force Decode, no JT65 shorthands 
 Alt+E	Erase
 Alt+F	Toggle Freeze
 Alt+G	Generate Standard Messages
