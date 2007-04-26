@@ -1,6 +1,6 @@
 	subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,MinSigdB,
      +    NQRN,DFTolerance,MouseButton,NClearAve,nforce,
-     +    Mode,NFreeze,NAFC,NZap,mode65,idf,
+     +    Mode,NFreeze,NAFC,NZap,mode65,idf,ntdecode0,
      +    MyCall,HisCall,HisGrid,neme,ntx2,s2,
      +    ps0,npkept,lumsg,basevb,rmspower,nslim2,psavg,ccf,Nseg,
      +    MouseDF,NAgain,LDecoded,nspecial,ndf,ss1,ss2)
@@ -48,11 +48,13 @@
 	common/avecom/dat(NP2),labdat,jza,modea
 	common/ccom/nline,tping(100),line(100)
 	common/limcom/ nslim2a
+	common/extcom/ntdecode
 	common/clipcom/ nclip
 	save
 
 	lcum=.true.
 	jz=jz0
+	ntdecode=ntdecode0
 	modea=Mode
 	nclip=NQRN-5
 	nslim2a=nclip
@@ -189,7 +191,9 @@ C  Intentionally degrade SNR by -nclip dB.
  	   hiscall=HisCall(1:i-1)//'            '
 
 !  Offset data by about 1 s.
- 	   if(jz.ge.126*2048) call wsjt65(dat(4097),jz-4096,cfile6,
+! 	    jztest=126*2048
+	   jztest=11025*ntdecode/2 - 2755
+ 	   if(jz.ge.jztest) call wsjt65(dat(4097),jz-4096,cfile6,
      +        NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode65,Nseg,
      +        MouseDF2,NAgain,ndepth,neme,idf,idfsh,
      +        mycall,hiscall,hisgrid,lumsg,lcum,nspecial,ndf,

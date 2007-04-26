@@ -64,6 +64,7 @@ integer idf            !Frequency offset in Hz                  Decoder
 integer ndiskdat       !1 if data read from disk, 0 otherwise   GUI
 integer nlines         !Available lines of waterfall data       GUI
 integer nflat          !Is waterfall to be flattened?           GUI
+integer ntdecode       !Time to start decoding in JT65 modes    GUI
 integer ntxreq         !Tx msg# requested                       GUI
 integer ntxnow         !Tx msg# being sent now                  GUI
 integer ndepth         !Requested "depth" of JT65 decoding      GUI
@@ -94,7 +95,8 @@ common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      nclearave,nfreeze,nafc,nmode,mode65,nclip,ndebug,nblank,nport,   &
      mousedf,neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,ntxdf, &
      shok,sendingsh,d2a(661500),d2b(661500),b(60000),jza,jzb,ntime,   &
-     idinterval,msmax,lenappdir,idf,ndiskdat,nlines,nflat,ntxreq,ntxnow,  &
+     idinterval,msmax,lenappdir,idf,ndiskdat,nlines,nflat,ntdecode,   &
+     ntxreq,ntxnow,  &
      ndepth,nspecial,ndf,nfmid,nforce,nfrange,ss1(-224:224),ss2(-224:224),   &
      mycall,hiscall,hisgrid,txmsg,sending,mode,fname0,fnamea,         &
      fnameb,decodedfile,AppDir,filetokilla,filetokillb,utcdate,pttport

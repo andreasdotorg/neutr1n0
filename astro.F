@@ -49,6 +49,8 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
      +    AzSun,ElSun,mjd)
 
       freq=nfreq*1.e6
+      if(nfreq.eq.2) freq=1.8e6
+      if(nfreq.eq.4) freq=3.5e6
 
       call MoonDop(nyear,month,nday,uth,lon,lat,RAMoon,DecMoon,
      +  LST,HA,AzMoon,ElMoon,ldeg,bdeg,vr,dist)

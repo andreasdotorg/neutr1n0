@@ -5,6 +5,7 @@
       integer era(51),dat4(12),indx(63)
       integer mrsym(63),mr2sym(63),mrprob(63),mr2prob(63)
       logical first
+      common/extcom/ntdecode
       data first/.true./,nsec1/0/
       save
 
@@ -23,6 +24,11 @@
       nemax=30
       maxe=8
       xlambda=15.0
+      naddsynd=200
+      if(ntdecode.eq.48) then
+         xlambda=12.0
+         naddsynd=50
+      endif
 
       if(ndec.eq.1) then
          call graycode(mr2sym,63,-1)
@@ -30,7 +36,7 @@
          call interleave63(mr2prob,-1)
 
          nsec1=nsec1+1
-         write(22,rec=1) nsec1,xlambda,maxe,200,
+         write(22,rec=1) nsec1,xlambda,maxe,naddsynd,
      +        mrsym,mrprob,mr2sym,mr2prob
          call flushqqq(22)
          call runqqq('kvasd.exe','-q',iret)

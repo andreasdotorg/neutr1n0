@@ -90,6 +90,7 @@ nhotabetter=0
 nopen=0
 nosh441=IntVar()
 noshjt65=IntVar()
+qdecode=IntVar()
 setseq=IntVar()
 ShOK=IntVar()
 slabel="Sync   "
@@ -194,7 +195,10 @@ def textsize():
 #------------------------------------------------------ logqso
 def logqso(event=NONE):
     t=time.strftime("%Y-%b-%d,%H:%M",time.gmtime())
-    t=t+","+hiscall+","+hisgrid+","+str(g.nfreq)+","+g.mode+"\n"
+    tf=str(g.nfreq)
+    if g.nfreq==2: tf="1.8"
+    if g.nfreq==4: tf="3.5"
+    t=t+","+hiscall+","+hisgrid+","+tf+","+g.mode+"\n"
     t2="Please confirm making the following entry in WSJT.LOG:\n\n" + t
     msg=Pmw.MessageDialog(root,buttons=('Yes','No'),message_text=t2)
     msg.geometry(msgpos())
@@ -1359,6 +1363,8 @@ def update():
             options.MyGrid.get().upper(),HisGrid.get().upper(),utchours)
         azdist()
         g.nfreq=nfreq.get()
+        Audio.gcom2.ntdecode=52
+        if qdecode.get(): Audio.gcom2.ntdecode=48
 
         if Audio.gcom2.ndecoding==0:
             g.AzSun,g.ElSun,g.AzMoon,g.ElMoon,g.AzMoonB,g.ElMoonB,g.ntsky, \
@@ -1695,8 +1701,9 @@ decodebutton['menu'] = decodemenu
 decodemenu.FSK441=Menu(decodemenu,tearoff=0)
 decodemenu.FSK441.add_checkbutton(label='No shorthands',variable=nosh441)
 decodemenu.JT65=Menu(decodemenu,tearoff=0)
-decodemenu.JT65.add_checkbutton(label='Only EME calls',variable=neme)
+decodemenu.JT65.add_checkbutton(label='Only EME calls in Deep Search',variable=neme)
 decodemenu.JT65.add_checkbutton(label='No Shorthands if Tx 1',variable=noshjt65)
+decodemenu.JT65.add_checkbutton(label='Quick Decode',variable=qdecode)
 decodemenu.JT65.add_separator()
 decodemenu.JT65.add_radiobutton(label = 'No Deep Search',
                                 variable=ndepth, value=0)
@@ -1727,11 +1734,20 @@ bandbutton.pack(side = LEFT)
 bandmenu = Menu(bandbutton, tearoff=1)
 bandbutton['menu'] = bandmenu
 nfreq=IntVar()
+bandmenu.add_radiobutton(label = '1.8', variable=nfreq,value=2)
+bandmenu.add_radiobutton(label = '3.5', variable=nfreq,value=4)
+bandmenu.add_radiobutton(label = '7', variable=nfreq,value=7)
+bandmenu.add_radiobutton(label = '14', variable=nfreq,value=14)
+bandmenu.add_radiobutton(label = '18', variable=nfreq,value=18)
+bandmenu.add_radiobutton(label = '21', variable=nfreq,value=21)
+bandmenu.add_radiobutton(label = '24', variable=nfreq,value=24)
+bandmenu.add_radiobutton(label = '28', variable=nfreq,value=28)
 bandmenu.add_radiobutton(label = '50', variable=nfreq,value=50)
 bandmenu.add_radiobutton(label = '144', variable=nfreq,value=144)
 bandmenu.add_radiobutton(label = '222', variable=nfreq,value=222)
 bandmenu.add_radiobutton(label = '432', variable=nfreq,value=432)
 bandmenu.add_radiobutton(label = '1296', variable=nfreq,value=1296)
+bandmenu.add_radiobutton(label = '2304', variable=nfreq,value=2304)
 nfreq.set(144)
 #------------------------------------------------------ Help menu
 helpbutton = Menubutton(mbar, text = 'Help')
@@ -2072,6 +2088,7 @@ iframe6.pack(expand=1, fill=X, padx=4)
 frame.pack()
 
 ldate.after(100,update)
+
 lauto=0
 isync=1
 ntx.set(1)
@@ -2196,6 +2213,7 @@ try:
         elif key == 'NAFC': nafc.set(value)
         elif key == 'NoSh441': nosh441.set(value)
         elif key == 'NoShJT65': noshjt65.set(value)
+        elif key == 'QDecode': qdecode.set(value)
         elif key == 'NEME': neme.set(value)
         elif key == 'NDepth': ndepth.set(value)
         elif key == 'Debug': ndebug.set(value)
@@ -2289,6 +2307,7 @@ f.write("NB " + str(nblank.get()) + "\n")
 f.write("NAFC " + str(nafc.get()) + "\n")
 f.write("NoSh441 " + str(nosh441.get()) + "\n")
 f.write("NoShJT65 " + str(noshjt65.get()) + "\n")
+f.write("QDecode " + str(qdecode.get()) + "\n")
 f.write("NEME " + str(neme.get()) + "\n")
 f.write("NDepth " + str(ndepth.get()) + "\n")
 f.write("Debug " + str(ndebug.get()) + "\n")
