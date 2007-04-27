@@ -277,7 +277,7 @@ def dbl_click_call(t,t1,rpt,event):
             ntx.set(1)
         else:
             ntx.set(2)
-        if event.num==3 and not lauto: toggleauto()
+        if not lauto: toggleauto()
 
 def textkey(event=NONE):
     text.configure(state=DISABLED)
@@ -718,6 +718,7 @@ F2	Options
 F3	Tx Mute
 F4	Clear "To Radio"
 F5	What message to send?
+Shift+F5	Examples of minimal JT65 QSOs
 F6	Open next file in directory
 Shift+F6	Decode all wave files in directory
 F7	Set FSK441 mode
@@ -815,6 +816,33 @@ reports may be substituted.)
     Label(screenf5,text=t,justify=LEFT).pack(padx=20)
     screenf5.focus_set()
 
+#------------------------------------------------------ minimal_qso
+def minimal_qso(event=NONE):
+    screenf5s=Toplevel(root)
+    screenf5s.geometry(root_geom[root_geom.index("+"):])
+    if g.Win32: screenf5s.iconbitmap("wsjt.ico")
+    t="""
+The following are examples of minimal QSOs using standard
+JT65 messages:
+
+Station #1                            Station #2
+----------------------------------------------------------
+CQ K1JT FN20
+                                            K1JT DL3XYZ JO61
+DL3XYZ K1JT FN20 OOO
+                                            RO
+RRR
+                                            73
+----------------------------------------------------------
+CQ K1JT FN20
+                                            K1JT VK7ABC QE37
+VK7ABC K1JT -22
+                                            K1JT VK7ABC R-23
+VK7ABC K1JT RRR
+                                            TNX JOE 73
+"""
+    Label(screenf5s,text=t,justify=LEFT).pack(padx=20)
+    screenf5s.focus_set()
 #------------------------------------------------------ prefixes
 def prefixes(event=NONE):
     pfx=Toplevel(root)
@@ -1763,6 +1791,8 @@ helpmenu.add('command', label = 'Special mouse commands', \
              command = mouse_commands, accelerator='Shift+F1')
 helpmenu.add('command', label = 'What message to send?', \
              command = what2send, accelerator='F5')
+helpmenu.add('command', label = 'Examples of minimal JT65 QSOs', \
+             command = minimal_qso, accelerator='Shift+F5')
 helpmenu.add('command', label = 'Available suffixes and add-on prefixes', \
              command = prefixes)
 helpmenu.add('command', label = 'About WSJT', command = about, \
@@ -1819,6 +1849,7 @@ root.bind_all('<F2>', options1)
 root.bind_all('<F3>', txmute)
 root.bind_all('<F4>', clrToRadio)
 root.bind_all('<F5>', what2send)
+root.bind_all('<Shift-F5>', minimal_qso)
 root.bind_all('<F6>', opennext)
 root.bind_all('<Shift-F6>', decodeall)
 root.bind_all('<F7>', ModeFSK441)

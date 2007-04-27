@@ -2,18 +2,29 @@
 
       real s3(64,63)
       character decoded*22
-      integer era(51),dat4(12),indx(63)
+      integer era(51),dat4(12),indx(64)
       integer mrsym(63),mr2sym(63),mrprob(63),mr2prob(63)
       logical first
       common/extcom/ntdecode
       data first/.true./,nsec1/0/
       save
 
-      call demod64a(s3,nadd,mrsym,mrprob,mr2sym,mr2prob,ntest,nlow)
+      nfail=0
+ 1    call demod64a(s3,nadd,mrsym,mrprob,mr2sym,mr2prob,ntest,nlow)
 
       if(ntest.lt.50 .or. nlow.gt.20) then
          ncount=-999                         !Flag bad data
          go to 900
+      endif
+
+      call chkhist(mrsym,nhist,ipk)
+      if(nhist.ge.20) then
+         nfail=nfail+1
+         call pctile(s3,tmp,4032,50,base)     ! ### or, use ave from demod64a ?
+         do j=1,63
+            s3(ipk,j)=base
+         enddo
+         go to 1
       endif
 
       call graycode(mrsym,63,-1)
@@ -41,9 +52,9 @@
          call flushqqq(22)
          call runqqq('kvasd.exe','-q',iret)
          if(iret.ne.0) then
-            if(first) write(*,1000)
+            if(first) write(*,1000) iret
  1000       format('Error in KV decoder, or no KV decoder present.'/
-     +         'Using BM algorithm.')
+     +         'Return code:',i8,'.  Will use BM algorithm.')
             ndec=0
             first=.false.
             go to 20
