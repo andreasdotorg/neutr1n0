@@ -37,6 +37,8 @@ def update():
     iram=int(60.0*(g.RaAux-irah))
     t7c="Source:   %2.2d:%2.2d  %6.2f\n\n" % (irah,iram,g.DecAux)
     t8= "Freq: %4d  Tsky:%6d\n" % (g.nfreq,g.ntsky)
+    if g.nfreq==2: t8="Freq:  1.8 Tsky:%6d\n" % (g.ntsky)
+    if g.nfreq==4: t8="Freq:  3.5 Tsky:%6d\n" % (g.ntsky)
     t9= "MNR: %5.1f  Dgrd:%6.1f\n" % (g.MaxNR,g.Dgrd)
     t10="DPol: %4d  SD:%8.2f\n" % (g.poloffset,g.sd)
     t=t1+t2+t3+t4+t4a+t5+t6+t7+t7a+t7b+t7c+t8+t9+t10
