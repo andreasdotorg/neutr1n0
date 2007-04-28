@@ -1,6 +1,7 @@
       subroutine extract(s3,nadd,ncount,decoded)
 
       real s3(64,63)
+      real tmp(4032)
       character decoded*22
       integer era(51),dat4(12),indx(64)
       integer mrsym(63),mr2sym(63),mrprob(63),mr2prob(63)
