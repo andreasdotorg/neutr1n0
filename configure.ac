@@ -114,6 +114,7 @@ AC_CHECK_HEADER([jack/jack.h], [HAS_JACK_H=1], [HAS_JACK_H=0])
 AC_CHECK_HEADER([samplerate.h], [HAS_SAMPLERATE_H=1], [HAS_SAMPLERATE_H=0])
 HAS_PORTAUDIO_H=0
 HAS_PORTAUDIO_LIB=0
+HAS_PORTAUDIO=0
 
 dnl See whether we can include both string.h and strings.h.
 AC_CACHE_CHECK([whether string.h and strings.h may both be included],
@@ -210,7 +211,6 @@ AC_CONFIG_FILES(		\
 	Makefile		
 )
 
-dnl Do I dare assume a default for these? -db
 dnl =========================================
 portaudio_lib_dir=""
 portaudio_include_dir=""
@@ -309,7 +309,7 @@ dnl ============
 
 if test "$alsa" != yes -a "$oss" != yes -a \
 	"$portaudio" != yes; then
-        if test $HAS_PORTAUDIO_H -eq 1; then
+        if test $HAS_PORTAUDIO -eq 1; then
 		[portaudio=yes];
 	elif test $HAS_ASOUNDLIB_H -eq 1; then
 		[alsa=yes];
@@ -317,6 +317,42 @@ if test "$alsa" != yes -a "$oss" != yes -a \
 		[oss=yes];
 	fi
 fi
+
+dnl =============
+dnl sanity tests.
+
+if test "$alsa" = yes; then
+	if test $HAS_ASOUNDLIB_H -eq 0; then
+		AC_MSG_ERROR([You need asoundlib.h to use --enable-alsa])
+	fi
+fi
+
+if test "$oss" = yes; then
+	if test $HAS_SOUNDCARD_H -eq 0; then
+		AC_MSG_ERROR([You need soundcard.h to use --enable-oss])
+	fi
+fi
+
+if test "$portaudio" = yes; then
+	if test $HAS_PORTAUDIO -eq 0; then
+		echo ""
+		echo "Using portaudio provided"
+		echo ""
+		portaudio_include_dir="portaudio-v19/include"
+		LIBS="${LIBS} ${RTLIBS} -lsamplerate portaudio-v19/lib/.libs/libportaudio.a"
+		LOCAL_PORTAUDIO="portaudio"
+	else
+		LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
+		LIBS="${LIBS} ${RTLIBS} -lsamplerate -lportaudio"
+		LOCAL_PORTAUDIO=""
+	fi
+	AC_SUBST(AUDIO, "a2d.f90 jtaudio.c resample.c start_portaudio.c")
+	AC_DEFINE(USE_PORTAUDIO, 1, [Define if you want PORTAUDIO used.])
+	CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
+fi
+
+dnl =====================
+dnl final audio selection
 
 if test "$alsa" = yes; then
 	AC_DEFINE(USE_ALSA, 1, [Define if you want ALSA used.])
@@ -329,13 +365,6 @@ if test "$oss" = yes; then
 	AC_SUBST(AUDIO, "start_oss.c")
 fi
 
-if test "$portaudio" = yes; then
-	AC_DEFINE(USE_PORTAUDIO, 1, [Define if you want PORTAUDIO used.])
-	AC_SUBST(AUDIO, "a2d.f90 jtaudio.c resample.c start_portaudio.c")
-	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
-	LIBS="${LIBS} ${RTLIBS} -lsamplerate -lportaudio"
-	CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
-fi
 
 dnl set conf flags
 dnl ==============
@@ -360,32 +389,6 @@ if test $HAS_SAMPLERATE_H -eq 1; then
         AC_DEFINE(HAS_SAMPLERATE_H, 1, )
 fi
 
-dnl sanity tests.
-dnl =============
-
-if test "$alsa" = yes; then
-	if test $HAS_ASOUNDLIB_H -eq 0; then
-		AC_MSG_ERROR([You need asoundlib.h to use --enable-alsa])
-	fi
-fi
-
-if test "$oss" = yes; then
-	if test $HAS_SOUNDCARD_H -eq 0; then
-		AC_MSG_ERROR([You need soundcard.h to use --enable-oss])
-	fi
-fi
-
-if test "$portaudio" = yes; then
-	if test $HAS_PORTAUDIO_H -eq 0; then
-		AC_MSG_ERROR([You need portaudio.h to use --enable-portaudio])
-	fi
-	if test $HAS_PORTAUDIO_LIB -eq 0; then
-		AC_MSG_ERROR([You need libportaudio to use --enable-portaudio])
-	fi
-	if test $HAS_SAMPLERATE_H -eq 0; then
-		AC_MSG_ERROR([You need samplerate.h to use --enable-portaudio])
-	fi
-fi
 
 if test "$F2PY" = ""; then
 	AC_MSG_ERROR([You are missing f2py])
@@ -396,6 +399,7 @@ AC_SUBST(CPPFLAGS, "${CPPFLAGS}")
 AC_SUBST(LDFLAGS, "${LDFLAGS}")
 AC_SUBST(LIBS, "${LIBS}")
 AC_SUBST(CFLAGS)
+AC_SUBST(LOCAL_PORTAUDIO,"${LOCAL_PORTAUDIO}")
 
 AC_OUTPUT
 dnl AC_CONFIG_FILES(Makefile)

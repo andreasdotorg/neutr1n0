@@ -97,11 +97,12 @@ all:	wsjt6 JT65code
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
 
+portaudio:
 portaudio-v19/lib/.libs/libportaudio.a:
 	(cd portaudio-v19;./configure --with-jack=no)
 	(cd portaudio-v19;${MAKE})
 
-wsjt6:	Audio.so #wsjt.spec
+wsjt6:	@LOCAL_PORTAUDIO@ Audio.so
 #	${PYTHON} c:\python23\installer\Build.py wsjt.spec
 #	${RM} wsjt6
 
