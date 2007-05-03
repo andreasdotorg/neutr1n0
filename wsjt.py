@@ -277,7 +277,7 @@ def dbl_click_call(t,t1,rpt,event):
             ntx.set(1)
         else:
             ntx.set(2)
-        if not lauto: toggleauto()
+        if event.num==3 and not lauto: toggleauto()
 
 def textkey(event=NONE):
     text.configure(state=DISABLED)
@@ -1122,13 +1122,15 @@ def mouse_up_g1(event):
 
 #------------------------------------------------------ right_arrow
 def right_arrow(event=NONE):
-    n=5*int(Audio.gcom2.mousedf/5) + 5
+    n=5*int(Audio.gcom2.mousedf/5)
+    if n>0: n=n+5
     if n==Audio.gcom2.mousedf: n=n+5
     Audio.gcom2.mousedf=n
 
 #------------------------------------------------------ left_arrow
 def left_arrow(event=NONE):
     n=5*int(Audio.gcom2.mousedf/5)
+    if n<0: n=n-5
     if n==Audio.gcom2.mousedf: n=n-5
     Audio.gcom2.mousedf=n
     
@@ -1910,8 +1912,6 @@ root.bind_all('<Alt-z>',toggle_zap)
 root.bind_all('<Alt-Z>',toggle_zap)
 root.bind_all('<Control-l>',lookup_gen)
 root.bind_all('<Control-L>',lookup_gen)
-#root.bind_all('<Left>',left_arrow)
-#root.bind_all('<Right>',right_arrow)
 
 text.pack(side=LEFT, fill=X, padx=1)
 sb = Scrollbar(iframe4, orient=VERTICAL, command=text.yview)
@@ -1921,7 +1921,6 @@ iframe4.pack(expand=1, fill=X, padx=4)
 iframe4b = Frame(frame, bd=1, relief=SUNKEN)
 avetext=Text(iframe4b, height=2, width=80)
 avetext.bind('<Double-Button-1>',dbl_click_ave)
-#avetext.bind('<Double-Button-3>',dbl_click_ave)
 avetext.bind('<Key>',avetextkey)
 avetext.pack(side=LEFT, fill=X, padx=1)
 iframe4b.pack(expand=1, fill=X, padx=4)

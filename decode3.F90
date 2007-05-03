@@ -48,6 +48,7 @@ subroutine decode3(d2,jz,istart,filename)
 
   open(23,file=appdir(:lenappdir)//'/CALL3.TXT',status='unknown')
   if(nadd5.eq.1) then
+!  Insert 5 s of zeroes at start of data.
      nzero=5*11025
      do i=jz,nzero+1,-1
         d2d(i)=d2d(i-nzero)
