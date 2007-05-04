@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------- WSJT
+#-------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -822,8 +822,8 @@ def minimal_qso(event=NONE):
     screenf5s.geometry(root_geom[root_geom.index("+"):])
     if g.Win32: screenf5s.iconbitmap("wsjt.ico")
     t="""
-The following are examples of minimal QSOs using standard
-JT65 messages:
+The following are recommended sequences for  minimal QSOs
+using the standard JT65 messages:
 
 Station #1                            Station #2
 ----------------------------------------------------------
@@ -851,11 +851,11 @@ def prefixes(event=NONE):
     f=open(appdir+'/prefixes.txt','r')
     s=f.readlines()
     t2=""
-    for i in range(4):
+    for i in range(3):
         t2=t2+s[i]
     t=""
-    for i in range(len(s)-4):
-        t=t+s[i+4]
+    for i in range(len(s)-3):
+        t=t+s[i+3]
     t=t.split()
     t.sort()
     t1=""
