@@ -20,7 +20,7 @@ dnl Make sure autoconf doesn't interfere with cflags -jmallett
 CFLAGS="$OLD_CFLAGS"
 
 dnl Lets guess at some likely places for extra libs/includes XXX -db
-CPPFLAGS="-I/usr/local/include -I/usr/include/alsa -I/usr/local/include/alsa ${CPPFLAGS}"
+CPPFLAGS="-I/usr/local/include ${CPPFLAGS}"
 LDFLAGS="-L/usr/local/lib ${LDFLAGS}"
 LIBS=" -lpthread ${LIBS}"
 
@@ -88,7 +88,6 @@ AC_MSG_RESULT(${G95_LIB_PATH})
 AC_PATH_PROG(GFORTRAN, gfortran)
 dnl
 dnl FreeBSD currently installs gfortran as gfortran42
-dnl See http://gcc.gnu.org/fortran/
 dnl
 AC_PATH_PROG(GFORTRAN, gfortran42)
 AC_MSG_CHECKING([gfortran lib path])
@@ -236,26 +235,6 @@ fi
 if test $HAS_PORTAUDIO_H -eq 1 -a $HAS_PORTAUDIO_LIB -eq 1; then
 	HAS_PORTAUDIO=1
 fi
-dnl alsa soundsupport
-dnl =================
-
-AC_ARG_ENABLE(alsa,
-AC_HELP_STRING([--enable-alsa],[Force ALSA SOUNDCARD usage.]),
-[alsa=$enableval] , [alsa=no])
-
-dnl oss soundsupport
-dnl ================
-
-AC_ARG_ENABLE(oss,
-AC_HELP_STRING([--enable-oss],[Force OSS SOUND usage.]),
-[oss=$enableval] , [oss=no])
-
-dnl portaudio soundsupport
-dnl ======================
-
-AC_ARG_ENABLE(portaudio,
-AC_HELP_STRING([--enable-portaudio],[Force PORTAUDIO SOUND usage.]),
-[portaudio=$enableval], [portaudio=no])
 
 dnl pick gfortran or g95
 dnl ====================
@@ -306,65 +285,30 @@ AC_SUBST(FC, "${FC}")
 dnl set defaults
 dnl ============
 
-
-if test "$alsa" != yes -a "$oss" != yes -a \
-	"$portaudio" != yes; then
-        if test $HAS_PORTAUDIO -eq 1; then
-		[portaudio=yes];
-	elif test $HAS_ASOUNDLIB_H -eq 1; then
-		[alsa=yes];
-	elif test $HAS_SOUNDCARD_H -eq 1; then
-		[oss=yes];
-	fi
+if test $HAS_ASOUNDLIB_H -eq 1; then
+	CPPFLAGS="-I/usr/include/alsa -I/usr/local/include/alsa $(CPPFLAGS)"	
+	LDFLAGS="${ASOUNDLIBS} ${LDFLAGS}"
 fi
 
 dnl =============
 dnl sanity tests.
 
-if test "$alsa" = yes; then
-	if test $HAS_ASOUNDLIB_H -eq 0; then
-		AC_MSG_ERROR([You need asoundlib.h to use --enable-alsa])
-	fi
+if test $HAS_PORTAUDIO -eq 0; then
+	portaudio_include_dir="portaudio-v19/include"
+	LIBS="${LIBS} ${RTLIBS} -lsamplerate portaudio-v19/lib/.libs/libportaudio.a"
+	LOCAL_PORTAUDIO="portaudio"
+	LOCAL_PORTAUDIO_CLEAN="portaudio_clean"
+else
+	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
+	LIBS="${LIBS} ${RTLIBS} -lsamplerate -lportaudio"
+	LOCAL_PORTAUDIO=""
+	LOCAL_PORTAUDIO_CLEAN=""
 fi
-
-if test "$oss" = yes; then
-	if test $HAS_SOUNDCARD_H -eq 0; then
-		AC_MSG_ERROR([You need soundcard.h to use --enable-oss])
-	fi
-fi
-
-if test "$portaudio" = yes; then
-	if test $HAS_PORTAUDIO -eq 0; then
-		echo ""
-		echo "Using portaudio provided"
-		echo ""
-		portaudio_include_dir="portaudio-v19/include"
-		LIBS="${LIBS} ${RTLIBS} -lsamplerate portaudio-v19/lib/.libs/libportaudio.a"
-		LOCAL_PORTAUDIO="portaudio"
-	else
-		LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
-		LIBS="${LIBS} ${RTLIBS} -lsamplerate -lportaudio"
-		LOCAL_PORTAUDIO=""
-	fi
 	AC_SUBST(AUDIO, "a2d.f90 jtaudio.c resample.c start_portaudio.c")
 	AC_DEFINE(USE_PORTAUDIO, 1, [Define if you want PORTAUDIO used.])
 	CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
-fi
 
 dnl =====================
-dnl final audio selection
-
-if test "$alsa" = yes; then
-	AC_DEFINE(USE_ALSA, 1, [Define if you want ALSA used.])
-	AC_SUBST(AUDIO, "start_alsa.c")
-	LIBS="${LIBS} -lasound"
-fi
-
-if test "$oss" = yes; then
-	AC_DEFINE(USE_OSS, 1, [Define if you want OSS used.])
-	AC_SUBST(AUDIO, "start_oss.c")
-fi
-
 
 dnl set conf flags
 dnl ==============
@@ -389,7 +333,6 @@ if test $HAS_SAMPLERATE_H -eq 1; then
         AC_DEFINE(HAS_SAMPLERATE_H, 1, )
 fi
 
-
 if test "$F2PY" = ""; then
 	AC_MSG_ERROR([You are missing f2py])
 fi
@@ -400,6 +343,7 @@ AC_SUBST(LDFLAGS, "${LDFLAGS}")
 AC_SUBST(LIBS, "${LIBS}")
 AC_SUBST(CFLAGS)
 AC_SUBST(LOCAL_PORTAUDIO,"${LOCAL_PORTAUDIO}")
+AC_SUBST(LOCAL_PORTAUDIO_CLEAN,"${LOCAL_PORTAUDIO_CLEAN}")
 
 AC_OUTPUT
 dnl AC_CONFIG_FILES(Makefile)
@@ -417,16 +361,10 @@ if test $gfortran == "yes"; then
 	echo "Using gfortran as fortran compiler.";
 fi
 
-if test $portaudio == "yes"; then
-	echo "Using portaudio.";
-fi
+echo
 
-if test $alsa == "yes"; then
-	echo "Using alsa.";
-fi
-
-if test $oss == "yes"; then
-	echo "Using oss.";
+if test $HAS_PORTAUDIO -eq 0; then
+	echo "Using built in portaudio distribution"
 fi
 
 echo

@@ -72,22 +72,8 @@ OBJS2F77 = ${SRCS2F77:.f=.o} deep65.o
 SRCS2C	= init_rs.c encode_rs.c decode_rs.c
 OBJS2C  = ${SRCS2C:.c=.o}
 
-# ok, so far for now
-# Windows @AUDIO@ will be a2d.f90 jtaudio.c since it uses portaudio
-#            for *nix @AUDIO@ will also be a2d.f90, jtaudio.c
-#               and start_portaudio.c for systems using portaudio
-#            for *nix @AUDIO@ will be start_alsa.c for alsa
-#            for *nix @AUDIO@ will be start_oss.c for oss
-#
-# ptt_unix.c vs. ptt.c I'll sort out later. 
-# ditto for cutil.c (only used on *nix)
-# --db
-# jtaudio.c/start_threads.c mess will have to be sorted out later
-# to minimise #ifdef's 
-# --db
-# and mostly sorted
-# --db
-#
+# for unix @AUDIO@ will be a2d.f90, jtaudio.c start_portaudio.c
+
 SRCS3C	= ptt_unix.c igray.c wrapkarn.c cutil.c
 OBJS3C  = ${SRCS3C:.c=.o}
 AUDIOSRCS = @AUDIO@
@@ -97,14 +83,16 @@ all:	wsjt6 JT65code
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
 
-portaudio:
+portaudio:	portaudio-v19/lib/.libs/libportaudio.a
+
 portaudio-v19/lib/.libs/libportaudio.a:
-	(cd portaudio-v19;./configure --with-jack=no)
+	(cd portaudio-v19;./configure --with-pic --with-jack=no)
 	(cd portaudio-v19;${MAKE})
 
+portaudio_clean:
+	(cd portaudio-v19;${MAKE} clean)
+
 wsjt6:	@LOCAL_PORTAUDIO@ Audio.so
-#	${PYTHON} c:\python23\installer\Build.py wsjt.spec
-#	${RM} wsjt6
 
 deep65.o: deep65.F
 	$(FC) -c -O0 -Wall -fPIC deep65.F
@@ -118,9 +106,6 @@ Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	${SRCS3C} ${AUDIOSRCS}
 
 wsjt.spec: wsjt.py astro.py g.py options.py palettes.py smeter.py specjt.py
-#	${PYTHON} c:\python23\installer\makespec.py --icon wsjt.ico \
-#	--tk --onefile wsjt.py
-
 
 init_rs_int.o: init_rs.c
 	$(CC) $(CFLAGS) -c -DBIGSYM=1 -o init_rs_int.o init_rs.c
@@ -130,7 +115,7 @@ decode_rs_int.o: decode_rs.c
 	$(CC) $(CFLAGS) -c -DBIGSYM=1 -o decode_rs_int.o decode_rs.c
 
 .PHONY : clean
-clean:
+clean:	@LOCAL_PORTAUDIO_CLEAN@
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt6
 
 distclean: clean
