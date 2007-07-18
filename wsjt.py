@@ -198,7 +198,7 @@ def logqso(event=NONE):
     tf=str(g.nfreq)
     if g.nfreq==2: tf="1.8"
     if g.nfreq==4: tf="3.5"
-    t=t+","+hiscall+","+hisgrid+","+tf+","+g.mode+"\n"
+    t=t+","+ToRadio.get()+","+HisGrid.get()+","+tf+","+g.mode+"\n"
     t2="Please confirm making the following entry in WSJT.LOG:\n\n" + t
     msg=Pmw.MessageDialog(root,buttons=('Yes','No'),message_text=t2)
     msg.geometry(msgpos())
