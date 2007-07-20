@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------- WSJT
+#-------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -79,6 +79,7 @@ ndepth=IntVar()
 nel=0
 nblank=IntVar()
 ncall=0
+nchallenge=IntVar()
 ncwtrperiod=120
 ndmiles=0
 ndkm=0
@@ -1627,6 +1628,7 @@ def update():
     Audio.gcom2.dftolerance=ntol[itol]
     Audio.gcom2.neme=neme.get()
     Audio.gcom2.ndepth=ndepth.get()
+    Audio.gcom2.nchallenge=nchallenge.get()
     try:
         Audio.gcom2.idinterval=options.IDinterval.get()
     except:
@@ -1748,6 +1750,8 @@ decodemenu.JT65.add_radiobutton(label = 'Aggressive Deep Search',
                                 variable=ndepth, value=2)
 decodemenu.JT65.add_radiobutton(label ='Include Average in Aggressive Deep Search',
                                 variable=ndepth, value=3)
+decodemenu.JT65.add_separator()
+decodemenu.JT65.add_checkbutton(label='DJ5HG Challenge',variable=nchallenge)
 decodemenu.add_cascade(label = 'FSK441',menu=decodemenu.FSK441)
 decodemenu.add_cascade(label = 'JT65',menu=decodemenu.JT65)
 

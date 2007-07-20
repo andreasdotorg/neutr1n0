@@ -1,4 +1,4 @@
-      subroutine deep65(s3,mode65,neme,flip,mycall,hiscall,
+      subroutine deep65(s3,mode65,neme,nchallenge,flip,mycall,hiscall,
      +  hisgrid,decoded,qual)
 
       parameter (MAXCALLS=7000,MAXRPT=63)
@@ -11,8 +11,12 @@
       character*180 line
       character*4 rpt(MAXRPT)
       integer ncode(63,2*MAXCALLS + 2 + MAXRPT)
-      real pp(2*MAXCALLS + 2 + MAXRPT)
+!      character*1 cflag
+      character*36 cc
+      integer dgen(12),sent(63)
+      integer*1 sent1(63)
       common/tmp9/ mrs(63),mrs2(63)
+      data cc/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
 #ifdef Win32
 C  This prevents some optimizations that break this subroutine.
       volatile p1,p2,bias
@@ -32,6 +36,8 @@ C  This prevents some optimizations that break this subroutine.
      +         'R-21','R-22','R-23','R-24','R-25',
      +         'R-26','R-27','R-28','R-29','R-30',
      +         'RO','RRR','73'/
+      data iseed/1000000001/,dgen(1)/999/
+      save
 
       rewind 23
       k=0
@@ -61,6 +67,7 @@ C  This prevents some optimizations that break this subroutine.
             callsign=line(1:i1-1)
             grid=line(i1+1:i2-1)
             ceme=line(i2+1:i3-1)
+            if(callsign.eq.hiscall .and. grid.eq.hisgrid(1:4)) go to 10
             if(neme.eq.1 .and. ceme.ne.'EME') go to 10
          endif
 
@@ -105,8 +112,8 @@ C  Insert CQ message unless sync=OOO (flip=-1).
          ref0=ref0 + s3(mrs(j),j)
       enddo
 
-      p1=-1.e30
-      p2=-1.e30
+      p1=0.
+      p2=0.
       do k=1,ntot
          sum=0.
          ref=ref0
@@ -118,30 +125,93 @@ C  Insert CQ message unless sync=OOO (flip=-1).
             endif
          enddo
          p=sum/ref
-         pp(k)=p
-         if(p.gt.p1) then
-            p1=p
-            ip1=k
+         if(p.gt.p2) then
+            if(p.gt.p1) then
+               p2=p1
+               ip2=ip1
+               p1=p
+               ip1=k
+            else
+               p2=p
+               ip2=k
+            endif
          endif
       enddo
 
-      p2=-1.e30
-      do i=1,ntot
-         if(pp(i).gt.p2 .and. pp(i).ne.p1) p2=pp(i)
+      if(nchallenge.eq.0) go to 30
+!  Accept the DJ5HG challenge, and decode all four-character alphanumeric
+!  messages using deep search.
+      p2a=p2
+      ip1a=ip1
+      ip2a=ip2
+      ntot2=36**4
+
+      if(dgen(1).eq.999) then
+         do i1=1,36
+            message=cc(i1:i1)//'                     '
+            do i2=1,36
+               message(2:2)=cc(i2:i2)
+               do i3=1,36
+                  message(3:3)=cc(i3:i3)
+                  do i4=1,36
+                     message(4:4)=cc(i4:i4)
+                     call packmsg(message,dgen)
+                     call rs_encode(dgen,sent)
+                     call interleave63(sent,1)
+                     call graycode(sent,63,1)
+                     do i=1,63
+                        sent1(i)=sent(i)
+                     enddo
+                     write(49) sent1
+                  enddo
+               enddo
+            enddo
+         enddo
+      endif
+      rewind 49
+      do k=1,ntot2
+         read(49) sent1
+         sum=0.
+         ref=ref0
+         do j=1,63
+            i=sent1(j)+1
+            sum=sum + s3(i,j)
+            if(i.eq.mrs(j)) then
+               ref=ref - s3(i,j) + s3(mrs2(j),j)
+            endif
+         enddo
+         p=sum/ref
+         if(p.gt.p2) then
+            if(p.gt.p1) then
+               p2=p1
+               ip2=ip1
+               p1=p
+               ip1=k+ntot
+            else
+               p2=p
+               ip2=k+ntot
+            endif
+         endif
       enddo
 
-      if(mode65.eq.1) bias=max(1.12*p2,0.335)
+ 30   if(mode65.eq.1) bias=max(1.12*p2,0.335)
       if(mode65.eq.2) bias=max(1.08*p2,0.405)
       if(mode65.ge.4) bias=max(1.04*p2,0.505)
       qual=100.0*(p1-bias)
       decoded='                      '
       c=' '
 
-      if(qual.gt.1.0) then
+      if(qual.gt.1.0 .and. ip1.le.ntot) then
          if(qual.lt.6.0) c='?'
          decoded=testmsg(ip1)
       else
-         qual=0.
+         i=ip1-ntot-1
+         i1=i/(36**3)
+         i2=(i - i1*36**3)/(36**2)
+         i3=(i - i1*36**3 - i2*36**2)/36
+         i4=mod(i,36)
+         decoded=cc(i1+1:i1+1)//cc(i2+1:i2+1)//cc(i3+1:i3+1)//
+     +           cc(i4+1:i4+1)//'                  '
       endif
       decoded(22:22)=c
 C  Make sure everything is upper case.
@@ -149,6 +219,19 @@ C  Make sure everything is upper case.
          if(decoded(i:i).ge.'a' .and. decoded(i:i).le.'z') 
      +     decoded(i:i)=char(ichar(decoded(i:i))-32)
       enddo
+
+!      cflag=' '
+!      if(mode65.eq.2) bias=max(1.08*p2a,0.405)
+!      nqual=qual
+!      nquala=100.0*(p1a-bias)
+!      nqual=min(10,max(nqual,0))
+!      nquala=min(10,max(nquala,0))
+!      if(p1.gt.p1a .and. nquala.ge.1 .and. nqual.ge.1) cflag='*'
+!      write(*,3001) p1a,ip1a,p2a,ip2a,p1,ip1,p2,ip2,p2a/p2,
+!     +  nquala,nqual,nquala-nqual,cflag
+!      write(48,3001) p1a,ip1a,p2a,ip2a,p1,ip1,p2,ip2,p2a/p2,
+!     +  nquala,nqual,nquala-nqual,cflag
+! 3001 format(f7.3,i5,f7.3,i5,f7.3,i8,f7.3,i8,f7.3,3i3,2x,a1)
 
       return
       end

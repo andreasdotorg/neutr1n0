@@ -67,6 +67,7 @@ integer nflat          !Is waterfall to be flattened?           GUI
 integer ntdecode       !Time to start decoding in JT65 modes    GUI
 integer ntxreq         !Tx msg# requested                       GUI
 integer ntxnow         !Tx msg# being sent now                  GUI
+integer nchallenge     !Nonzero for DJ5HG challenge             GUI
 integer ndepth         !Requested "depth" of JT65 decoding      GUI
 integer nspecial       !JT65 shorthand msg#: RO=2 RRR=3 73=4    Decoder
 integer ndf            !Measured DF in Hz                       Decoder
@@ -96,7 +97,7 @@ common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      mousedf,neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,ntxdf, &
      shok,sendingsh,d2a(661500),d2b(661500),b(60000),jza,jzb,ntime,   &
      idinterval,msmax,lenappdir,idf,ndiskdat,nlines,nflat,ntdecode,   &
-     ntxreq,ntxnow,  &
+     ntxreq,ntxnow,nchallenge,                                        &
      ndepth,nspecial,ndf,nfmid,nforce,nfrange,ss1(-224:224),ss2(-224:224),   &
      mycall,hiscall,hisgrid,txmsg,sending,mode,fname0,fnamea,         &
      fnameb,decodedfile,AppDir,filetokilla,filetokillb,utcdate,pttport

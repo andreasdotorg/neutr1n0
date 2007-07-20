@@ -1,4 +1,4 @@
-      subroutine avemsg65(mseg,mode65,ndepth,decoded,nused,
+      subroutine avemsg65(mseg,mode65,ndepth,nchallenge,decoded,nused,
      +  nq1,nq2,neme,mycall,hiscall,hisgrid,qual,
      +  ns,ncount)
 
@@ -43,7 +43,7 @@ C  Compute the average of all flagged spectra for this segment.
 C  Possibly should pass nadd=nused, also:
       if(ndepth.ge.3) then
          flipx=1.0                     !Normal flip not relevant for ave msg
-         call deep65(s3,mode65,neme,flipx, 
+         call deep65(s3,mode65,neme,nchallenge,flipx, 
      +   mycall,hiscall,hisgrid,deepmsg,qual)
          nqual=qual
          if(nqual.lt.nq1) deepmsg='                      '
