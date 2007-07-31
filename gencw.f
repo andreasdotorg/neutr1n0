@@ -1,80 +1,89 @@
-      subroutine gencw(msg,wpm,freqcw,samfac,TRPeriod,iwave,nwave)
+      subroutine gencw(msg,wpm0,freqcw,samfac,TRPeriod,iwave,nwave)
+
+C  Generates array iwave() containing an audio signal corresponding
+C  to an EME CW message.
 
       parameter (NMAX=150*11025)
-      character msg*22,word12*22,word3*22
+      character*22 msg,word12,word3,s1,s2,s3
       integer*2 iwave(NMAX)
       integer TRPeriod
-
-      integer*1 idat(5000),idat1(460),idat2(200)
+      integer*1 idat(5000),idat1(460),idat2(200),idat3(200)
       real*8 dt,t,twopi,pha,dpha,tdit,samfac
       data twopi/6.283185307d0/
 
-      nwords=0
-      do i=2,22
-         if(msg(i-1:i).eq.'  ') go to 10
-         if(msg(i:i).eq.' ') then
-            nwords=nwords+1
-            j=j0
-            j0=i+1
-         endif
-      enddo
- 10   ntype=1                          !Call1+Call2, CQ+Call
-      word12=msg
-      if(nwords.eq.3) then
-         word3=msg(j:j0-1)
-         word12(j-1:)='                      '
-         ntype=3                       !BC+RO, BC+RRR, BC+73
-         if(word3.eq.'OOO') ntype=2    !BC+OOO
-      endif
+      call msgtype(msg,ntype,nrpt1,nrpt2,s1,s2)
+      call morse(s1,idat1,nz1)         !Encode string 1
+      nz2=0
+      if(ntype.ge.2) call morse(s2,idat2,nz2)   !Encode string 2
+      s3='KK'
+      call morse(s3,idat3,nz3)         !Encode 'KK'
 
-      tdit=1.2d0/wpm                   !Key-down dit time, seconds
-      call morse(word12,idat1,nmax1) !Encode part 1 of msg
-      t1=tdit*nmax1                    !Time for part1, once
-      nrpt1=TRPeriod/t1                !Repetitions of part 1
-      if(ntype.eq.2) nrpt1=0.75*TRPeriod/t1
-      if(ntype.eq.3) nrpt1=1
-      t1=nrpt1*t1                      !Total time for part 1
-      nrpt2=0
-      t2=0.
-      if(ntype.ge.2) then
-         call morse(word3,idat2,nmax2) !Encode part 2
-         t2=tdit*nmax2                 !Time for part 2, once
-         nrpt2=(TRPeriod-t1)/t2        !Repetitions of part 2
-         t2=nrpt2*t2                   !Total time for part 2
-      endif
+      b4=58.0*wpm0/1.2
+      b3=0.75*b4
+      b1=0.25*b4
 
+      nr1=1
+      nr2=0
+      if(nrpt1.eq.100) then
+         nr1=nint((b4-nz3)/nz1)
+      else if(nrpt1.eq.1) then
+         nr2=nint((b4-nz1-nz3)/nz2)
+      else if(nrpt1.eq.75) then
+         nr1=nint(b3/nz1)
+         nr2=nint((b4-nr1*nz1-nz3)/nz2)
+      endif
+      nbits=nr1*nz1 + nr2*nz2 + nz3
+      
       j=0
-      do n=1,nrpt1
-         do i=1,nmax1
+      do n=1,nr1
+         do i=1,nz1
             j=j+1
             idat(j)=idat1(i)
          enddo
       enddo
-      do n=1,nrpt2
-         do i=1,nmax2
-            j=j+1
-            idat(j)=idat2(i)
+      if(nr2.gt.0) then
+         do n=1,nr2
+            do i=1,nz2
+               j=j+1
+               idat(j)=idat2(i)
+            enddo
          enddo
+      endif
+
+      do i=1,nz3
+         j=j+1
+         idat(j)=idat3(i)
+      enddo
+      jz=j
+      do i=jz+1,5000
+         idat(j)=0
       enddo
 
+      wpm=wpm0 * nbits/b4
+      tdit=1.2d0/wpm                   !Key-down dit time, seconds
       dt=1.d0/(11025.d0*samfac)
-      nwave=j*tdit/dt
+      nwave=jz*tdit/dt
       pha=0.
       dpha=twopi*freqcw*dt
       t=0.
       s=0.
       u=wpm/(11025*0.03)
+      j0=1
+      nsign=1
       do i=1,nwave
          t=t+dt
          pha=pha+dpha
-         j=t/tdit + 1
-!         iwave(i)=0
-!         if(idat(j).ne.0) iwave(i)=nint(32767.d0*sin(pha))
+         j=nint(t/tdit) + 1
          s=s + u*(idat(j)-s)
-         iwave(i)=nint(s*32767.d0*sin(pha))
+         if(idat(j0).eq.0 .and. idat(j).ne.0) nsign=-nsign
+         iwave(i)=nsign*nint(s*32767.d0*sin(pha))
+         j0=j
       enddo
+      do i=nwave+1,NMAX
+         iwave(i)=0
+      enddo
+      nwave=nwave+11025
 
       return
       end
 
-      include 'gencwid.f'

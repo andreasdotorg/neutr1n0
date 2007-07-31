@@ -1171,12 +1171,12 @@ def GenStdMsgs(event=NONE):
         tx6.insert(0,t.upper())
         altmsg=0
     elif mode.get()[:2]=="CW":
-        tx1.insert(0,ToRadio.get() + " "+options.MyCall.get())
-        tx2.insert(0,tx1.get()+" OOO")
-        tx3.insert(0,tx1.get()+" RO")
-        tx4.insert(0,tx1.get()+" RRR")
-        tx5.insert(0,tx1.get()+" 73")
-        tx6.insert(0,"CQ " + options.MyCall.get())
+        tx1.insert(0,"[" + ToRadio.get() + " " +options.MyCall.get() + "]")
+        tx2.insert(0,tx1.get()+" [OOO]")
+        tx3.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [RO]")
+        tx4.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [RRR]")
+        tx5.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [73]")
+        tx6.insert(0,"[CQ " + options.MyCall.get() + "]")
     
 #------------------------------------------------------ GenAltMsgs
 def GenAltMsgs(event=NONE):
