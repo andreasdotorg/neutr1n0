@@ -1399,8 +1399,6 @@ def update():
             options.MyGrid.get().upper(),HisGrid.get().upper(),utchours)
         azdist()
         g.nfreq=nfreq.get()
-        Audio.gcom2.ntdecode=52
-        if qdecode.get(): Audio.gcom2.ntdecode=48
 
         if Audio.gcom2.ndecoding==0:
             g.AzSun,g.ElSun,g.AzMoon,g.ElMoon,g.AzMoonB,g.ElMoonB,g.ntsky, \
@@ -1629,6 +1627,14 @@ def update():
     Audio.gcom2.neme=neme.get()
     Audio.gcom2.ndepth=ndepth.get()
     Audio.gcom2.nchallenge=nchallenge.get()
+    if mode.get()=='CW':
+        Audio.gcom2.ntdecode=56
+    else:
+        if qdecode.get():
+            Audio.gcom2.ntdecode=48
+        else:
+            Audio.gcom2.ntdecode=52
+
     try:
         Audio.gcom2.idinterval=options.IDinterval.get()
     except:

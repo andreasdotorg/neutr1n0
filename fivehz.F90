@@ -152,8 +152,8 @@ subroutine fivehz
   nbufs=ibuf-ibuf0
   if(nbufs.lt.0) nbufs=nbufs+1024
   tdata=nbufs*2048.0/11025.0
-  if(mode(1:4).eq.'JT65' .and. monitoring.eq.1 .and. &
-       tdata.gt.float(ntdecode) .and. ibuf0.ne.ibuf00) then
+  if((mode(1:4).eq.'JT65' .or. mode(1:2).eq.'CW') .and. monitoring.eq.1 &
+       .and. tdata.gt.float(ntdecode) .and. ibuf0.ne.ibuf00) then
      rxdone=.true.
      ibuf00=ibuf0
   endif
