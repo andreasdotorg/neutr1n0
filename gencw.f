@@ -62,6 +62,8 @@ C  to an EME CW message.
       wpm=wpm0 * nbits/b4
       tdit=1.2d0/wpm                   !Key-down dit time, seconds
       dt=1.d0/(11025.d0*samfac)
+!      write(*,3001) msg,ntype,nr1,nz1,nr2,nz2,nz3,nbits,wpm,b4,1.d6*dt
+! 3001 format(a22,i3,6i5,f7.2,f8.2,f9.3)
       nwave=jz*tdit/dt
       pha=0.
       dpha=twopi*freqcw*dt

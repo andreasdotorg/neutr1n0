@@ -262,6 +262,13 @@ C  Call the decoder if DF is in range or Freeze is off.
 	   goto 800
 	endif
 
+	if(mode.eq.5) then
+!  We're in CW mode.
+ 	   call decodecw(dat,jz,cfile6,DFTolerance,NFreeze,
+     +        MouseDF2,mycall,hiscall,hisgrid)
+	   go to 900
+	endif
+
 !  We're in FSK441 mode. Compute the 2D spectrum.
 	df=11025.0/256.0            !FFT resolution ~43 Hz
 	dtbuf=nstep/11025.0

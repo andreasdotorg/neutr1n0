@@ -27,7 +27,7 @@ SRCS2F90 = a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	blanker.f90 decode1.f90 decode2.f90 decode3.f90 ftn_init.f90 \
 	ftn_quit.f90 get_fname.f90 getfile.f90 horizspec.f90 hscroll.f90 \
 	i1tor4.f90 pix2d.f90 pix2d65.f90 rfile.f90 savedata.f90 spec.f90 \
-	wsjtgen.f90 runqqq.f90 fivehz.f90
+	wsjtgen.f90 runqqq.f90 fivehz.f90 msgparms.f90
 SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	stdecode.f indexx.f s2shape.f flat2.f gen65.f chkmsg.f gen6m.f \
 	gentone.f syncf0.f syncf1.f synct.f decode6m.f avemsg6m.f \
@@ -42,7 +42,7 @@ SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	xcor.f xfft.f xfft2.f wsjt65.f astro.f azdist.f coord.f dcoord.f \
 	deg2grid.f dot.f ftsky.f geocentric.f GeoDist.f grid2deg.f \
 	moon2.f MoonDop.f sun.f toxyz.f pfxdump.f \
-	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f
+	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f decodecw.f
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c
 
