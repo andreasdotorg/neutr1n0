@@ -174,7 +174,8 @@ C  Get median of lower half, then normalize
          nz1=nparm(3,k)
          nr2=nparm(4,k)
          nz2=nparm(5,k)
-         call foldcw(x,nsym,ntype,nr1,nz1,nr2,nz2,f1,f2,qual)
+         call foldcw(x,nsym,ntype,nr1,nz1,nr2,nz2,f1,f2,qual,
+     +        xm21,xm31,xm41,xm22,xm32,xm42)
          if(qual.gt.qbest) then
             kpk=k
             qbest=qual
@@ -191,13 +192,21 @@ C  Get median of lower half, then normalize
       if(ntype.eq.2 .and. nz2.eq.28) rpt='RO '
       if(ntype.eq.2 .and. nz2.eq.34) rpt='RRR'
       if(ntype.eq.2 .and. nz2.eq.36) rpt='73 '
+      
+      call foldcw(x,nsym,ntype,nr1,nz1,nr2,nz2,f1,f2,qual,
+     +     xm21,xm31,xm41,xm22,xm32,xm42)
 
+      write(81,3200) nsym,nbits,ntype,nr1,nz1,nr2,nz2,qual,
+     +     xm21,xm31,xm41,xm22,xm32,xm42
+ 3200 format(7i5/7f10.3)
+      if(nz1.gt.0) write(81,3201) (f1(i),i=1,nz1)
+ 3201 format(10f8.3)
+      if(nz2.gt.0) write(81,3201) (f2(i),i=1,nz2)
 
-      call foldcw(x,nsym,ntype,nr1,nz1,nr2,nz2,f1,f2,qual)
-      write(*,3100) nbits,nsym,ntype,nr1,nz1,nr2,nz2,qual,rpt
- 3100 format(7i5,f7.2,2x,a3)
+      write(*,3100) nbits,nsym,ntype,nr1,nz1,nr2,nz2,qual,xm41,xm42,rpt
+ 3100 format(7i5,3f7.2,2x,a3)
 
-      write(80,3100) nbits,nsym,ntype,nr1,nz1,nr2,nz2,qual,rpt
+      write(80,3100) nbits,nsym,ntype,nr1,nz1,nr2,nz2,qual,xm41,xm42,rpt
       if(ntype.eq.2) then
          do i=1,nz2
             id(i)=0

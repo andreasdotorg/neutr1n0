@@ -1,4 +1,7 @@
-      subroutine foldcw(x,nsym,ntype,nr1,nz1,nr2,nz2,f1,f2,qual)
+      subroutine foldcw(x,nsym,ntype,nr1,nz1,nr2,nz2,f1,f2,qual,
+     +    xm21,xm31,xm41,xm22,xm32,xm42)
+
+
 
       real x(nsym)
       real f1(300),f2(300),tmp(300)
@@ -74,6 +77,37 @@ C  Get median, re-normalize, and compute histogram
 
       qual=q1
       if(ntype.eq.2) qual=q2
-      
+
+      call m234(f1,nz1,xm21,xm31,xm41)
+      call m234(f2,nz2,xm22,xm32,xm42)
+
       return
       end
+
+      subroutine m234(f,nz,xm2,xm3,xm4)
+
+      real f(nz)
+
+      s2=0.
+      s3=0.
+      s4=0.
+      xm2=0.
+      xm3=0.
+      xm4=0.
+      if(nz.eq.0) return
+
+      do i=1,nz
+         s2=s2 + f(i)**2
+         s3=s3 + f(i)**3
+         s4=s4 + f(i)**4
+      enddo
+      xm2=s2/nz
+      xm3=s3/nz
+      xm4=s4/nz
+
+!      xm3=xm3/(xm2**1.5)
+!      xm4=xm4/(xm2**2)
+
+      return
+      end
+      
