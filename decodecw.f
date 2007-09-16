@@ -165,7 +165,7 @@ C  Get median of lower half, then normalize
          x(i)=(x(i)-base)/sigma
       enddo
 
-      call msgparms(nbits,nparm,kz)
+!      call msgparms(nbits,nparm,kz)
 
       qbest=-99.
       do k=1,kz

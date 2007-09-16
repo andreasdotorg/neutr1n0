@@ -264,8 +264,8 @@ C  Call the decoder if DF is in range or Freeze is off.
 
 	if(mode.eq.5) then
 !  We're in CW mode.
- 	   call decodecw(dat,jz,cfile6,DFTolerance,NFreeze,
-     +        MouseDF2,mycall,hiscall,hisgrid)
+! 	   call decodecw(dat,jz,cfile6,DFTolerance,NFreeze,
+!     +        MouseDF2,mycall,hiscall,hisgrid)
 	   go to 900
 	endif
 
