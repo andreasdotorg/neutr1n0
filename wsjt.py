@@ -48,6 +48,7 @@ root_geom=""
 
 #------------------------------------------------------ Global variables
 appdir=os.getcwd()
+g.appdir=appdir
 isync=0
 isync441=2
 isync6m=-10
@@ -2240,6 +2241,7 @@ try:
         elif key == 'AddPrefix': options.addpfx.set(value.replace("_"," ").lstrip())
         elif key == 'AuxRA': options.auxra.set(value)
         elif key == 'AuxDEC': options.auxdec.set(value)
+        elif key == 'AzElDir': options.azeldir.set(value)        
         elif key == 'TxFirst': TxFirst.set(value)
         elif key == 'KB8RQ': kb8rq.set(value)
         elif key == 'K2TXB': k2txb.set(value)
@@ -2285,6 +2287,7 @@ elif mode.get()[:4]=='JT65': isync=isync65
 lsync.configure(text=slabel+str(isync))
 lclip.configure(text='Clip   '+str(iclip))
 Audio.gcom2.appdir=(appdir+'                                                                                          ')[:80]
+Audio.gcom2.azeldir=(options.azeldir.get()+'                                                                                          ')[:80]
 Audio.gcom2.ndepth=ndepth.get()
 Audio.ftn_init()
 GenStdMsgs()
@@ -2336,6 +2339,7 @@ if options.auxra.get()=="": options.auxra.set("0")
 if options.auxdec.get()=="": options.auxdec.set("0")
 f.write("AuxRA " + options.auxra.get() + "\n")
 f.write("AuxDEC " + options.auxdec.get() + "\n")
+f.write("AzElDir " + str(options.azeldir.get()) + "\n")
 f.write("TxFirst " + str(TxFirst.get()) + "\n")
 f.write("KB8RQ " + str(kb8rq.get()) + "\n")
 f.write("K2TXB " + str(k2txb.get()) + "\n")

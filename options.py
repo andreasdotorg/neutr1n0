@@ -41,6 +41,7 @@ Template6=StringVar()
 addpfx=StringVar()
 auxra=StringVar()
 auxdec=StringVar()
+azeldir=StringVar()
 
 def defaults():
 #    if g.mode=="FSK441" or g.mode=="JT6M":
@@ -183,7 +184,9 @@ aux_ra=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Source RA:',
     entry_width=9,entry_textvariable=auxra)
 aux_dec=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Source DEC:',
     entry_width=9,entry_textvariable=auxdec)
-widgets = (temp_prefix,aux_ra,aux_dec)
+azeldir_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='AzElDir:',
+    entry_width=9,value=g.appdir,entry_textvariable=azeldir)
+widgets = (temp_prefix,aux_ra,aux_dec,azeldir_entry)
 for widget in widgets:
     widget.pack(padx=10,pady=2)
 Pmw.alignlabels(widgets)
