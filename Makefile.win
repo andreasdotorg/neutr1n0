@@ -21,7 +21,7 @@ JT65code.exe: $(OBJS1)
 	$(FC) $(FFLAGS) /exe:JT65code.exe $(OBJS1)
 
 
-OBJS2C   = init_rs.o encode_rs.o decode_rs.o jtaudio.o
+OBJS2C   = init_rs.o encode_rs.o decode_rs.o jtaudio.o fano.o tab.o
 F2PYONLY = ftn_init ftn_quit audio_init spec getfile azdist0 astro0
 SRCS2F90 = a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	blanker.f90 decode1.f90 decode2.f90 decode3.f90 ftn_init.f90 \
@@ -29,7 +29,8 @@ SRCS2F90 = a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	i1tor4.f90 pix2d.f90 pix2d65.f90 rfile.f90 savedata.f90 spec.f90 \
 	wsjtgen.f90 runqqq.f90 fivehz.f90 msgparms.f90
 SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
-	stdecode.f indexx.f s2shape.f flat2.f gen65.f chkmsg.f gen6m.f \
+	stdecode.f indexx.f s2shape.f flat2.f gen65.f gen24.f entail.f \
+	genmet.f chkmsg.f gen6m.f \
 	gentone.f syncf0.f syncf1.f synct.f decode6m.f avemsg6m.f \
 	set.f flatten.f db.f pctile.f sort.f ssort.f ps.f smooth.f ping.f \
 	longx.f peakup.f sync.f detect.f avemsg65.f decode65.f demod64a.f \
@@ -93,6 +94,12 @@ wrapkarn.obj: wrapkarn.c
 
 igray.obj: igray.c
 	$(CC) /nologo /c /DWin32=1 igray.c
+
+fano.o: fano.c
+	$(CC) /nologo /c /Fofano.o fano.c
+
+tab.o: tab.c
+	$(CC) /nologo /c /Fotab.o tab.c
 
 .PHONY : clean
 

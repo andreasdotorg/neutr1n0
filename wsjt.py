@@ -188,7 +188,8 @@ def textsize():
     if textheight <= 9:
         textheight=21
     else:
-        if mode.get()[:4]=='JT65':
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+               mode.get()[:3]=='JT4':
             textheight=7
         else:
             textheight=9
@@ -232,7 +233,8 @@ def dbl_click_text(event):
 
 #------------------------------------------------------ dbl_click3_text
 def dbl_click3_text(event):
-    if mode.get()[:4]=='JT65':
+    if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+               mode.get()[:3]=='JT4':
         t=text.get('1.0',END)           #Entire contents of text box
         t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
         n=t1.rfind("\n")
@@ -668,6 +670,18 @@ def ModeCW(event=NONE):
         GenStdMsgs()
         erase()
 
+#------------------------------------------------------ ModeJT2
+def ModeJT2():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT65()
+    mode.set("JT2")
+
+#------------------------------------------------------ ModeJT4
+def ModeJT4():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT65()
+    mode.set("JT4")
+
 #------------------------------------------------------ ModeEcho
 #def ModeEcho(event=NONE):
 #    mode.set("Echo")
@@ -885,7 +899,8 @@ def azdist():
         labHotAB.configure(text="",bg='gray85')
         labDist.configure(text="")
     else:
-        if mode.get()[:4]=="JT65" or mode.get()[:2]=="CW":
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+               mode.get()[:3]=='JT4' or mode.get()[:2]=="CW":
             labAz.configure(text="Az: %d" % (naz,))
             labHotAB.configure(text="",bg='gray85')
         else:
@@ -991,7 +1006,9 @@ def dectrperiod(event):
 #------------------------------------------------------ erase
 def erase(event=NONE):
     graph1.delete(ALL)
-    if mode.get()[:4]!="JT65" and mode.get()[:2]!="CW": graph2.delete(ALL)
+    if mode.get()[:4]!="JT65" and mode.get()[:2]!="CW" and \
+            mode.get()[:3]!='JT2' and mode.get()[:3]!='JT4':
+        graph2.delete(ALL)
     text.configure(state=NORMAL)
     text.delete('1.0',END)
     text.configure(state=DISABLED)
@@ -1079,7 +1096,8 @@ def toggletxdf(event=NONE):
 #----------------------------------------------------- dtdf_change
 # Readout of graphical cursor location
 def dtdf_change(event):
-    if mode.get()[:4]!="JT65":
+    if mode.get()[:4]!='JT65' and mode.get()[:3]!='JT2' and \
+               mode.get()[:3]!='JT4':
         t="%.1f" % (event.x*30.0/500.0,)
         lab6.configure(text=t,bg='green')
     else:
@@ -1102,7 +1120,8 @@ def dtdf_change(event):
 def mouse_click_g1(event):
     global nopen
     if not nopen:
-        if mode.get()[:4]=="JT65":
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+               mode.get()[:3]=='JT4':
             Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)
         else:
             if Audio.gcom2.ndecoding==0:              #If decoder is busy, ignore
@@ -1117,7 +1136,8 @@ def mouse_click_g1(event):
 
 #------------------------------------------------------ double-click_g1
 def double_click_g1(event):
-    if g.mode[:4]=='JT65' and Audio.gcom2.ndecoding==0:
+    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+        mode.get()[:3]=='JT4') and Audio.gcom2.ndecoding==0:
         g.freeze_decode=1
     
 #------------------------------------------------------ mouse_up_g1
@@ -1157,7 +1177,8 @@ def GenStdMsgs(event=NONE):
         tx4.insert(0,setmsg(options.tx4.get(),r))
         tx5.insert(0,setmsg(options.tx5.get(),r))
         tx6.insert(0,setmsg(options.tx6.get(),r))
-    elif mode.get()[:4]=="JT65":
+    elif mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+               mode.get()[:3]=='JT4':
         if ToRadio.get().find("/") == -1 and \
                options.MyCall.get().find("/") == -1:
             t=ToRadio.get() + " "+options.MyCall.get() + " "+options.MyGrid.get()[:4]
@@ -1187,7 +1208,8 @@ def GenAltMsgs(event=NONE):
     ToRadio.insert(0,t)
     if k2txb.get()!=0: ntx.set(1)
     Audio.gcom2.hiscall=(ToRadio.get()+'            ')[:12]
-    if mode.get()[:4]=="JT65" and ToRadio.get().find("/") == -1 and \
+    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+        mode.get()[:3]=='JT4') and ToRadio.get().find("/") == -1 and \
                options.MyCall.get().find("/") == -1:
         for m in (tx1, tx2, tx3, tx4, tx5, tx6):
             m.delete(0,99)
@@ -1417,7 +1439,8 @@ def update():
             Audio.gcom2.ntx2=0
             if ntx.get()==1 and noshjt65.get()==1: Audio.gcom2.ntx2=1
 
-        if mode.get()[:4]=='JT65' or mode.get()[:2]=='CW' :
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+               mode.get()[:3]=='JT4' or mode.get()[:2]=='CW':
             graph2.delete(ALL)
             graph2.create_text(80,13,anchor=CENTER,text="Moon",font=g2font)
             graph2.create_text(13,37,anchor=W, text="Az: %6.2f" % g.AzMoon,font=g2font)
@@ -1425,7 +1448,8 @@ def update():
             graph2.create_text(13,85,anchor=W, text="Dop:%6d" % g.ndop,font=g2font)
             graph2.create_text(13,109,anchor=W,text="Dgrd:%5.1f" % g.Dgrd,font=g2font)
 
-    if g.freeze_decode and mode.get()[:4]=='JT65':
+    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+        mode.get()[:3]=='JT4') and g.freeze_decode:
         itol=2
         ltol.configure(text='Tol    '+str(50))
         Audio.gcom2.dftolerance=50
@@ -1460,6 +1484,10 @@ def update():
             msg2.configure(bg='#FF00FF')
         elif mode.get()=="CW":
             msg2.configure(bg='#00FF00')
+        elif mode.get()=="JT2":
+            msg2.configure(bg='#8888FF')
+        elif mode.get()=="JT4":
+            msg2.configure(bg='#88FF88')
 #        elif mode.get()=="Echo":
 #            msg2.configure(bg='#FF0000')
         g.mode=mode.get()
@@ -1734,6 +1762,8 @@ modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C, \
                          accelerator='Ctrl+F8')
 modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW, \
                          accelerator='Shift+Ctrl+F8')
+modemenu.add_radiobutton(label = 'JT2', variable=mode, command = ModeJT2)
+modemenu.add_radiobutton(label = 'JT4', variable=mode, command = ModeJT4)
 #modemenu.add_radiobutton(label = 'Echo', variable=mode, command = ModeEcho,
 #                         state=DISABLED)
 
@@ -2179,6 +2209,10 @@ try:
                 ModeJT6M()
             elif value=='CW':
                 ModeCW()
+            elif value=='JT2':
+                ModeJT2()
+            elif value=='JT4':
+                ModeJT4()
         elif key == 'MyCall': options.MyCall.set(value)
         elif key == 'MyGrid': options.MyGrid.set(value)
         elif key == 'HisCall':

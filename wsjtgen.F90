@@ -117,12 +117,18 @@ subroutine wsjtgen
   dt=1.d0/fsample_out
   LTone=2
 
-  if(mode(1:4).eq.'JT65') then
+  if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4') then
+     if(mode(1:4).eq.'JT65') then
 !  We're in JT65 mode.
-     if(mode(5:5).eq.'A') mode65=1
-     if(mode(5:5).eq.'B') mode65=2
-     if(mode(5:5).eq.'C') mode65=4
-     call gen65(msg,mode65,samfacout,ntxdf,iwave,nwave,sendingsh,msgsent,nmsg0)
+        if(mode(5:5).eq.'A') mode65=1
+        if(mode(5:5).eq.'B') mode65=2
+        if(mode(5:5).eq.'C') mode65=4
+        call gen65(msg,mode65,samfacout,ntxdf,iwave,nwave,sendingsh,   &
+             msgsent,nmsg0)
+     else
+        call gen24(msg,mode,samfacout,ntxdf,iwave,nwave,sendingsh,     &
+             msgsent,nmsg0)
+     endif
 
      if(lcwid) then
 !  Generate and insert the CW ID.
