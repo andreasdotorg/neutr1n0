@@ -98,8 +98,9 @@ int encode_(char *data, int *nbytes0,char *symbols)
 /* Decode packet with the Fano algorithm.
  * Return 0 on success, -1 on timeout
  */
+
+#ifdef Win32
 int __stdcall FANO(
-		   //  int fano_(
 unsigned long *metric,	/* Final path metric (returned value) */
 unsigned long *cycles,	/* Cycle count (returned value) */
 unsigned char *data,	/* Decoded output data */
@@ -108,6 +109,19 @@ unsigned int *nbits0,	/* Number of output bits */
 int mettab[2][256],	/* Metric table, [sent sym][rx symbol] */
 int *delta0,		/* Threshold adjust parameter */
 unsigned long *maxcycles0)/* Decoding timeout in cycles per bit */
+
+#else
+int fano_(
+unsigned long *metric,	/* Final path metric (returned value) */
+unsigned long *cycles,	/* Cycle count (returned value) */
+unsigned char *data,	/* Decoded output data */
+unsigned char *symbols,	/* Raw deinterleaved input symbols */
+unsigned int *nbits0,	/* Number of output bits */
+int mettab[2][256],	/* Metric table, [sent sym][rx symbol] */
+int *delta0,		/* Threshold adjust parameter */
+unsigned long *maxcycles0)/* Decoding timeout in cycles per bit */
+#endif
+
 {
 	struct node *nodes;		/* First node */
 	register struct node *np;	/* Current node */

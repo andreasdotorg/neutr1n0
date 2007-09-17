@@ -18,7 +18,7 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       data twopi/6.283185307d0/,first/.true./
       save
 
-      mode4=10
+      mode4=1
       nsym=207                               !Symbols per transmission
       if(first) then
          do i=1,nsym
