@@ -1,6 +1,6 @@
 	subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,nchallenge,
      +    MinSigdB,NQRN,DFTolerance,MouseButton,NClearAve,nforce,
-     +    Mode,NFreeze,NAFC,NZap,mode65,idf,ntdecode0,
+     +    Mode,NFreeze,NAFC,NZap,mode65,mode4,idf,ntdecode0,
      +    MyCall,HisCall,HisGrid,neme,ntx2,s2,
      +    ps0,npkept,lumsg,basevb,rmspower,nslim2,psavg,ccf,Nseg,
      +    MouseDF,NAgain,LDecoded,nspecial,ndf,ss1,ss2)
@@ -268,6 +268,38 @@ C  Call the decoder if DF is in range or Freeze is off.
 !     +        MouseDF2,mycall,hiscall,hisgrid)
 	   go to 900
 	endif
+
+!  If we're in JT2 or JT4 mode, call the decode24 routines.
+  	if(mode.eq.6 .or. mode.eq.7) then
+!  Lowpass filter and decimate by 2
+ 	   call lpf1(dat,jz,jz2,MouseDF,MouseDF2)
+	   idf=mousedf-mousedf2
+ 	   jz=jz2
+ 	   nadd=1
+ 	   fzap(1)=0.
+ 	   if(nzap.eq.1) call avesp2(dat,jz,nadd,mode,NFreeze,MouseDF2,
+     +       DFTolerance,fzap)
+    	   if(nzap.eq.1.and.nstest.eq.0) call bzap(dat,jz,nadd,mode,fzap)
+
+ 	   i=index(MyCall,char(0))
+	   if(i.le.0) i=index(MyCall,' ')
+ 	   mycall=MyCall(1:i-1)//'            '
+ 	   i=index(HisCall,char(0))
+	   if(i.le.0) i=index(HisCall,' ')
+ 	   hiscall=HisCall(1:i-1)//'            '
+
+!  Offset data by about 1 s.
+! 	    jztest=126*2048
+	   jztest=11025*ntdecode/2 - 2755
+ 	   if(jz.ge.jztest) call wsjt24(dat(4097),jz-4096,cfile6,
+     +        NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode4,Nseg,
+     +        MouseDF2,NAgain,ndepth,neme,idf,idfsh,
+     +        mycall,hiscall,hisgrid,lumsg,lcum,nspecial,ndf,
+     +        nstest,dfsh,snrsh,
+     +        NSyncOK,ccf,psavg,ndiag,nwsh)
+ 	   goto 900
+ 	endif
+
 
 !  We're in FSK441 mode. Compute the 2D spectrum.
 	df=11025.0/256.0            !FFT resolution ~43 Hz
