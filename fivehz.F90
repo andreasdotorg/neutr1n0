@@ -73,7 +73,7 @@ subroutine fivehz
   if(trperiod.le.0) trperiod=30
   tx1=0.0                              !Time to start a TX sequence
   tx2=trperiod-(tlatency+txdelay)      !Time to turn TX off
-  if(mode(1:4).eq.'JT65') then
+  if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4') then
      if(nwave.lt.126*4096) nwave=126*4096
      tx2=txdelay + nwave/11025.0
      if(tx2.gt.(trperiod-2.0)) tx2=trperiod-tlatency-1.0
@@ -152,7 +152,8 @@ subroutine fivehz
   nbufs=ibuf-ibuf0
   if(nbufs.lt.0) nbufs=nbufs+1024
   tdata=nbufs*2048.0/11025.0
-  if((mode(1:4).eq.'JT65' .or. mode(1:2).eq.'CW') .and. monitoring.eq.1 &
+  if((mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4' &
+       .or. mode(1:2).eq.'CW') .and. monitoring.eq.1 &
        .and. tdata.gt.float(ntdecode) .and. ibuf0.ne.ibuf00) then
      rxdone=.true.
      ibuf00=ibuf0
