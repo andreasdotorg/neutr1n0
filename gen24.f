@@ -8,14 +8,14 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       character*22 msgsent          !Message as it will be received
       character*3 cok               !'   ' or 'OOO'
       character*6 mode
-      real*8 t,dt,phi,f,f0,dfgen,dphi,twopi,samfac,tsymbol
+      real*8 t,dt,phi,f,f0,dfgen,dphi,pi,twopi,samfac,tsymbol
       integer*2 iwave(NMAX)         !Generated wave file
       integer sendingsh
       integer dgen(13)
-      integer*1 data0(13),symbol(208)
+      integer*1 data0(13),symbol(216)
       logical first
       include 'prcom2.f'
-      data twopi/6.283185307d0/,first/.true./
+      data first/.true./
       save
 
       mode4=1
@@ -24,6 +24,8 @@ C  Encodes a JT2 or JT4 message into a wavefile.
          do i=1,nsym
             pr2(i)=2*npr2(i)-1
          enddo
+         pi=4.d0*atan(1.d0)
+         twopi=2.d0*pi
          first=.false.
       endif
 
@@ -31,7 +33,9 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       call packmsg(message,dgen)  !Pack 72-bit message into 12 six-bit symbols
       call entail(dgen,data0)
       nbytes=(72+31+7)/8
-      call encode(dgen,nbytes,symbol)        !Convolutional encoding
+      call encode(dgen,nbytes,symbol(2))     !Convolutional encoding
+      symbol(1)=0                            !Reference phase
+
       sendingsh=0
       if(iand(dgen(10),8).ne.0) sendingsh=-1 !Plain text flag
 C###      call interleave63(sent,1) !Apply interleaving
@@ -54,12 +58,11 @@ C  Set up necessary constants
                f=f0 + npr2(j)*dfgen
                if(flip.lt.0.0) f=f0 + (1-npr2(j))*dfgen
                dphi=twopi*dt*f
-               sig=1.0
-               if(symbol(j).gt.0) sig=-1.0
+               if(symbol(j).gt.0) phi=phi+pi
                j0=j
             endif
             phi=phi+dphi
-            iwave(i)=32767.0*sin(phi)*sig
+            iwave(i)=32767.0*sin(phi)
          enddo
       else
          do i=1,ndata
@@ -92,6 +95,9 @@ C  Set up necessary constants
          if(msgsent(i:i).ne.' ') goto 20
       enddo
  20   nmsg=i
+
+      write(*,3001) (symbol(i),i=1,207)
+ 3001 format(70i1)
 
       return
       end
