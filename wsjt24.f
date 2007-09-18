@@ -1,12 +1,10 @@
       subroutine wsjt24(dat,npts,cfile6,NClearAve,MinSigdB,
-     +  DFTolerance,NFreeze,NAFC,mode4,Nseg,MouseDF,NAgain,
-     +  ndepth,neme,idf,idfsh,mycall,hiscall,hisgrid,
-     +  lumsg,lcum,nspecial,ndf,nstest,dfsh,
-     +  snrsh,NSyncOK,ccfblue,ccfred,ndiag,nwsh)
+     +  DFTolerance,NFreeze,NAFC,mode,mode4,Nseg,MouseDF,NAgain,
+     +  ndepth,neme,idf,mycall,hiscall,hisgrid,lumsg,lcum,
+     +  nspecial,ndf,NSyncOK,ccfblue,ccfred,ndiag)
 
-C  Orchestrates the process of decoding JT65 messages, using data that
-C  have been 2x downsampled.  The search for shorthand messages has
-C  already been done.
+C  Orchestrates the process of decoding JT2 and JT4 messages, using 
+C  data that have been 2x downsampled.  
 
       real dat(npts)                        !Raw data
       integer DFTolerance
@@ -20,17 +18,15 @@ C  already been done.
       character*12 hiscall
       character*6 hisgrid
       real ccfblue(-5:540),ccfred(-224:224)
-      integer itf(2,9)
+      integer mettab(0:255,0:1)             !Metric table
       include 'avecom.h'
       data first/.true./,ns10/0/,ns20/0/
-      data itf/0,0, 1,0, -1,0, 0,-1, 0,1, 1,-1, 1,1, -1,-1, -1,1/
       save
 
       mode65=2
-      print*,cfile6,' ',mode4
 
       if(first) then
-         call setup65                   !Initialize pseudo-random arrays
+      call genmet(mode,mettab)
          nsave=0
          first=.false.
          ave1=' '
@@ -56,8 +52,9 @@ C  already been done.
       endif
 
 C  Attempt to synchronize: look for sync tone, get DF and DT.
-      call sync65(dat,npts,DFTolerance,NFreeze,MouseDF,
-     +    mode65,dtx,dfx,snrx,snrsync,ccfblue,ccfred,flip,width)
+      call sync24(dat,npts,DFTolerance,NFreeze,MouseDF,mode,
+     +    mode4,dtx,dfx,snrx,snrsync,ccfblue,ccfred,flip,width)
+
       csync=' '
       decoded='                      '
       deepmsg='                      '
@@ -80,28 +77,6 @@ C  Attempt to synchronize: look for sync tone, get DF and DT.
       nsnr=nint(snrx)
       if(nsnr.lt.-30 .or. nsync.lt.0) nsync=0
       nsnrlim=-32
-
-C  Good Sync takes precedence over a shorthand message:
-      if(nsync.ge.MinSigdB .and. nsnr.ge.nsnrlim .and.
-     +   nsync.ge.nstest) nstest=0
-
-      if(nstest.gt.0) then
-         dfx=dfsh
-         nsync=nstest
-         nsnr=snrsh
-         dtx=1.
-         ccfblue(-5)=-999.0
-         if(nspecial.eq.1) special='ATT  '
-         if(nspecial.eq.2) special='RO   '
-         if(nspecial.eq.3) special='RRR  '
-         if(nspecial.eq.4) special='73   '
-         NSyncOK=1              !Mark this RX file as good (for "Save Decoded")
-         if(NFreeze.eq.0 .or. DFTolerance.ge.200) special(5:5)='?'
-         width=nwsh
-         idf=idfsh
-         go to 200
-      endif
-
       if(nsync.lt.MinSigdB .or. nsnr.lt.nsnrlim) go to 200
 
 C  If we get here, we have achieved sync!
@@ -113,8 +88,8 @@ C  If we get here, we have achieved sync!
          cooo='O ?'
       endif
 
-      call decode65(dat,npts,dtx,dfx,flip,ndepth,nchallenge,neme,
-     +   mycall,hiscall,hisgrid,mode65,nafc,decoded,
+      call decode24(dat,npts,dtx,dfx,flip,ndepth,neme,
+     +   mycall,hiscall,hisgrid,mode,mode4,nafc,decoded,
      +   ncount,deepmsg,qual)
       if(ncount.eq.-999) qual=0                 !Bad data
  200  kvqual=0
@@ -132,24 +107,12 @@ C  If we get here, we have achieved sync!
          if(c1.ge.'a' .and. c1.le.'z') decoded(i:i)=char(ichar(c1)-32)
       enddo
       jdf=ndf+idf
-      if(nstest.gt.0) jdf=ndf
       write(line,1010) cfile6,nsync,nsnr,dtx-1.0,jdf,
      +    nint(width),csync,special,decoded(1:19),cooo,kvqual,nqual
  1010 format(a6,i3,i5,f5.1,i5,i3,1x,a1,1x,a5,a19,1x,a3,i4,i4)
 
 C  Blank all end-of-line stuff if no decode
       if(line(31:40).eq.'          ') line=line(:30)
-
-C  Blank DT if shorthand message  (### wrong logic? ###)
-      if(special.ne.'     ') then
-         line(15:19)='     '
-         line=line(:35)
-          ccfblue(-5)=-9999.0
-!         if(ndiag.gt.0) write(line(51:57),1012) iderrsh,idriftsh
-! 1012    format(i3,i4)
-      else
-         nspecial=0
-      endif
 
       if(lcum) write(21,1011) line
  1011 format(a67)

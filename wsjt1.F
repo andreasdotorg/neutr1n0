@@ -292,11 +292,9 @@ C  Call the decoder if DF is in range or Freeze is off.
 ! 	    jztest=126*2048
 	   jztest=11025*ntdecode/2 - 2755
  	   if(jz.ge.jztest) call wsjt24(dat(4097),jz-4096,cfile6,
-     +        NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode4,Nseg,
-     +        MouseDF2,NAgain,ndepth,neme,idf,idfsh,
-     +        mycall,hiscall,hisgrid,lumsg,lcum,nspecial,ndf,
-     +        nstest,dfsh,snrsh,
-     +        NSyncOK,ccf,psavg,ndiag,nwsh)
+     +        NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode,mode4,
+     +        Nseg,MouseDF2,NAgain,ndepth,neme,idf,mycall,hiscall,
+     +        hisgrid,lumsg,lcum,nspecial,ndf,NSyncOK,ccf,psavg,ndiag)
  	   goto 900
  	endif
 
