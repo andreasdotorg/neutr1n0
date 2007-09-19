@@ -18,7 +18,6 @@ C  data that have been 2x downsampled.
       character*12 hiscall
       character*6 hisgrid
       real ccfblue(-5:540),ccfred(-224:224)
-      integer mettab(0:255,0:1)             !Metric table
       include 'avecom.h'
       data first/.true./,ns10/0/,ns20/0/
       save
@@ -26,7 +25,6 @@ C  data that have been 2x downsampled.
       mode65=2
 
       if(first) then
-      call genmet(mode,mettab)
          nsave=0
          first=.false.
          ave1=' '

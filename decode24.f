@@ -13,11 +13,16 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       real*8 dt,df,phi,f0,dphi,twopi
       complex c0,c1
       integer*1 i1,symbol(207)
-      integer amp
+      integer*1 data1(13)                !Decoded data
+      integer amp,delta,scale
+      integer mettab(0:255,0:1)             !Metric table
+      integer fano
       integer npr2(207)
+      logical first
       double complex cz
       include 'avecom.h'
       equivalence (i1,i4)
+      data first/.true./
       data npr2/
      +  0,0,0,0,1,1,0,0,0,1,1,0,1,1,0,0,1,0,1,0,0,0,0,0,0,0,1,1,0,0,
      +  0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,0,0,
@@ -28,19 +33,27 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
      +  1,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,1,1,0,1,1,1,1,0,1,0,1/
       save
 
-      twopi=8*atan(1.d0)
-      dt=2.d0/11025                    !Sample interval (2x downsampled data)
-      df=11025.d0/2520.d0
+      rewind 41
+      rewind 42
+
+      if(first) then
+         call genmet(mode,mettab)
+         twopi=8*atan(1.d0)
+         dt=2.d0/11025          !Sample interval (2x downsampled data)
+         df=11025.d0/2520.d0
+         nsym=206
+         amp=1
+         first=.false.
+      endif
+
       istart=nint(dtx/dt)              !Start index for synced FFTs
-      nsym=206
-      amp=10
+
+C  Shoule amp be adjusted according to signal strength?
 
 C  Compute soft symbols using differential BPSK demodulation
-      c0=0.
+      c0=0.                                !### C0=1 ???
       k=istart
       fac=1.e-4
-
-      print*,dtx,dfx,df,flip,ndepth
 
       do j=1,nsym
          f0=1270.46 + dfx + npr2(j)*df
@@ -71,7 +84,6 @@ C  Compute soft symbols using differential BPSK demodulation
          i4=nint(r)
          if(j.ge.1) symbol(j)=i1
       enddo
-      print*,npts,k,istart
 
       do i=1,nsym
          j=0
@@ -82,12 +94,22 @@ C  Compute soft symbols using differential BPSK demodulation
  3091    format(3i6)
       enddo      
 
+      nbits=72                                        !103 ???
+      delta=15
+      limit=10000
+      ncycles=0
+      iret=fano(metric,ncycles,data1,symbol,nbits,mettab,
+     +     delta,limit)
+      decoded='                      '
+      print*,'iret:',iret,ncycles
+      write(*,3001) data1
+ 3001 format(13i4)
+
 !      call extract(s3,nadd,ncount,decoded)     !Extract the message
       qual=0.
-      if(ndepth.ge.1) call deep65(s3,mode65,neme,nchallenge,
-     +    flip,mycall,hiscall,hisgrid,deepmsg,qual)
+!      if(ndepth.ge.1) call deep65(s3,mode65,neme,nchallenge,
+!     +    flip,mycall,hiscall,hisgrid,deepmsg,qual)
 
-      if(ncount.lt.0) decoded='                      '
 
 C  Save symbol spectra for possible decoding of average.
 !      do j=1,63

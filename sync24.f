@@ -128,7 +128,7 @@ C  Find rms of the CCF, without the main peak
       snrsync=abs(ccfblue(lagpk))/rms - 1.1    !Empirical
 
       dt=2.0/11025.0
-      istart=xlag*nh
+      istart=xlag*nq
       dtx=istart*dt
       snrx=-99.0
 !      ppmax=psavg(ipk)/base-1.0
@@ -166,17 +166,6 @@ C  Compute width of sync tone to outermost -3 dB points
       do i=-224,224
          ccfred1(i)=ccfred(i)
       enddo
-
-!      print*,dtx,dfx,snrx,snrsync,flip,width
-!      do i=ia-i0,ib-i0
-!         write(41,3001) i*df,ccfred(i)
-! 3001    format(2f10.3)
-!      enddo
-!      dtlag=dt*nq
-!      do lag=lag1,lag2
-!         write(42,3002) lag,dtlag*lag,ccfblue(lag)
-! 3002    format(i5,2f10.3)
-!      enddo
 
       return
       end

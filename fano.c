@@ -132,7 +132,6 @@ unsigned long *maxcycles0)/* Decoding timeout in cycles per bit */
 	long ngamma;
 	unsigned int lsym;
 	unsigned long i;
-
 	unsigned int nbits;
 	int delta;
 	unsigned long maxcycles;
@@ -140,7 +139,6 @@ unsigned long *maxcycles0)/* Decoding timeout in cycles per bit */
 	nbits=*nbits0;
 	delta=*delta0;
 	maxcycles=*maxcycles0;
-
 	if((nodes = (struct node *)malloc(nbits*sizeof(struct node))) == NULL){
 		printf("alloc failed\n");
 		return 0;
