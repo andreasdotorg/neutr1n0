@@ -32,18 +32,19 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       call chkmsg(message,cok,nspecial,flip)
       call packmsg(message,dgen)  !Pack 72-bit message into 12 six-bit symbols
       call entail(dgen,data0)
-      write(*,3001) data0
- 3001 format(13i4)
+      write(*,3001) (data0(i),i=1,9),(dgen(i),i=1,12)
+ 3001 format('Gen24:   ',9(1x,z2),2x,12(1x,z2))
+      call unpackmsg(dgen,msgsent)
+      print*,msgsent
       nbytes=(72+31+7)/8
-      call encode(data0,nbytes,symbol(2))     !Convolutional encoding
+      call encode(data0,nbytes,symbol(2))    !Convolutional encoding
       symbol(1)=0                            !Reference phase
-
       sendingsh=0
       if(iand(dgen(10),8).ne.0) sendingsh=-1 !Plain text flag
 C###      call interleave63(sent,1) !Apply interleaving
-      tsymbol=2520.d0/11025.d0
 
 C  Set up necessary constants
+      tsymbol=2520.d0/11025.d0
       dt=1.0/(samfac*11025.0)
       f0=118*11025.d0/1024 + ntxdf
       dfgen=11025.0/2520                     !4.375 Hz
@@ -86,8 +87,7 @@ C  Set up necessary constants
          iwave(i)=0
       enddo
       nwave=i
-      call unpackmsg(dgen,msgsent)
-      print*,msgsent
+
       if(flip.lt.0.0) then
          do i=22,1,-1
             if(msgsent(i:i).ne.' ') goto 10

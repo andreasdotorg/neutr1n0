@@ -89,7 +89,6 @@ C  If we get here, we have achieved sync!
       call decode24(dat,npts,dtx,dfx,flip,ndepth,neme,
      +   mycall,hiscall,hisgrid,mode,mode4,nafc,decoded,
      +   ncount,deepmsg,qual)
-      if(ncount.eq.-999) qual=0                 !Bad data
  200  kvqual=0
       if(ncount.ge.0) kvqual=1
       nqual=qual

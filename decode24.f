@@ -10,10 +10,12 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       real ftrack(126)
       character decoded*22,deepmsg*22
       character mycall*12,hiscall*12,hisgrid*6
+      character*72 c72
       real*8 dt,df,phi,f0,dphi,twopi
       complex c0,c1
       integer*1 i1,symbol(207)
-      integer*1 data1(13)                !Decoded data
+      integer*1 data1(13)                   !Decoded data (8-bit bytes)
+      integer   data4(12)                   !Decoded data (6-bit bytes)
       integer amp,delta,scale
       integer mettab(0:255,0:1)             !Metric table
       integer fano
@@ -94,29 +96,33 @@ C  Compute soft symbols using differential BPSK demodulation
  3091    format(3i6)
       enddo      
 
-      nbits=72                                        !103 ???
+      nbits=72+31
       delta=15
       limit=10000
       ncycles=0
-      iret=fano(metric,ncycles,data1,symbol,nbits,mettab,
+      ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
      +     delta,limit)
+      print*,'Decode24  ncount:',ncount,ncycles
+      write(c72,1100) (data1(i),i=1,9)
+ 1100 format(9b8.8)
+      print*,c72
+      read(c72,1102) data4
+ 1102 format(12b6)
+      write(*,3001) (data1(i),i=1,9),(data4(i),i=1,12)
+ 3001 format('Decode24:'9(1x,z2),2x,12(1x,z2))
+
       decoded='                      '
-      print*,'iret:',iret,ncycles
-      write(*,3001) data1
- 3001 format(13i4)
+      if(ncount.ge.0) call unpackmsg(data4,decoded)
+      print*,decoded
 
 !      call extract(s3,nadd,ncount,decoded)     !Extract the message
       qual=0.
+      deepmsg='                      '
 !      if(ndepth.ge.1) call deep65(s3,mode65,neme,nchallenge,
 !     +    flip,mycall,hiscall,hisgrid,deepmsg,qual)
 
 
 C  Save symbol spectra for possible decoding of average.
-!      do j=1,63
-!         k=mdat(j)
-!         if(flip.lt.0.0) k=mdat2(j)
-!         call move(s2(8,k),ppsave(1,j,nsave),64)
-!      enddo
 
       return
       end

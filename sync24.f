@@ -98,7 +98,6 @@ C  If we found nothing with snrx > -30 dB, take the best sync that *was* found.
       endif
 
 C  Peak up in frequency to fraction of channel
-      base=0.25*(psavg(ipk-3)+psavg(ipk-2)+psavg(ipk+2)+psavg(ipk+3))
 !      call peakup(psavg(ipk-1),psavg(ipk),psavg(ipk+1),dx)
 !      if(dx.lt.-1.0) dx=-1.0
 !      if(dx.gt.1.0) dx=1.0
@@ -131,7 +130,6 @@ C  Find rms of the CCF, without the main peak
       istart=xlag*nq
       dtx=istart*dt
       snrx=-99.0
-!      ppmax=psavg(ipk)/base-1.0
       ppmax=psavg(ipk)-1.0
 C  Plus 3 dB because sync tone is on half the time.  (Don't understand 
 C  why an additional +2 dB is needed ...)
