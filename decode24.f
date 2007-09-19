@@ -16,7 +16,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       integer*1 i1,symbol(207)
       integer*1 data1(13)                   !Decoded data (8-bit bytes)
       integer   data4(12)                   !Decoded data (6-bit bytes)
-      integer amp,delta,scale
+      integer amp,delta
       integer mettab(0:255,0:1)             !Metric table
       integer fano
       integer npr2(207)
@@ -47,7 +47,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
          dt=2.d0/11025          !Sample interval (2x downsampled data)
          df=11025.d0/2520.d0
          nsym=206
-         amp=4
+         amp=15
          first=.false.
       endif
 
@@ -60,7 +60,7 @@ C  Compute soft symbols using differential BPSK demodulation
       k=istart
       fac=1.e-4
 
-      do j=1,nsym
+      do j=1,nsym+1
          f0=1270.46 + dfx + npr2(j)*df
          dphi=twopi*dt*f0
          c1=0.
@@ -100,10 +100,10 @@ C  Compute soft symbols using differential BPSK demodulation
       enddo      
 
       nbits=72+31
-      delta=15
-      limit=10000
+      delta=100
+      limit=100000
       ncycles=0
-      symbol(207)=-128
+!      symbol(207)=-128
       do i=1,207
          i1=symbol(i)
          ierr=0
@@ -112,6 +112,20 @@ C  Compute soft symbols using differential BPSK demodulation
          write(43,3009) i,sym0(i),i4,ierr
  3009    format(4i5)
       enddo
+
+!      sum=0.
+!      do i=1,206
+!         i1=symbol(i+1)
+!         sum=sum + i4
+!      enddo
+!      ave=sum/206.
+!      sq=0.
+!      do i=1,206
+!         i1=symbol(i+1)
+!         sq=sq + (i4-ave)**2
+!      enddo
+!      rms=sqrt(sq/205.0)
+!      print*,ave,rms
 
       ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
      +     delta,limit)

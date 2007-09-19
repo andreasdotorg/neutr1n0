@@ -131,9 +131,8 @@ C  Find rms of the CCF, without the main peak
       dtx=istart*dt
       snrx=-99.0
       ppmax=psavg(ipk)-1.0
-C  Plus 3 dB because sync tone is on half the time.  (Don't understand 
-C  why an additional +2 dB is needed ...)
-      if(ppmax.gt.0.0001) snrx=db(ppmax*df/2500.0) + 5.0    !###
+
+      if(ppmax.gt.0.0001) snrx=db(ppmax*df/2500.0) + 7.5    !Semi-Empirical
       if(snrx.lt.-33.0) snrx=-33.0
 
 C  Compute width of sync tone to outermost -3 dB points

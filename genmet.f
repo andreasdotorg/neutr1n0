@@ -6,7 +6,7 @@ C  Return appropriate metric table for soft-decision convolutional decoder.
       integer scale                     !scale factor for integer table
       integer mettab(0:255,0:1)         !Metric table (RxSymbol,TxSymbol)
 
-      bias=-0.5
+      bias=0.5
       if(mode.eq.6) then       !JT2, DBPSK
          open(19,file='dmet_20_-2_2.dat',status='old')
          scale=20
