@@ -23,6 +23,8 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       logical first
       double complex cz
       include 'avecom.h'
+      integer*1 sym0
+      common/tst99/ sym0(216)
       equivalence (i1,i4)
       data first/.true./
       data npr2/
@@ -37,6 +39,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
 
       rewind 41
       rewind 42
+      rewind 43
 
       if(first) then
          call genmet(mode,mettab)
@@ -44,7 +47,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
          dt=2.d0/11025          !Sample interval (2x downsampled data)
          df=11025.d0/2520.d0
          nsym=206
-         amp=1
+         amp=4
          first=.false.
       endif
 
@@ -100,20 +103,31 @@ C  Compute soft symbols using differential BPSK demodulation
       delta=15
       limit=10000
       ncycles=0
+      symbol(207)=-128
+      do i=1,207
+         i1=symbol(i)
+         ierr=0
+         if(i4.ge.128 .and. sym0(i).eq.0) ierr=i4-127
+         if(i4.lt.128 .and. sym0(i).eq.1) ierr=i4-128
+         write(43,3009) i,sym0(i),i4,ierr
+ 3009    format(4i5)
+      enddo
+
       ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
      +     delta,limit)
-      print*,'Decode24  ncount:',ncount,ncycles
+!      print*,'Decode24  ncount:',ncount,ncycles
+
       write(c72,1100) (data1(i),i=1,9)
  1100 format(9b8.8)
-      print*,c72
+!      print*,c72
       read(c72,1102) data4
  1102 format(12b6)
-      write(*,3001) (data1(i),i=1,9),(data4(i),i=1,12)
- 3001 format('Decode24:'9(1x,z2),2x,12(1x,z2))
+!      write(*,3001) (data1(i),i=1,9),(data4(i),i=1,12)
+! 3001 format('Decode24:'9(1x,z2),2x,12(1x,z2))
 
       decoded='                      '
       if(ncount.ge.0) call unpackmsg(data4,decoded)
-      print*,decoded
+!      print*,decoded
 
 !      call extract(s3,nadd,ncount,decoded)     !Extract the message
       qual=0.

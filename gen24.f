@@ -15,6 +15,7 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       integer*1 data0(13),symbol(216)
       logical first
       include 'prcom2.f'
+      common/tst99/ symbol
       data first/.true./
       save
 
@@ -32,10 +33,10 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       call chkmsg(message,cok,nspecial,flip)
       call packmsg(message,dgen)  !Pack 72-bit message into 12 six-bit symbols
       call entail(dgen,data0)
-      write(*,3001) (data0(i),i=1,9),(dgen(i),i=1,12)
- 3001 format('Gen24:   ',9(1x,z2),2x,12(1x,z2))
       call unpackmsg(dgen,msgsent)
-      print*,msgsent
+!      write(*,3001) (data0(i),i=1,9),(dgen(i),i=1,12)
+! 3001 format('Gen24:   ',9(1x,z2),2x,12(1x,z2))
+!      print*,msgsent
       nbytes=(72+31+7)/8
       call encode(data0,nbytes,symbol(2))    !Convolutional encoding
       symbol(1)=0                            !Reference phase
@@ -99,8 +100,8 @@ C  Set up necessary constants
       enddo
  20   nmsg=i
 
-      write(*,3002) (symbol(i),i=1,207)
- 3002 format(70i1)
+!      write(*,3002) (symbol(i),i=1,207)
+! 3002 format(70i1)
 
       return
       end
