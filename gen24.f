@@ -1,4 +1,4 @@
-      subroutine gen24(message,mode,samfac,ntxdf,iwave,nwave,
+      subroutine gen24(message,mode,mode4,samfac,ntxdf,iwave,nwave,
      +    sendingsh,msgsent,nmsg)
 
 C  Encodes a JT2 or JT4 message into a wavefile.
@@ -19,7 +19,6 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       data first/.true./
       save
 
-      mode4=1
       nsym=207                               !Symbols per transmission
       if(first) then
          do i=1,nsym

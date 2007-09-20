@@ -126,7 +126,7 @@ subroutine wsjtgen
         call gen65(msg,mode65,samfacout,ntxdf,iwave,nwave,sendingsh,   &
              msgsent,nmsg0)
      else
-        call gen24(msg,mode,samfacout,ntxdf,iwave,nwave,sendingsh,     &
+        call gen24(msg,mode,mode4,samfacout,ntxdf,iwave,nwave,sendingsh,     &
              msgsent,nmsg0)
      endif
 

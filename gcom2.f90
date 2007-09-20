@@ -33,6 +33,7 @@ integer nfreeze        !Is Freeze checked?                      GUI
 integer nafc           !Is AFC checked?                         GUI
 integer nmode          !Which WSJT mode?                   GUI,Decoder
 integer mode65         !JT65 sub-mode (A/B/C ==> 1/2/4) GUI,SoundIn,Decoder
+integer mode4          !JT4 sub-mode (A-G)              GUI,SoundIn,Decoder
 integer nclip          !Clipping level                          GUI
 integer ndebug         !Write debugging info?                   GUI
 integer nblank         !Is NB checked?                          GUI
@@ -94,7 +95,7 @@ common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      green(500),ngreen,dgain,iter,ndecoding,ndecoding0,mousebutton,   &
      ndecdone,npingtime,ierr,lauto,mantx,nrestart,ntr,nmsg,nsave,nadd5, &
      dftolerance,LDecoded,rxdone,monitoring,nzap,nsavecum,minsigdb,   &
-     nclearave,nfreeze,nafc,nmode,mode65,nclip,ndebug,nblank,nport,   &
+     nclearave,nfreeze,nafc,nmode,mode65,mode4,nclip,ndebug,nblank,nport,   &
      mousedf,neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,ntxdf, &
      shok,sendingsh,d2a(661500),d2b(661500),b(60000),jza,jzb,ntime,   &
      idinterval,msmax,lenappdir,idf,ndiskdat,nlines,nflat,ntdecode,   &

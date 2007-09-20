@@ -680,7 +680,55 @@ def ModeJT2():
 def ModeJT4():
     global slabel,isync,isync65,textheight,itol
     ModeJT65()
-    mode.set("JT4")
+
+#------------------------------------------------------ ModeJT4A
+def ModeJT4A():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT4()
+    mode.set("JT4A")
+    Audio.gcom2.mode4=1
+
+#------------------------------------------------------ ModeJT4B
+def ModeJT4B():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT4()
+    mode.set("JT4B")
+    Audio.gcom2.mode4=2
+
+#------------------------------------------------------ ModeJT4C
+def ModeJT4C():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT4()
+    mode.set("JT4C")
+    Audio.gcom2.mode4=4
+
+#------------------------------------------------------ ModeJT4D
+def ModeJT4D():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT4()
+    mode.set("JT4D")
+    Audio.gcom2.mode4=9
+
+#------------------------------------------------------ ModeJT4E
+def ModeJT4E():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT4()
+    mode.set("JT4E")
+    Audio.gcom2.mode4=18
+
+#------------------------------------------------------ ModeJT4F
+def ModeJT4F():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT4()
+    mode.set("JT4F")
+    Audio.gcom2.mode4=36
+
+#------------------------------------------------------ ModeJT4G
+def ModeJT4G():
+    global slabel,isync,isync65,textheight,itol
+    ModeJT4()
+    mode.set("JT4G")
+    Audio.gcom2.mode4=72
 
 #------------------------------------------------------ ModeEcho
 #def ModeEcho(event=NONE):
@@ -1763,7 +1811,13 @@ modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C, \
 modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW, \
                          accelerator='Shift+Ctrl+F8')
 modemenu.add_radiobutton(label = 'JT2', variable=mode, command = ModeJT2)
-modemenu.add_radiobutton(label = 'JT4', variable=mode, command = ModeJT4)
+modemenu.add_radiobutton(label = 'JT4A', variable=mode, command = ModeJT4A)
+modemenu.add_radiobutton(label = 'JT4B', variable=mode, command = ModeJT4B)
+modemenu.add_radiobutton(label = 'JT4C', variable=mode, command = ModeJT4C)
+modemenu.add_radiobutton(label = 'JT4D', variable=mode, command = ModeJT4D)
+modemenu.add_radiobutton(label = 'JT4E', variable=mode, command = ModeJT4E)
+modemenu.add_radiobutton(label = 'JT4F', variable=mode, command = ModeJT4F)
+modemenu.add_radiobutton(label = 'JT4G', variable=mode, command = ModeJT4G)
 #modemenu.add_radiobutton(label = 'Echo', variable=mode, command = ModeEcho,
 #                         state=DISABLED)
 
@@ -2178,6 +2232,7 @@ balloon.unbind(ToRadio)
 g.astro_geom0="+0+0"
 Audio.gcom1.mute=0
 Audio.gcom2.nforce=1
+Audio.gcom2.mode4=1
 
 #---------------------------------------------------------- Process INI file
 try:
@@ -2318,6 +2373,15 @@ g.mode=mode.get()
 if mode.get()=='FSK441': isync=isync441
 elif mode.get()=='JT6M': isync=isync6m
 elif mode.get()[:4]=='JT65': isync=isync65
+elif mode.get()[:3]=='JT4':
+    if mode.get()[3:4]=='A': Audio.gcom2.mode4=1
+    if mode.get()[3:4]=='B': Audio.gcom2.mode4=2
+    if mode.get()[3:4]=='C': Audio.gcom2.mode4=4
+    if mode.get()[3:4]=='D': Audio.gcom2.mode4=9
+    if mode.get()[3:4]=='E': Audio.gcom2.mode4=18
+    if mode.get()[3:4]=='F': Audio.gcom2.mode4=36
+    if mode.get()[3:4]=='G': Audio.gcom2.mode4=72
+
 lsync.configure(text=slabel+str(isync))
 lclip.configure(text='Clip   '+str(iclip))
 Audio.gcom2.appdir=(appdir+'                                                                                          ')[:80]
