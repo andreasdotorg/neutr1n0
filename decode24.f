@@ -127,6 +127,7 @@ C  Compute soft symbols using differential BPSK demodulation
 !      rms=sqrt(sq/205.0)
 !      print*,ave,rms
 
+      call interleave24(symbol(2),-1)         !Remove the interleaving
       ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
      +     delta,limit)
 !      print*,'Decode24  ncount:',ncount,ncycles

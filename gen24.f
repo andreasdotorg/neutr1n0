@@ -41,7 +41,7 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       symbol(1)=0                            !Reference phase
       sendingsh=0
       if(iand(dgen(10),8).ne.0) sendingsh=-1 !Plain text flag
-C###      call interleave63(sent,1) !Apply interleaving
+      call interleave24(symbol(2),1)         !Apply JT2/JT4 interleaving
 
 C  Set up necessary constants
       tsymbol=2520.d0/11025.d0
