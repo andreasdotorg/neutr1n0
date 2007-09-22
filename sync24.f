@@ -13,7 +13,7 @@ C  Synchronizes JT2 and JT4 data, finding the best-fit DT and DF.
       real ccfblue(-5:540)             !CCF with pseudorandom sequence
       real ccfred(-450:450)            !Peak of ccfblue, as function of freq
       real ccfred1(-224:224)           !Peak of ccfblue, as function of freq
-      real tmp(450)
+      real tmp(550)
       save
 
 C  Do FFTs of twice symbol length, stepped by half symbols.  Note that 

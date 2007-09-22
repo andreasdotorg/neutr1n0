@@ -118,6 +118,9 @@ encode_rs_int.o: encode_rs.c
 decode_rs_int.o: decode_rs.c
 	$(CC) $(CFLAGS) -c -DBIGSYM=1 -o decode_rs_int.o decode_rs.c
 
+fourt.o: fourt.f
+	$(FC) -c -O fourt.f
+
 .PHONY : clean
 clean:	@LOCAL_PORTAUDIO_CLEAN@
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt6

@@ -289,8 +289,7 @@ C  Call the decoder if DF is in range or Freeze is off.
  	   hiscall=HisCall(1:i-1)//'            '
 
 !  Offset data by about 1 s.
-! 	    jztest=126*2048
-	   jztest=11025*ntdecode/2 - 2755
+	   jztest=165000
  	   if(jz.ge.jztest) call wsjt24(dat(4097),jz-4096,cfile6,
      +        NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode,mode4,
      +        Nseg,MouseDF2,NAgain,ndepth,neme,idf,mycall,hiscall,

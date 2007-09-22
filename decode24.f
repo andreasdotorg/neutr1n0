@@ -15,6 +15,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       complex c0,c1
       integer*1 i1,symbol(207)
       integer*1 data1(13)                   !Decoded data (8-bit bytes)
+      integer   data4a(9)                   !Decoded data (8-bit bytes)
       integer   data4(12)                   !Decoded data (6-bit bytes)
       integer amp,delta
       integer mettab(0:255,0:1)             !Metric table
@@ -69,7 +70,7 @@ C  Compute soft symbols using differential BPSK demodulation
             k=k+1
             phi=phi+dphi
             cz=dcmplx(cos(phi),-sin(phi))
-            c1=c1 + dat(k)*cz
+            if(k.le.npts) c1=c1 + dat(k)*cz
          enddo
          c1=fac*c1
          rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
@@ -97,8 +98,7 @@ C  Compute soft symbols using differential BPSK demodulation
          if(i4.lt.0) i4=i4+256
          write(42,3091) i,i4,j
  3091    format(3i6)
-      enddo      
-
+      enddo
       nbits=72+31
       delta=100
       limit=100000
@@ -130,19 +130,18 @@ C  Compute soft symbols using differential BPSK demodulation
       call interleave24(symbol(2),-1)         !Remove the interleaving
       ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
      +     delta,limit)
-!      print*,'Decode24  ncount:',ncount,ncycles
 
-      write(c72,1100) (data1(i),i=1,9)
+      do i=1,9
+         i1=data1(i)
+         data4a(i)=i4
+      enddo
+      write(c72,1100) (data4a(i),i=1,9)
  1100 format(9b8.8)
-!      print*,c72
       read(c72,1102) data4
  1102 format(12b6)
-!      write(*,3001) (data1(i),i=1,9),(data4(i),i=1,12)
-! 3001 format('Decode24:'9(1x,z2),2x,12(1x,z2))
 
       decoded='                      '
       if(ncount.ge.0) call unpackmsg(data4,decoded)
-!      print*,decoded
 
 !      call extract(s3,nadd,ncount,decoded)     !Extract the message
       qual=0.
