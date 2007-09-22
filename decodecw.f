@@ -67,7 +67,7 @@ C  Compute oversampled symbol spectra
             k=k+1
             z=z+c(k)
          enddo
-         x(i)=real(z)**2 + imag(z)**2    !Convert to power
+         x(i)=real(z)**2 + aimag(z)**2    !Convert to power
       enddo
 
       nfft2=2**(int(log(float(iz))/log(2.0)) + 1)
@@ -79,7 +79,7 @@ C  Compute oversampled symbol spectra
       enddo
       call xfft(x,nfft2)                 !Compute specurum
       do i=1,nh2                         !Convert to power
-         x(i)=real(cx(i))**2 + imag(cx(i))**2
+         x(i)=real(cx(i))**2 + aimag(cx(i))**2
       enddo
       call smooth(x,nh2)                 !Smooth once
 
@@ -125,7 +125,7 @@ C  symbol spectra.
          do i=ia,ib
             z=z+c(i)
          enddo
-         x(k)=real(z)**2 + imag(z)**2    !Convert to power
+         x(k)=real(z)**2 + aimag(z)**2    !Convert to power
       enddo
 
  10   kz=k-1

@@ -72,8 +72,8 @@ C  Compute soft symbols using differential BPSK demodulation
             c1=c1 + dat(k)*cz
          enddo
          c1=fac*c1
-         rsym=amp*(real(c1)*real(c0) + imag(c1)*imag(c0))
-         ang=atan2(imag(c1),real(c1))
+         rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
+         ang=atan2(aimag(c1),real(c1))
          r2=amp*abs(c1)*abs(c0)*sin(ang-ang0)
          ndang=nint(57.1957795131d0*(ang-ang0))
          if(ndang.le.-180) ndang=ndang+360
