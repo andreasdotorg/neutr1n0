@@ -86,7 +86,7 @@ C  Compute soft symbols using differential BPSK demodulation
 
       nbits=72+31
       delta=100
-      limit=10000
+      limit=100000
       ncycles=0
       call interleave24(symbol(2),-1)         !Remove the interleaving
 
