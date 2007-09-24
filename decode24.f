@@ -74,64 +74,36 @@ C  Compute soft symbols using differential BPSK demodulation
          enddo
          c1=fac*c1
          rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
-         ang=atan2(aimag(c1),real(c1))
-         r2=amp*abs(c1)*abs(c0)*sin(ang-ang0)
-         ndang=nint(57.1957795131d0*(ang-ang0))
-         if(ndang.le.-180) ndang=ndang+360
-         if(ndang.gt.180) ndang=ndang-360
-!         hist(ndang)=hist(ndang)+1
-         write(41,3090) j,ang,ndang,rsym,r2
- 3090    format(i3,f10.3,i6,2f10.3)
-         ang0=ang
          c0=c1
          r=rsym+128.
          if(r.gt.255.0) r=255.0
          if(r.lt.0.0) r=0.0
          i4=nint(r)
          if(j.ge.1) symbol(j)=i1
+         write(41,3090) j,rsym,i4
+ 3090    format(i3,f9.1,i6)
       enddo
 
-      do i=1,nsym
-         j=0
-         if(symbol(i).lt.0) j=1
-         i1=symbol(i)
-         if(i4.lt.0) i4=i4+256
-         write(42,3091) i,i4,j
- 3091    format(3i6)
-      enddo
       nbits=72+31
       delta=100
-      limit=100000
+      limit=10000
       ncycles=0
-!      symbol(207)=-128
-      do i=1,207
-         i1=symbol(i)
-         ierr=0
-         if(i4.ge.128 .and. sym0(i).eq.0) ierr=i4-127
-         if(i4.lt.128 .and. sym0(i).eq.1) ierr=i4-128
-         write(43,3009) i,sym0(i),i4,ierr
- 3009    format(4i5)
+      call interleave24(symbol(2),-1)         !Remove the interleaving
+
+      do iter=1,2
+         if(iter.eq.2) then
+            do i=2,207
+               i1=symbol(i)
+               i4=255-i4
+               symbol(i)=i1
+            enddo
+         endif
+         ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
+     +        delta,limit)
+         if(ncount.ge.0) go to 100
       enddo
 
-!      sum=0.
-!      do i=1,206
-!         i1=symbol(i+1)
-!         sum=sum + i4
-!      enddo
-!      ave=sum/206.
-!      sq=0.
-!      do i=1,206
-!         i1=symbol(i+1)
-!         sq=sq + (i4-ave)**2
-!      enddo
-!      rms=sqrt(sq/205.0)
-!      print*,ave,rms
-
-      call interleave24(symbol(2),-1)         !Remove the interleaving
-      ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
-     +     delta,limit)
-
-      do i=1,9
+ 100     do i=1,9
          i1=data1(i)
          data4a(i)=i4
       enddo
