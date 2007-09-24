@@ -55,6 +55,9 @@ subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
   if(mode(1:4).eq.'JT65') nmode=2
   if(mode.eq.'Echo') nmode=3
   if(mode.eq.'JT6M') nmode=4
+  if(mode(1:2).eq.'CW') nmode=5
+  if(mode(1:3).eq.'JT2') nmode=6
+  if(mode(1:3).eq.'JT4') nmode=7
 
   nlines=0
   newdat=0
@@ -165,10 +168,17 @@ subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
      endif
      do i=ia,750                       !Insert new data in top row
         if(nfrange.eq.2000) then
-           a0(i)=5*ss(i+i0)/nsum
+           if(nmode.eq.6 .or. nmode.eq.7) then           !JT2 or JT4
+              a0(i)=(5.0/nsum) * (ss(i+i0) + ss(i+i0+1)+ ss(i+i0-1))/3.0
+           else                                          !JT65 
+              a0(i)=5*ss(i+i0)/nsum
+           endif
         else if(nfrange.eq.4000) then
-           smax=max(ss(2*i+i0),ss(2*i+i0-1))
-           a0(i)=5*smax/nsum
+           if(nmode.eq.6 .or. nmode.eq.7) then           !JT2 or JT4
+              a0(i)=(5.0/nsum) * (ss(2*i+i0) + ss(2*i+i0+1)+ ss(2*i+i0-1))/3.0
+           else                                          !JT65 
+              a0(i)=(5.0/nsum) * max(ss(2*i+i0),ss(2*i+i0-1))
+           endif
         endif
      enddo
      nsum=0

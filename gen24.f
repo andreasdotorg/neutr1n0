@@ -54,6 +54,9 @@ C  Set up necessary constants
       ndata=(nsym*11025.d0*samfac*tsymbol)/2
       ndata=2*ndata
       if(mode(1:3).eq.'JT2') then
+         ss=1.0
+         s=0.0
+         u=0.04
          do i=1,ndata
             t=t+dt
             j=int(t/tsymbol) + 1                  !Symbol number, 1-207
@@ -61,11 +64,15 @@ C  Set up necessary constants
                f=f0 + npr2(j)*dfgen
                if(flip.lt.0.0) f=f0 + (1-npr2(j))*dfgen
                dphi=twopi*dt*f
-               if(symbol(j).gt.0) phi=phi+pi
+               if(symbol(j).gt.0) then
+                  phi=phi+pi
+                  ss=-ss
+               endif
                j0=j
             endif
             phi=phi+dphi
-            iwave(i)=32767.0*sin(phi)
+            s=s + u*(ss-s)
+            iwave(i)=32767.0 * s * sin(phi)
          enddo
       else
          do i=1,ndata
