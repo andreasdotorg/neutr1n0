@@ -64,10 +64,7 @@ C  Set up necessary constants
                f=f0 + npr2(j)*dfgen
                if(flip.lt.0.0) f=f0 + (1-npr2(j))*dfgen
                dphi=twopi*dt*f
-               if(symbol(j).gt.0) then
-                  phi=phi+pi
-                  ss=-ss
-               endif
+               if(symbol(j).gt.0) ss=-ss
                j0=j
             endif
             phi=phi+dphi
