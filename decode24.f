@@ -90,7 +90,7 @@ C  Compute soft symbols using differential BPSK demodulation
          write(41,3090) j,rsym,i4a,i4
  3090    format(i3,f9.1,2i6)
       enddo
-      call flush(41)
+      call flushqqq(41)
 
       nbits=72+31
       delta=100
