@@ -54,18 +54,23 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
 
       istart=nint(dtx/dt)              !Start index for synced FFTs
 
-C  Shoule amp be adjusted according to signal strength?
+C  Should amp be adjusted according to signal strength?
 
 C  Compute soft symbols using differential BPSK demodulation
       c0=0.                                !### C0=1 ???
       k=istart
       fac=1.e-4
+      phi=0.d0
 
       do j=1,nsym+1
-         f0=1270.46 + dfx + npr2(j)*df
+         if(flip.gt.0.0) then
+            f0=1270.46 + dfx + npr2(j)*df
+         else
+            f0=1270.46 + dfx + (1-npr2(j))*df
+         endif
          dphi=twopi*dt*f0
          c1=0.
-         phi=0.d0                          !### ??? ###
+         phi=0.d0                          !### ??? ###  CHECK THIS ###
          do i=1,1260
             k=k+1
             phi=phi+dphi
@@ -80,9 +85,12 @@ C  Compute soft symbols using differential BPSK demodulation
          if(r.lt.0.0) r=0.0
          i4=nint(r)
          if(j.ge.1) symbol(j)=i1
-         write(41,3090) j,rsym,i4
- 3090    format(i3,f9.1,i6)
+         i4a=i4
+         i1=sym0(j)
+         write(41,3090) j,rsym,i4a,i4
+ 3090    format(i3,f9.1,2i6)
       enddo
+      call flush(41)
 
       nbits=72+31
       delta=100
