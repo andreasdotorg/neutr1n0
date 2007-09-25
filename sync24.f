@@ -132,7 +132,10 @@ C  Find rms of the CCF, without the main peak
       snrx=-99.0
       ppmax=psavg(ipk)-1.0
 
-      if(ppmax.gt.0.0001) snrx=db(ppmax*df/2500.0) + 7.5    !Semi-Empirical
+      if(ppmax.gt.0.0001) then
+         snrx=db(ppmax*df/2500.0) + 7.5        !Empirical
+         if(mode.eq.7) snrx=snrx + 3.0         !Empirical
+      endif
       if(snrx.lt.-33.0) snrx=-33.0
 
 C  Compute width of sync tone to outermost -3 dB points
