@@ -11,7 +11,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       character decoded*22,deepmsg*22
       character mycall*12,hiscall*12,hisgrid*6
       character*72 c72
-      real*8 dt,df,phi,f0,dphi,twopi
+      real*8 dt,df,phi,f0,dphi,twopi,phi1,dphi1
       complex c0,c1
       integer*1 i1,symbol(207)
       integer*1 data1(13)                   !Decoded data (8-bit bytes)
@@ -22,7 +22,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       integer fano
       integer npr2(207)
       logical first
-      double complex cz
+      double complex cz,cz1
       include 'avecom.h'
       integer*1 sym0
       common/tst99/ sym0(216)
@@ -61,37 +61,79 @@ C  Compute soft symbols using differential BPSK demodulation
       k=istart
       fac=1.e-4
       phi=0.d0
+      phi1=0.d0
 
-      do j=1,nsym+1
-         if(flip.gt.0.0) then
-            f0=1270.46 + dfx + npr2(j)*df
-         else
-            f0=1270.46 + dfx + (1-npr2(j))*df
-         endif
-         dphi=twopi*dt*f0
-         c1=0.
-         phi=0.d0                          !### ??? ###  CHECK THIS ###
-         do i=1,1260
-            k=k+1
-            phi=phi+dphi
-            cz=dcmplx(cos(phi),-sin(phi))
-            if(k.le.npts) c1=c1 + dat(k)*cz
+      if(mode.eq.6) then                   !JT2
+         do j=1,nsym+1
+            if(flip.gt.0.0) then
+               f0=1270.46 + dfx + npr2(j)*df
+            else
+               f0=1270.46 + dfx + (1-npr2(j))*df
+            endif
+            dphi=twopi*dt*f0
+            c1=0.
+            phi=0.d0                       !### ??? ###  CHECK THIS! ###
+            do i=1,1260
+               k=k+1
+               phi=phi+dphi
+               cz=dcmplx(cos(phi),-sin(phi))
+               if(k.le.npts) c1=c1 + dat(k)*cz
+            enddo
+            c1=fac*c1
+            rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
+            c0=c1
+            r=rsym+128.
+            if(r.gt.255.0) r=255.0
+            if(r.lt.0.0) r=0.0
+            i4=nint(r)
+            if(j.ge.1) symbol(j)=i1
+            i4a=i4
+            i1=sym0(j)
+            write(41,3090) j,rsym,i4a,i4
+ 3090       format(i3,f9.1,2i6)
          enddo
-         c1=fac*c1
-         rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
-         c0=c1
-         r=rsym+128.
-         if(r.gt.255.0) r=255.0
-         if(r.lt.0.0) r=0.0
-         i4=nint(r)
-         if(j.ge.1) symbol(j)=i1
-         i4a=i4
-         i1=sym0(j)
-         write(41,3090) j,rsym,i4a,i4
- 3090    format(i3,f9.1,2i6)
-      enddo
-      call flushqqq(41)
+      else                                    !JT4x 
+         do j=1,nsym+1
+            if(flip.gt.0.0) then
+               f0=1270.46 + dfx + npr2(j)*mode4*df
+               f1=1270.46 + dfx + (2+npr2(j))*mode4*df
+            else
+               f0=1270.46 + dfx + (1-npr2(j))*mode4*df
+               f1=1270.46 + dfx + (3-npr2(j))*mode4*df
+            endif
+            dphi=twopi*dt*f0
+            dphi1=twopi*dt*f1
+            c0=0.
+            c1=0.
+            phi=0.d0                       !### ??? ###  CHECK THIS! ###
+            phi1=0.d0                       !### ??? ###  CHECK THIS! ###
+            do i=1,1260
+               k=k+1
+               phi=phi+dphi
+               phi1=phi1+dphi1
+               cz=dcmplx(cos(phi),-sin(phi))
+               cz1=dcmplx(cos(phi1),-sin(phi1))
+               if(k.le.npts) then
+                  c0=c0 + dat(k)*cz
+                  c1=c1 + dat(k)*cz1
+               endif
+            enddo
+            c0=fac*c0
+            c1=fac*c1
+            rsym=amp*(real(c1)**2 + aimag(c1)**2 - 
+     +                real(c0)**2 - aimag(c0)**2)
+            r=rsym+128.
+            if(r.gt.255.0) r=255.0
+            if(r.lt.0.0) r=0.0
+            i4=nint(r)
+            if(j.ge.1) symbol(j)=i1
+            i4a=i4
+            i1=sym0(j)
+            write(41,3090) j,rsym,i4a,i4
+         enddo
+      endif
 
+      call flushqqq(41)
       nbits=72+31
       delta=100
       limit=100000

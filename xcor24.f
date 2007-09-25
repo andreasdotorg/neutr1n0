@@ -1,4 +1,4 @@
-      subroutine xcor24(s2,ipk,nsteps,nsym,lag1,lag2,
+      subroutine xcor24(s2,ipk,nsteps,nsym,lag1,lag2,mode,mode4,
      +  ccf,ccf0,lagpk,flip)
 
 C  Computes ccf of a row of s2 and the pseudo-random array pr2.  Returns
@@ -38,7 +38,15 @@ C  the "OOO" message.
       dtstep=0.5/df
       fac=dtstep/(60.0*df)
       do j=1,nsteps
-         a(j)=s2(ipk+2,j) - s2(ipk,j)
+         if(mode.eq.6) then
+            a(j)=s2(ipk+2,j) - s2(ipk,j)             !JT2
+         else                                        !JT4
+            n=2*mode4
+!            a(j)=0.5*(s2(ipk+n,j) + s2(ipk+3*n,j) - 
+!     +                s2(ipk  ,j) - s2(ipk+2*n,j))
+            a(j)=max(s2(ipk+n,j),s2(ipk+3*n,j)) - 
+     +           max(s2(ipk  ,j),s2(ipk+2*n,j))
+         endif
       enddo
 
       ccfmax=0.

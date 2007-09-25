@@ -53,7 +53,7 @@ C  Set up necessary constants
       j0=0
       ndata=(nsym*11025.d0*samfac*tsymbol)/2
       ndata=2*ndata
-      if(mode(1:3).eq.'JT2') then
+      if(mode(1:3).eq.'JT2') then                 !JT2 mode
          ss=1.0
          s=0.0
          u=0.04
@@ -71,7 +71,7 @@ C  Set up necessary constants
             s=s + u*(ss-s)
             iwave(i)=32767.0 * s * sin(phi)
          enddo
-      else
+      else                                        !JT4x mode
          do i=1,ndata
             t=t+dt
             j=int(t/tsymbol) + 1                  !Symbol number, 1-207

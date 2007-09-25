@@ -1526,7 +1526,7 @@ def update():
     if mode.get() != g.mode or first:
         if mode.get()=="FSK441":
             msg2.configure(bg='yellow')
-        elif mode.get()=="JT65A" or mode.get()=="JT65B" or mode.get()=="JT65C":
+        elif mode.get()[:4]=="JT65":
             msg2.configure(bg='#00FFFF')
         elif mode.get()=="JT6M":
             msg2.configure(bg='#FF00FF')
@@ -1534,7 +1534,7 @@ def update():
             msg2.configure(bg='#00FF00')
         elif mode.get()=="JT2":
             msg2.configure(bg='#8888FF')
-        elif mode.get()=="JT4":
+        elif mode.get()[:3]=="JT4":
             msg2.configure(bg='#88FF88')
 #        elif mode.get()=="Echo":
 #            msg2.configure(bg='#FF0000')
@@ -1652,7 +1652,8 @@ def update():
             im.putpalette(g.palette)
             cmap0=g.cmap
 
-        if mode.get()[:4]=='JT65':
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+                                     mode.get()[:3]=='JT4':
             plot_large()
         else:    
             im.putdata(Audio.gcom2.b)
