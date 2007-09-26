@@ -1292,7 +1292,7 @@ def setmsg(template,r):
     
 #------------------------------------------------------ plot_large
 def plot_large():
-    "Plot the green, red, and blue curves in JT65 mode."
+    "Plot the green, red, and blue curves in JT65, JT2, and JT4 modes."
     graph1.delete(ALL)
     y=[]
     ngreen=Audio.gcom2.ngreen
@@ -1312,7 +1312,8 @@ def plot_large():
             xy.append(n)
         graph1.create_line(xy,fill="green")
 
-        if Audio.gcom2.nspecial==0:
+        if Audio.gcom2.nspecial==0 or mode.get()[:3]=='JT2' or \
+                mode.get()[:3]=='JT4':
             y=[]
             for i in range(446):                #Find ymax for red curve
                 psavg=Audio.gcom2.psavg[i+1]
@@ -1324,6 +1325,8 @@ def plot_large():
             fac=500.0/446.0
             for i in range(446):                #Make xy list for red curve
                 x=i*fac
+                if mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
+                    x=i*500.0/548.571 + 47                      #empirical
                 psavg=Audio.gcom2.psavg[i+1]
                 n=int(90.0-yfac*psavg)
                 xy.append(x)
@@ -1377,6 +1380,8 @@ def plot_large():
             fac=500.0/64.6
             for i in range(65):             #Make xy list for blue curve
                 x=(i+0.5)*fac
+                if mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
+                    x=(i+0.5)*500.0/105.0 + 15     #15 is empirical
                 ccf=Audio.gcom2.ccf[i]
                 n=int(60.0-yfac*ccf)
                 xy2.append(x)
@@ -1843,7 +1848,7 @@ decodemenu.JT65.add_radiobutton(label = 'Aggressive Deep Search',
 decodemenu.JT65.add_radiobutton(label ='Include Average in Aggressive Deep Search',
                                 variable=ndepth, value=3)
 decodemenu.JT65.add_separator()
-decodemenu.JT65.add_checkbutton(label='DJ5HG Challenge',variable=nchallenge)
+#decodemenu.JT65.add_checkbutton(label='DJ5HG Challenge',variable=nchallenge)
 decodemenu.add_cascade(label = 'FSK441',menu=decodemenu.FSK441)
 decodemenu.add_cascade(label = 'JT65',menu=decodemenu.JT65)
 
@@ -2267,7 +2272,7 @@ try:
                 ModeCW()
             elif value=='JT2':
                 ModeJT2()
-            elif value=='JT4':
+            elif value[:3]=='JT4':
                 ModeJT4()
         elif key == 'MyCall': options.MyCall.set(value)
         elif key == 'MyGrid': options.MyGrid.set(value)

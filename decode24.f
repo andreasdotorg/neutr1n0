@@ -140,7 +140,10 @@ C  Compute soft symbols using differential BPSK demodulation
       ncycles=0
       call interleave24(symbol(2),-1)         !Remove the interleaving
 
-      do iter=1,2
+C  This is a kludge:
+      iters=1
+      if(mode.eq.6) iters=2
+      do iter=1,iters
          if(iter.eq.2) then
             do i=2,207
                i1=symbol(i)
@@ -164,6 +167,10 @@ C  Compute soft symbols using differential BPSK demodulation
 
       decoded='                      '
       if(ncount.ge.0) call unpackmsg(data4,decoded)
+      if(decoded(1:6).eq.'000AAA') then
+         decoded='***WRONG MODE?***'
+         ncount=-1
+      endif
 
 !      call extract(s3,nadd,ncount,decoded)     !Extract the message
       qual=0.
