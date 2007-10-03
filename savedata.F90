@@ -35,7 +35,7 @@ subroutine savedata
   k=2048*(ibuf1-1)
   if(mode(1:4).ne.'JT65' .and. mode(1:3).ne.'JT2' .and. mode(1:3).ne.'JT4'   &
        .and. mode(1:2).ne.'CW') k=k+3*2048
-  if(mode(1:4).ne.'JT65' .and. mode(1:3).eq.'JT2' .and. mode(1:3).eq.'JT4'   &
+  if(mode(1:4).ne.'JT65' .and. mode(1:3).ne.'JT2' .and. mode(1:3).ne.'JT4'   &
        .and. mode(1:2).ne.'CW' .and. jza.gt.30*11025) then
      k=k + (jza-30*11025)
      if(k.gt.NRxMax) k=k-NRxMax
@@ -127,7 +127,7 @@ subroutine savedata
 30   continue
   endif
 
-999 if(mode(1:4).ne.'JT65' .and. mode(1:3).eq.'JT2' .and. mode(1:3).eq.'JT4'  &
+999 if(mode(1:4).ne.'JT65' .and. mode(1:3).ne.'JT2' .and. mode(1:3).ne.'JT4'  &
          .and. mode(1:2).ne.'CW') then
      ibuf0z=ibuf0
      call get_fname(hiscall,ntime,trperiod,lauto,fname0)
