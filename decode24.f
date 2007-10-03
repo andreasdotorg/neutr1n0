@@ -12,7 +12,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       character mycall*12,hiscall*12,hisgrid*6
       character*72 c72
       real*8 dt,df,phi,f0,dphi,twopi,phi1,dphi1
-      complex c0,c1
+      complex*16 cz,cz1,c0,c1
       integer*1 i1,symbol(207)
       integer*1 data1(13)                   !Decoded data (8-bit bytes)
       integer   data4a(9)                   !Decoded data (8-bit bytes)
@@ -22,7 +22,6 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       integer fano
       integer npr2(207)
       logical first
-      double complex cz,cz1
       include 'avecom.h'
       integer*1 sym0
       common/tst99/ sym0(216)
@@ -57,22 +56,64 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
 C  Should amp be adjusted according to signal strength?
 
 C  Compute soft symbols using differential BPSK demodulation
-      c0=0.                                !### C0=1 ???
+      c0=0.                                !### C0=amp ???
       k=istart
       fac=1.e-4
       phi=0.d0
       phi1=0.d0
 
       if(mode.eq.6) then                   !JT2
+         nhmax=0
+         do idf=-20,20,2
+            c0=amp
+            k=istart
+            phi=0.d0
+            nh=0
+            do j=1,nsym+1
+               if(flip.gt.0.0) then
+                  f0=1270.46 + dfx + npr2(j)*df
+               else
+                  f0=1270.46 + dfx + (1-npr2(j))*df
+               endif
+               f0=f0 + 0.1*idf
+               dphi=twopi*dt*f0
+               c1=0.
+               do i=1,1260
+                  k=k+1
+                  phi=phi+dphi
+                  cz=dcmplx(cos(phi),-sin(phi))
+                  if(k.le.npts) c1=c1 + dat(k)*cz
+               enddo
+               rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
+               ang=atan2(aimag(c1),real(c1))
+               ndang=nint(57.1957795131d0*(ang-ang0))
+               ang0=ang
+               if(ndang.le.-180) ndang=ndang+360
+               if(ndang.gt.180) ndang=ndang-360
+               if(ndang.lt.-90) ndang=ndang+180
+               if(ndang.gt. 90) ndang=ndang-180
+               if(rsym.ge.0.05 .and. abs(ndang).lt.20)nh=nh+1
+            enddo
+            if(nh.gt.nhmax) then
+               nhmax=nh
+               idfbest=idf
+            endif
+            write(42,3091) idf,nh
+ 3091       format(2i8)
+         enddo
+
+         c0=amp
+         k=istart
+         phi=0.d0
          do j=1,nsym+1
             if(flip.gt.0.0) then
                f0=1270.46 + dfx + npr2(j)*df
             else
                f0=1270.46 + dfx + (1-npr2(j))*df
             endif
+            f0=f0 + 0.1*idfbest
             dphi=twopi*dt*f0
             c1=0.
-            phi=0.d0                       !### ??? ###  CHECK THIS! ###
             do i=1,1260
                k=k+1
                phi=phi+dphi
@@ -81,6 +122,15 @@ C  Compute soft symbols using differential BPSK demodulation
             enddo
             c1=fac*c1
             rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
+
+C  NB: It may be possible to track phase.  In that case, remove the 
+C  average phase and then use:
+!            rsym=amp*real(c1)*real(c0)
+
+            ang=atan2(aimag(c1),real(c1))
+            ndang=nint(57.1957795131d0*(ang-ang0))
+            if(ndang.le.-180) ndang=ndang+360
+            if(ndang.gt.180) ndang=ndang-360
             c0=c1
             r=rsym+128.
             if(r.gt.255.0) r=255.0
@@ -89,10 +139,12 @@ C  Compute soft symbols using differential BPSK demodulation
             if(j.ge.1) symbol(j)=i1
             i4a=i4
             i1=sym0(j)
-            write(41,3090) j,rsym,i4a,i4
- 3090       format(i3,f9.1,2i6)
+            write(41,3090) j,rsym,i4a,i4,ang,ndang
+ 3090       format(i3,f9.1,2i6,f8.3,i6)
+            ang0=ang
          enddo
-      else                                    !JT4x 
+!###
+      else                                    !JT4x
          do j=1,nsym+1
             if(flip.gt.0.0) then
                f0=1270.46 + dfx + npr2(j)*mode4*df
@@ -105,8 +157,8 @@ C  Compute soft symbols using differential BPSK demodulation
             dphi1=twopi*dt*f1
             c0=0.
             c1=0.
-            phi=0.d0                       !### ??? ###  CHECK THIS! ###
-            phi1=0.d0                       !### ??? ###  CHECK THIS! ###
+            phi=0.d0
+            phi1=0.d0
             do i=1,1260
                k=k+1
                phi=phi+dphi
