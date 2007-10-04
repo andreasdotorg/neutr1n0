@@ -149,7 +149,7 @@ C  average phase and then use:
          nchips=mode4
          if(mode4.eq.72) then
             nspchip=35
-            nchips=36
+            nchips=36     !Try using twice as many chips and overlapping
          endif
          fac2=1.e-8 * sqrt(float(mode4))
          do j=1,nsym+1

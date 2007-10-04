@@ -55,6 +55,10 @@ C  Find the best frequency channel for CCF
       endif
       ia=fa/df
       ib=fb/df
+      if(mode.eq.7) then
+         ia=ia - 3*mode4
+         ib=ib - 3*mode4
+      endif
       i0=nint(1270.46/df)
       lag1=-5
       lag2=59
@@ -66,6 +70,7 @@ C  Find the best frequency channel for CCF
          call xcor24(s2,i,nsteps,nsym,lag1,lag2,mode,mode4,
      +        ccfblue,ccf0,lagpk0,flip)
          j=i-i0
+         if(mode.eq.7) j=j + 3*mode4
          if(j.ge.-372 .and. j.le.372) ccfred(j)=ccf0
 
 C  Find rms of the CCF, without the main peak
@@ -103,7 +108,7 @@ C  Peak up in frequency to fraction of channel
 !      if(dx.gt.1.0) dx=1.0
       dx=0.
       dfx=(ipk+dx-i0)*df
-      dfx=dfx + 3*mode4*df
+      if(mode.eq.7) dfx=dfx + 3*mode4*df
 
 C  Peak up in time, at best whole-channel frequency
       call xcor24(s2,ipk,nsteps,nsym,lag1,lag2,mode,mode4,
