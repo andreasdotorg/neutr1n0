@@ -103,6 +103,7 @@ C  Peak up in frequency to fraction of channel
 !      if(dx.gt.1.0) dx=1.0
       dx=0.
       dfx=(ipk+dx-i0)*df
+      dfx=dfx + 3*mode4*df
 
 C  Peak up in time, at best whole-channel frequency
       call xcor24(s2,ipk,nsteps,nsym,lag1,lag2,mode,mode4,

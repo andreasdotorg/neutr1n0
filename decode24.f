@@ -145,35 +145,47 @@ C  average phase and then use:
          enddo
 !###
       else                                    !JT4x
+         nspchip=1260/mode4
+         nchips=mode4
+         if(mode4.eq.72) then
+            nspchip=35
+            nchips=36
+         endif
+         fac2=1.e-8 * sqrt(float(mode4))
          do j=1,nsym+1
             if(flip.gt.0.0) then
-               f0=1270.46 + dfx + npr2(j)*mode4*df
-               f1=1270.46 + dfx + (2+npr2(j))*mode4*df
+               f0=1270.46 + dfx + (npr2(j)-1.5)*mode4*df
+               f1=1270.46 + dfx + (2+npr2(j)-1.5)*mode4*df
             else
-               f0=1270.46 + dfx + (1-npr2(j))*mode4*df
-               f1=1270.46 + dfx + (3-npr2(j))*mode4*df
+               f0=1270.46 + dfx + (1-npr2(j)-1.5)*mode4*df
+               f1=1270.46 + dfx + (3-npr2(j)-1.5)*mode4*df
             endif
             dphi=twopi*dt*f0
             dphi1=twopi*dt*f1
-            c0=0.
-            c1=0.
-            phi=0.d0
-            phi1=0.d0
-            do i=1,1260
-               k=k+1
-               phi=phi+dphi
-               phi1=phi1+dphi1
-               cz=dcmplx(cos(phi),-sin(phi))
-               cz1=dcmplx(cos(phi1),-sin(phi1))
-               if(k.le.npts) then
-                  c0=c0 + dat(k)*cz
-                  c1=c1 + dat(k)*cz1
-               endif
+            sq0=0.
+            sq1=0.
+            do nc=1,nchips
+               phi=0.d0
+               phi1=0.d0
+               c0=0.
+               c1=0.
+               do i=1,nspchip
+                  k=k+1
+                  phi=phi+dphi
+                  phi1=phi1+dphi1
+                  cz=dcmplx(cos(phi),-sin(phi))
+                  cz1=dcmplx(cos(phi1),-sin(phi1))
+                  if(k.le.npts) then
+                     c0=c0 + dat(k)*cz
+                     c1=c1 + dat(k)*cz1
+                  endif
+               enddo
+               sq0=sq0 + real(c0)**2 + aimag(c0)**2
+               sq1=sq1 + real(c1)**2 + aimag(c1)**2
             enddo
-            c0=fac*c0
-            c1=fac*c1
-            rsym=amp*(real(c1)**2 + aimag(c1)**2 - 
-     +                real(c0)**2 - aimag(c0)**2)
+            sq0=fac2*sq0
+            sq1=fac2*sq1
+            rsym=amp*(sq1-sq0)
             r=rsym+128.
             if(r.gt.255.0) r=255.0
             if(r.lt.0.0) r=0.0

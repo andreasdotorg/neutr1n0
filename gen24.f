@@ -76,8 +76,8 @@ C  Set up necessary constants
             t=t+dt
             j=int(t/tsymbol) + 1                  !Symbol number, 1-207
             if(j.ne.j0) then
-               f=f0 + (npr2(j) + 2*symbol(j)) * dfgen * mode4
-               if(flip.lt.0.0) f=f0 + ((1-npr2(j)) + 2*symbol(j))*dfgen
+               f=f0 + (npr2(j)+2*symbol(j)-1.5) * dfgen * mode4
+               if(flip.lt.0.0) f=f0+((1-npr2(j))+2*symbol(j)-1.5)*dfgen
                dphi=twopi*dt*f
                j0=j
             endif
