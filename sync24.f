@@ -145,7 +145,10 @@ C  Find rms of the CCF, without the main peak
       if(snrx.lt.-33.0) snrx=-33.0
 
 C  Compute width of sync tone to outermost -3 dB points
-      call pctile(ccfred(ia-i0),tmp,ib-ia+1,45,base)
+!      call pctile(ccfred(ia-i0),tmp,ib-ia+1,45,base)
+      i1=max(-224,ia-i0)
+      i2=min(224,ib-i0)
+      call pctile(ccfred(i1),tmp,i2-i1+1,45,base)
 
       jpk=ipk-i0
       stest=base + 0.5*(ccfred(jpk)-base)                ! -3 dB
