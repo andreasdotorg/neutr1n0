@@ -176,14 +176,17 @@ static int SoundOut( void *inputBuffer, void *outputBuffer,
       *wptr++ = n2;                   //left
       *wptr++ = n2;                   //right
       ic++;
+
       if(ic>=*data->nwave) {
-	if(*data->nmode==2) {
+	if((*data->nmode!=1) && (*data->nmode!=4)) {
 	  *data->TxOK=0;
 	  ic--;
 	}
-	else
+	else {
 	  ic = ic % *data->nwave;       //Wrap buffer pointer if necessary
+	}
       }
+
     }
   } else {
     memset((void*)outputBuffer, 0, 2*sizeof(short)*framesPerBuffer);
