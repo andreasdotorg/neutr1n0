@@ -52,6 +52,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       endif
 
       istart=nint(dtx/dt)              !Start index for synced FFTs
+      if(istart.lt.0) istart=0
 
 C  Should amp be adjusted according to signal strength?
 
@@ -102,7 +103,7 @@ C  Compute soft symbols using differential BPSK demodulation
  3091       format(2i8)
          enddo
 
-         c0=amp
+         c0=0
          k=istart
          phi=0.d0
          do j=1,nsym+1
@@ -149,7 +150,7 @@ C  average phase and then use:
          nchips=mode4
          if(mode4.eq.72) then
             nspchip=35
-            nchips=36     !Try using twice as many chips and overlapping
+            nchips=36     !Try using twice as many chips and overlapping them?
          endif
          fac2=1.e-8 * sqrt(float(mode4))
          do j=1,nsym+1
