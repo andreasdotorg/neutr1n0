@@ -1,26 +1,33 @@
-
 subroutine get_fname(hiscall,ntime,trperiod,lauto,fname)
 
-#ifdef Win32
+#ifdef CVF
   use dfport
-#else
-  external gmtime_r
 #endif
 
+  character cdate*8,ctime*10,czone*5
   character hiscall*12,fname*24,tag*7
   integer ntime
   integer trperiod
-  integer it(9)
+  integer it(9),itt(8)
 
   n1=ntime
   n2=(n1+2)/trperiod
   n3=n2*trperiod
-#ifdef Win32
+#ifdef CVF
   call gmtime(n3,it)
-#else
-  call gmtime_r(n3,it)
-#endif
   it(5)=it(5)+1
+#else
+  call date_and_time(cdate,ctime,czone,itt)
+  it(6)=itt(1)
+  it(5)=itt(2)
+  it(4)=itt(3)
+  it(3)=itt(5)-itt(4)/60
+  if(it(3).lt.0) it(3)=it(3)+24
+  if(it(3).ge.24) it(3)=it(3)-24
+  it(2)=itt(6)
+!  it(1)=itt(7)
+  it(1)=0
+#endif
   it(6)=mod(it(6),100)
   write(fname,1000) (it(j),j=6,1,-1)
 1000 format('_',3i2.2,'_',3i2.2,'.WAV')

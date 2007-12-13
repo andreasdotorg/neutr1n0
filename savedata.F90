@@ -1,7 +1,7 @@
 !----------------------------------------------------------- savedata
 subroutine savedata
 
-#ifdef Win32
+#ifdef CVF
   use dfport
 #endif
 
@@ -107,7 +107,7 @@ subroutine savedata
      enddo
 10   longname=AppDir(1:i)//'/RxWav/'//fname
 
-#ifdef Win32
+#ifdef CVF
      open(17,file=longname,status='unknown',form='binary',err=20)
      write(17) ariff,nchunk,awave,afmt,lenfmt,nfmt2,nchan2,nsamrate, &
           nbytesec,nbytesam2,nbitsam2,adata,ndata,(d2a(j),j=1,jza)

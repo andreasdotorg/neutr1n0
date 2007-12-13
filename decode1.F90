@@ -5,7 +5,7 @@ subroutine decode1(iarg)
 ! Get data and parameters from gcom, then call the decoders when needed.
 ! This routine runs in a background thread and will never return.
 
-#ifdef Win32
+#ifdef CVF
   use dflib
 #endif
 
@@ -70,7 +70,7 @@ subroutine decode1(iarg)
      mode0=mode
   endif
        
-#ifdef Win32
+#ifdef CVF
   call sleepqq(100)
 #else
   call usleep(100*1000)

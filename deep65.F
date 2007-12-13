@@ -17,7 +17,7 @@
       integer*1 sent1(63)
       common/tmp9/ mrs(63),mrs2(63)
       data cc/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
-#ifdef Win32
+#ifdef CVF
 C  This prevents some optimizations that break this subroutine.
       volatile p1,p2,bias
 #endif
@@ -198,20 +198,23 @@ C  Insert CQ message unless sync=OOO (flip=-1).
       if(mode65.eq.2) bias=max(1.08*p2,0.405)
       if(mode65.ge.4) bias=max(1.04*p2,0.505)
       qual=100.0*(p1-bias)
+      if(qual.lt.0.0) qual=0.0
       decoded='                      '
       c=' '
 
-      if(qual.gt.1.0 .and. ip1.le.ntot) then
-         if(qual.lt.6.0) c='?'
-         decoded=testmsg(ip1)
-      else
-         i=ip1-ntot-1
-         i1=i/(36**3)
-         i2=(i - i1*36**3)/(36**2)
-         i3=(i - i1*36**3 - i2*36**2)/36
-         i4=mod(i,36)
-         decoded=cc(i1+1:i1+1)//cc(i2+1:i2+1)//cc(i3+1:i3+1)//
+      if(qual.gt.1.0) then
+         if(ip1.le.ntot) then
+            if(qual.lt.6.0) c='?'
+            decoded=testmsg(ip1)
+         else
+            i=ip1-ntot-1
+            i1=i/(36**3)
+            i2=(i - i1*36**3)/(36**2)
+            i3=(i - i1*36**3 - i2*36**2)/36
+            i4=mod(i,36)
+            decoded=cc(i1+1:i1+1)//cc(i2+1:i2+1)//cc(i3+1:i3+1)//
      +           cc(i4+1:i4+1)//'                  '
+         endif
       endif
       decoded(22:22)=c
 C  Make sure everything is upper case.

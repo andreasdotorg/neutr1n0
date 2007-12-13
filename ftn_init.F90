@@ -40,7 +40,7 @@ subroutine ftn_init
   enddo
 2 iz2=i
 
-#ifdef Win32
+#ifdef CVF
   open(11,file=appdir(:iz)//'/decoded.txt',status='unknown',               &
        share='denynone',err=910)
 #else
@@ -49,7 +49,7 @@ subroutine ftn_init
 #endif
   endfile 11
 
-#ifdef Win32
+#ifdef CVF
   open(12,file=appdir(:iz)//'/decoded.ave',status='unknown',               &
        share='denynone',err=920)
 #else
@@ -58,7 +58,7 @@ subroutine ftn_init
 #endif
   endfile 12
 
-#ifdef Win32
+#ifdef CVF
   open(14,file=azeldir(:iz2)//'/azel.dat',status='unknown',                  &
        share='denynone',err=930)
 #else
@@ -66,7 +66,7 @@ subroutine ftn_init
        err=930)
 #endif
 
-#ifdef Win32
+#ifdef CVF
   open(15,file=appdir(:iz)//'/debug.txt',status='unknown',                 &
        share='denynone',err=940)
 #else
@@ -74,7 +74,7 @@ subroutine ftn_init
        err=940)
 #endif
 
-#ifdef Win32
+#ifdef CVF
   open(21,file=appdir(:iz)//'/ALL.TXT',status='unknown',                   &
        access='append',share='denynone',err=950)
 #else
@@ -85,7 +85,7 @@ subroutine ftn_init
 10 continue
 #endif
 
-#ifdef Win32
+#ifdef CVF
   open(22,file=appdir(:iz)//'/kvasd.dat',access='direct',recl=1024,        &
        status='unknown',share='denynone')
 #else

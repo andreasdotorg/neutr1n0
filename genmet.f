@@ -4,7 +4,8 @@ C  Return appropriate metric table for soft-decision convolutional decoder.
 
       real bias                         !bias for integer table
       integer scale                     !scale factor for integer table
-      integer mettab(0:255,0:1)         !Metric table (RxSymbol,TxSymbol)
+C Metric table (RxSymbol,TxSymbol)
+      integer mettab(0:255,0:1)
 
       bias=0.5
       if(mode.eq.6) then       !JT2, DBPSK

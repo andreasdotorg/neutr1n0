@@ -2,7 +2,7 @@
 !----------------------------------------------------- getfile
 subroutine getfile(fname,len)
 
-#ifdef Win32
+#ifdef CVF
   use dflib
 #endif
 
@@ -23,7 +23,7 @@ subroutine getfile(fname,len)
   equivalence (ariff,hdr),(n1,n4),(d1,d2)
 
 1 if(ndecoding.eq.0) go to 2
-#ifdef Win32
+#ifdef CVF
   call sleepqq(100)
 #else
   call usleep(100*1000)
@@ -38,7 +38,7 @@ subroutine getfile(fname,len)
 10 filename=fname(i+1:)
   ierr=0
 
-#ifdef Win32
+#ifdef CVF
   open(10,file=fname,form='binary',status='old',err=998)
   read(10,end=998) hdr
 #else
@@ -48,7 +48,7 @@ subroutine getfile(fname,len)
   if(nbitsam2.eq.8) then
      if(ndata.gt.NDMAX) ndata=NDMAX
 
-#ifdef Win32
+#ifdef CVF
      call rfile(10,d1,ndata,ierr)
      if(ierr.ne.0) go to 999
 #endif
@@ -62,7 +62,7 @@ subroutine getfile(fname,len)
 
   else if(nbitsam2.eq.16) then
      if(ndata.gt.2*NDMAX) ndata=2*NDMAX
-#ifdef Win32
+#ifdef CVF
      call rfile(10,d2c,ndata,ierr)
      jzc=ndata/2
      if(ierr.ne.0) go to 999

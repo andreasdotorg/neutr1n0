@@ -9,8 +9,6 @@ subroutine a2d(iarg)
 ! This call does not normally return, as the background portion of
 ! JTaudio goes into a test-and-sleep loop.
 
-  write(*,1000)
-1000 format('Using PortAudio.')
   idevin=ndevin
   idevout=ndevout
   call padevsub(numdevs,ndefin,ndefout,nchin,nchout)

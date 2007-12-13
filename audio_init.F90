@@ -1,7 +1,7 @@
 !------------------------------------------------ audio_init
 subroutine audio_init(ndin,ndout)
 
-#ifdef Win32
+#ifdef CVF
   use dfmt
   integer Thread1,Thread2
   external a2d,decode1
@@ -34,7 +34,7 @@ subroutine audio_init(ndin,ndout)
      iwave(i)=nint(32767.0*sin(6.283185307*i*f0/nfsample))
   enddo
 
-#ifdef Win32
+#ifdef CVF
 !  Priority classes (for processes):
 !     IDLE_PRIORITY_CLASS               64
 !     NORMAL_PRIORITY_CLASS             32

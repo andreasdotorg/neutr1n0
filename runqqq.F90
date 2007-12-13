@@ -1,16 +1,16 @@
 subroutine runqqq(fname,cmnd,iret)
 
-#ifdef Win32
+#ifdef CVF
   use dflib
 #endif
   integer system
 
   character*(*) fname,cmnd
 
-#ifdef Win32
+#ifdef CVF
   iret=runqq(fname,cmnd)
 #else
-  iret=system('./KVASD -q >& /dev/null')
+  iret=system('KVASD -q > dev_null')
 #endif
 
   return
@@ -18,7 +18,7 @@ end subroutine runqqq
 
 subroutine flushqqq(lu)
 
-#ifdef Win32
+#ifdef CVF
   use dfport
 #endif
 
@@ -28,7 +28,7 @@ subroutine flushqqq(lu)
 end subroutine flushqqq
 
 subroutine sleepqqq(n)
-#ifdef Win32
+#ifdef CVF
   use dflib
       call sleepqq(n)
 #else

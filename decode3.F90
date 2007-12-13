@@ -1,7 +1,7 @@
 !---------------------------------------------------- decode3
 subroutine decode3(d2,jz,istart,filename)
 
-#ifdef Win32
+#ifdef CVF
   use dfport
 #endif
 
