@@ -1,7 +1,13 @@
 # Makefile for Windows
 # !include <dfinc.mak>   #Some definitions for Compaq Visual Fortran
-CC = /mingw/bin/gcc
-FC = /mingw/bin/g95
+#CC = /mingw/bin/gcc
+#FC = /mingw/bin/g95
+CC = gcc
+FC = g95
+PYTHON = python
+BUILD = /python23/installer/Build.py
+F2PY = f2py.py
+MAKESPEC = /python23/installer/makespec.py 
 
 # FFLAGS = -O2
 CFLAGS = -I.
@@ -50,11 +56,11 @@ SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c start_portaudio.c cutil.c
 WSJT6.EXE: Audio.pyd wsjt.spec
-	c:/python25/python c:/python25/pyinstaller-1.3/Build.py wsjt.spec
+	$(PYTHON) $(BUILD)  wsjt.spec
 	mv wsjt.exe WSJT6.EXE
 
 Audio.pyd: $(OBJS2C) $(SRCS2F90) $(SRCS2F77) $(SRCS2C) 
-	c:/python25/python c:/python25/scripts/f2py.py -c -I. \
+	$(PYTHON) $(F2PY) -c -I. \
 	--quiet --fcompiler=g95 --opt="-fbounds-check -O2 -cpp -DWin32" \
 	--compiler=mingw32 \
 	$(OBJS2C) \
@@ -64,11 +70,18 @@ Audio.pyd: $(OBJS2C) $(SRCS2F90) $(SRCS2F77) $(SRCS2C)
 	$(SRCS2F90) $(SRCS2F77) $(SRCS2C)
 
 wsjt.spec: wsjt.py astro.py g.py options.py palettes.py smeter.py specjt.py
-	c:/python25/python c:/python25/pyinstaller-1.3/makespec.py --icon \
+	$(PYTHON) $(MAKESPEC) --icon \
 	   wsjt.ico --tk --onefile wsjt.py
 
 jtaudio.o: jtaudio.c
 	$(CC) $(CFLAGS) -c -DWin32 jtaudio.c
+
+init_rs.o: init_rs.c
+	$(CC) -c -DBIGSYM=1 init_rs.c
+encode_rs.o: encode_rs.c
+	$(CC) -c -DBIGSYM=1 encode_rs.c
+decode_rs.o: decode_rs.c
+	$(CC) -c -DBIGSYM=1 decode_rs.c
 
 .PHONY : clean
 
