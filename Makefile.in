@@ -40,7 +40,7 @@ OBJS1 = JT65code.o nchar.o grid2deg.o packmsg.o packtext.o \
 	unpackgrid.o deg2grid.o packdxcc.o chkmsg.o getpfx1.o \
 	getpfx2.o k2grid.o grid2k.o interleave63.o graycode.o set.o \
 	igray.o init_rs_int.o encode_rs_int.o decode_rs_int.o \
-	wrapkarn.o
+	wrapkarn.o cutil.o
 
 F2PYONLY = ftn_init ftn_quit audio_init spec getfile azdist0 astro0
 
@@ -73,7 +73,7 @@ SRCS2F77 = wsjt1.f astro.f azdist.f coord.f dcoord.f deg2grid.f \
 
 OBJS2F77 = ${SRCS2F77:.f=.o} deep65.o
 
-SRCS2C	= init_rs.c encode_rs.c decode_rs.c fano.o tab.c cutil.c
+SRCS2C	= init_rs.c encode_rs.c decode_rs.c fano.o tab.c
 OBJS2C  = ${SRCS2C:.c=.o}
 
 # for unix @AUDIO@ will be a2d.f90, jtaudio.c start_portaudio.c
@@ -119,7 +119,7 @@ decode_rs_int.o: decode_rs.c
 	$(CC) $(CFLAGS) -c -DBIGSYM=1 -o decode_rs_int.o decode_rs.c
 
 cutil.o: cutil.c
-	$(CC) $(CFLAGS) -c -DSTARNIX=1 -o decode_rs_int.o decode_rs.c
+	$(CC) $(CFLAGS) -c -DSTARNIX=1 cutil.c
 
 fourt.o: fourt.f
 	$(FC) -c -O fourt.f
