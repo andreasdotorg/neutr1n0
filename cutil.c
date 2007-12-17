@@ -4,11 +4,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-// #include <sys/times.h>
-// #include <time.h>
-// #include <sys/time.h>
+
+#ifdef STARNIX
+#include <sys/times.h>
+#include <time.h>
+#include <sys/time.h>
+#else
 #include "sleep.h"
 #include "timeval.h"
+#endif
 
 /*  FORTRAN:  fd = close(filedes)      */
 int close_(int *filedes)
