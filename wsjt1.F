@@ -95,12 +95,8 @@
 	   do j=1,jz
 	      dat2(j)=dat(j)-ave
 	   enddo
-
-#if (USE_PORTAUDIO==1)  || defined(CVF)
 	   ierr=resample(dat2,dat,samratio,jz)
 	   if(ierr.ne.0) print*,'Resample error.',samratio
-#endif
-
 	endif
 
 	if(ndiag.ne.0 .and. nclip.lt.0) then
