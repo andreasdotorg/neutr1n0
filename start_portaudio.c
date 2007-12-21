@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
+#include "pthread.h"
 #include <inttypes.h>
 #include <time.h>
 #include <sys/time.h>
