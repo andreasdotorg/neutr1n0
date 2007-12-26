@@ -76,6 +76,7 @@ subroutine decode1(iarg)
   call usleep(100*1000)
 #endif
 
+  call flushqqq(21)
   go to 10
 
 end subroutine decode1
