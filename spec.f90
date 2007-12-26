@@ -168,17 +168,9 @@ subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
      endif
      do i=ia,750                       !Insert new data in top row
         if(nfrange.eq.2000) then
-           if(nmode.eq.6 .or. nmode.eq.7) then           !JT2 or JT4
-              a0(i)=(5.0/nsum) * (ss(i+i0) + ss(i+i0+1)+ ss(i+i0-1))/3.0
-           else                                          !JT65 
-              a0(i)=5*ss(i+i0)/nsum
-           endif
+           a0(i)=5*ss(i+i0)/nsum
         else if(nfrange.eq.4000) then
-           if(nmode.eq.6 .or. nmode.eq.7) then           !JT2 or JT4
-              a0(i)=(5.0/nsum) * (ss(2*i+i0) + ss(2*i+i0+1)+ ss(2*i+i0-1))/3.0
-           else                                          !JT65 
-              a0(i)=(5.0/nsum) * max(ss(2*i+i0),ss(2*i+i0-1))
-           endif
+           a0(i)=(5.0/nsum) * max(ss(2*i+i0),ss(2*i+i0-1))
         endif
      enddo
      nsum=0
