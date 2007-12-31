@@ -70,7 +70,7 @@ struct node {
  * and easier than trying to pack them more compactly.
  */
 
-#ifdef Win32
+#ifdef CVF
 int __stdcall ENCODE(char *data, int *nbytes0,char *symbols)
 #else
 int encode_(char *data, int *nbytes0,char *symbols)
@@ -99,7 +99,7 @@ int encode_(char *data, int *nbytes0,char *symbols)
  * Return 0 on success, -1 on timeout
  */
 
-#ifdef Win32
+#ifdef CVF
 int __stdcall FANO(
 unsigned long *metric,	/* Final path metric (returned value) */
 unsigned long *cycles,	/* Cycle count (returned value) */
