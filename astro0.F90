@@ -95,7 +95,6 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
   imin=60*uth8
   isec=3600*uth8
 
-!#ifdef CVF
   if(isec.ne.isec0 .and. ndecoding.eq.0) then
      ih=uth8
      im=mod(imin,60)
@@ -112,7 +111,6 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
      rewind 14
 800  isec0=isec
   endif
-!#endif
 
   return
 end subroutine astro0

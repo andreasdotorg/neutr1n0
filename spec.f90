@@ -164,7 +164,8 @@ subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
         if(i0.lt.0) ia=1-i0
      else if(nfrange.eq.4000) then
         i0=nint(nfmid/df - 752.0)
-        if(i0.lt.0) ia=1-i0/2
+!        if(i0.lt.0) ia=1-i0/2
+        if(i0.lt.0) ia=2-i0/2
      endif
      do i=ia,750                       !Insert new data in top row
         if(nfrange.eq.2000) then
