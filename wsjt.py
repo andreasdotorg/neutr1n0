@@ -1514,8 +1514,13 @@ def update():
             Audio.gcom2.ndecoding=4
             Audio.gcom2.nagain=1
         g.freeze_decode=0
-        
-    n=int(20.0*log10(g.rms/770.0+0.01))
+
+    n=-99
+    g.rms=g.rms+0.001
+    if g.rms > 0:
+        n=int(20.0*log10(g.rms/770.0+0.01))
+    else:
+        print "RMS noise:", g.rms, " out of range."
     t="Rx noise:%3d dB" % (n,)
     if n>=-10 and n<=10:
         msg4.configure(text=t,bg='gray85')
@@ -2395,7 +2400,8 @@ Audio.gcom2.ndepth=ndepth.get()
 Audio.ftn_init()
 GenStdMsgs()
 Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+'        ')[:8]
-stopmon()
+#stopmon()
+monitor()
 first=1
 if g.Win32: root.iconbitmap("wsjt.ico")
 root.title('  WSJT 6     by K1JT')
