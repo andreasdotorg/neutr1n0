@@ -27,7 +27,8 @@ subroutine a2d(iarg)
        11025,NSPB,TRPeriod,TxOK,ndebug,Transmitting,            &
        Tsec,ngo,nmode,tbuf,ibuf,ndsec)
   if(ierr.ne.0) then
-     print*,'Error ',ierr,' in JTaudio, cannot continue.'
+     write(*,1005) ierr
+1005 format('Error ',i2,' in JTaudio, you will only be able to work offline!')
   else
      write(*,1006) 
 1006 format('Audio streams terminated normally.')

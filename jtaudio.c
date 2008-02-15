@@ -25,8 +25,7 @@ typedef struct
   short  *y1;
   short  *y2;
   short  *iwave;
-}
-paTestData;
+} paTestData;
 
 typedef struct _SYSTEMTIME
 {
@@ -41,25 +40,25 @@ typedef struct _SYSTEMTIME
 } SYSTEMTIME;
 
 #ifdef Win32
-extern void __stdcall GetSystemTime(SYSTEMTIME *st);
+  extern void __stdcall GetSystemTime(SYSTEMTIME *st);
 #else
-#include <sys/time.h>
-#include <time.h>
+  #include <sys/time.h>
+  #include <time.h>
 
-void GetSystemTime(SYSTEMTIME *st){
-  struct timeval tmptimeofday;
-  struct tm tmptmtime;
-  gettimeofday(&tmptimeofday,NULL);
-  gmtime_r((const time_t *)&tmptimeofday.tv_sec,&tmptmtime);
-  st->Year = (short)tmptmtime.tm_year;
-  st->Month = (short)tmptmtime.tm_year;
-  st->DayOfWeek = (short)tmptmtime.tm_wday;
-  st->Day = (short)tmptmtime.tm_mday;
-  st->Hour = (short)tmptmtime.tm_hour;
-  st->Minute = (short)tmptmtime.tm_min;
-  st->Second = (short)tmptmtime.tm_sec;
-  st->Millisecond = (short)(tmptimeofday.tv_usec/1000);
-}
+  void GetSystemTime(SYSTEMTIME *st){
+    struct timeval tmptimeofday;
+    struct tm tmptmtime;
+    gettimeofday(&tmptimeofday,NULL);
+    gmtime_r((const time_t *)&tmptimeofday.tv_sec,&tmptmtime);
+    st->Year = (short)tmptmtime.tm_year;
+    st->Month = (short)tmptmtime.tm_year;
+    st->DayOfWeek = (short)tmptmtime.tm_wday;
+    st->Day = (short)tmptmtime.tm_mday;
+    st->Hour = (short)tmptmtime.tm_hour;
+    st->Minute = (short)tmptmtime.tm_min;
+    st->Second = (short)tmptmtime.tm_sec;
+    st->Millisecond = (short)(tmptimeofday.tv_usec/1000);
+  }
 #endif
 
 //  Input callback routine:
@@ -108,14 +107,14 @@ static int SoundIn( void *inputBuffer, void *outputBuffer,
     stime0=stime;
   }
 
-  if((statusFlags&1)==0) {
+  if((statusFlags&1) == 0) {
     //increment buffer pointers only if data available
-  ia=*data->iwrite;
-  ib=*data->ibuf;
-  ib++;                               //Increment ibuf
-  if(ib>1024) ib=1; 
-  *data->ibuf=ib;
-  data->tbuf[ib-1]=stime;
+    ia=*data->iwrite;
+    ib=*data->ibuf;
+    ib++;                               //Increment ibuf
+    if(ib>1024) ib=1; 
+    *data->ibuf=ib;
+    data->tbuf[ib-1]=stime;
     for(i=0; i<framesPerBuffer; i++) {
       data->y1[ia] = (*in++);
       data->y2[ia] = (*in++);
@@ -151,7 +150,7 @@ static int SoundOut( void *inputBuffer, void *outputBuffer,
   double stime;
   SYSTEMTIME st;
 
-  // Get System time
+   // Get System time
   GetSystemTime(&st);
   nsec = (int) (st.Hour*3600.0 + st.Minute*60.0 + st.Second);
   stime = nsec + st.Millisecond*0.001 + *data->ndsec*0.1;
@@ -170,23 +169,21 @@ static int SoundOut( void *inputBuffer, void *outputBuffer,
   *data->Transmitting=*data->TxOK;
 
   if(*data->TxOK)  {
-    for(i=0 ; i<framesPerBuffer; i++ )  {
+    for(i=0 ; i < framesPerBuffer; i++ )  {
       n2=data->iwave[ic];
       addnoise_(&n2);
       *wptr++ = n2;                   //left
       *wptr++ = n2;                   //right
       ic++;
 
-      if(ic>=*data->nwave) {
-	if((*data->nmode!=1) && (*data->nmode!=4)) {
-	  *data->TxOK=0;
-	  ic--;
-	}
-	else {
-	  ic = ic % *data->nwave;       //Wrap buffer pointer if necessary
-	}
+      if(ic >= *data->nwave) {
+        if((*data->nmode != 1) && (*data->nmode != 4)) {
+          *data->TxOK = 0;
+          ic--;
+        } else {
+          ic = ic % *data->nwave;       //Wrap buffer pointer if necessary
+        }
       }
-
     }
   } else {
     memset((void*)outputBuffer, 0, 2*sizeof(short)*framesPerBuffer);
@@ -204,15 +201,16 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
 	     double tbuf[], int *ibuf, int *ndsec)
 {
   paTestData data;
-  PaStream *instream;
-  PaStream *outstream;
-  PaStreamParameters inputParameters;
-  PaStreamParameters outputParameters;
+  PaStream *instream, *outstream;
+  PaStreamParameters inputParameters, outputParameters;
   //  PaStreamInfo *streamInfo;
 
-  int nfs,ndin,ndout;
-  PaError err1,err2,err2a,err3,err3a;
-  double dnfs;
+  int nSampleRate = *nfsample;
+  int ndevice_in = *ndevin;
+  int ndevice_out = *ndevout;
+  double dSampleRate = (double) *nfsample;
+  PaError err_init, err_open_in, err_open_out, err_start_in, err_start_out;
+  PaError err = 0;
 
   data.Tsec = Tsec;
   data.tbuf = tbuf;
@@ -228,149 +226,184 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
   data.nmode = nmode;
   data.nwave = nwave;
   data.iwave = iwave;
-  data.nfs = *nfsample;
+  data.nfs = nSampleRate;
   data.trperiod = TRPeriod;
 
-  nfs=*nfsample;
-  err1=Pa_Initialize();                      // Initialize PortAudio
-  if(err1) {
+  err_init = Pa_Initialize();                      // Initialize PortAudio
+
+  if(err_init) {
     printf("Error initializing PortAudio.\n");
-    printf("%s\n",Pa_GetErrorText(err1));
-    goto error;
+    printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_init), err_init);
+
+    Pa_Terminate();  // I don't think we need this but...
+
+    return(-1);
   }
 
-  ndin=*ndevin;
-  ndout=*ndevout;
-  dnfs=(double)nfs;
-  printf("Opening device %d for input, %d for output.\n",ndin,ndout);
+  printf("Opening device %d for input, %d for output...\n",ndevice_in,ndevice_out);
 
-  inputParameters.device=*ndevin;
-  inputParameters.channelCount=2;
-  inputParameters.sampleFormat=paInt16;
-  inputParameters.suggestedLatency=1.0;
-  inputParameters.hostApiSpecificStreamInfo=NULL;
-  err2=Pa_OpenStream(
+  inputParameters.device = ndevice_in;
+  inputParameters.channelCount = 2;
+  inputParameters.sampleFormat = paInt16;
+  inputParameters.suggestedLatency = 1.0;
+  inputParameters.hostApiSpecificStreamInfo = NULL;
+
+// Test if this configuration actually works, so we do not run into an ugly assertion
+  err_open_in = Pa_IsFormatSupported(&inputParameters, NULL, dSampleRate);
+
+  if (err_open_in == 0) {
+    err_open_in = Pa_OpenStream(
 		       &instream,       //address of stream
 		       &inputParameters,
 		       NULL,
-		       dnfs,            //Sample rate
+		       dSampleRate,            //Sample rate
 		       2048,            //Frames per buffer
 		       paNoFlag,
 		       SoundIn,         //Callback routine
 		       &data);          //address of data structure
-  if(err2) {
-    printf("Error opening Audio stream for input.\n");
-    printf("%s\n",Pa_GetErrorText(err2));
-    goto error;
+
+    if(err_open_in) {   // We should have no error here usually
+      printf("Error opening input audio stream:\n");
+      printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_open_in), err_open_in);
+
+      err = 1;
+    } else {
+      printf("Successfully opened audio input!\n");
+    }
+  } else {
+    printf("Error opening input audio stream!\n");
+    printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_open_in), err_open_in);
+
+    err = 1;
   }
 
-  outputParameters.device=*ndevout;
-  outputParameters.channelCount=2;
-  outputParameters.sampleFormat=paInt16;
-  outputParameters.suggestedLatency=1.0;
-  outputParameters.hostApiSpecificStreamInfo=NULL;
-  err2a=Pa_OpenStream(
+  outputParameters.device = ndevice_out;
+  outputParameters.channelCount = 2;
+  outputParameters.sampleFormat = paInt16;
+  outputParameters.suggestedLatency = 1.0;
+  outputParameters.hostApiSpecificStreamInfo = NULL;
+
+// Test if this configuration actually works, so we do not run into an ugly assertion
+  err_open_out = Pa_IsFormatSupported(NULL, &outputParameters, dSampleRate);
+
+  if (err_open_out == 0) {
+    err_open_out = Pa_OpenStream(
 		       &outstream,      //address of stream
 		       NULL,
 		       &outputParameters,
-		       dnfs,            //Sample rate
+		       dSampleRate,            //Sample rate
 		       2048,            //Frames per buffer
 		       paNoFlag,
 		       SoundOut,        //Callback routine
 		       &data);          //address of data structure
-  if(err2a) {
-    printf("Error opening Audio stream for output.\n");
-    printf("%s\n",Pa_GetErrorText(err2a));
-    goto error;
+
+    if(err_open_out) {     // We should have no error here usually
+      printf("Error opening output audio stream!\n");
+      printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_open_out), err_open_out);
+
+      err += 2;
+    } else {
+      printf("Successfully opened audio output!\n");
+    }
+  } else {
+    printf("Error opening output audio stream:\n");
+    printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_open_out), err_open_out);
+
+    err += 2;
   }
 
-  err3=Pa_StartStream(instream);             //Start input stream
-  if(err3) {
-    printf("Error starting input Audio stream\n");
-    printf("%s\n",Pa_GetErrorText(err3));
-    goto error;
-  }
-  err3a=Pa_StartStream(outstream);             //Start output stream
-  if(err3a) {
-    printf("Error starting output Audio stream\n");
-    printf("%s\n",Pa_GetErrorText(err3a));
-    goto error;
+  // if there was no error in opening both streams start them
+  if (err == 0) {
+    err_start_in = Pa_StartStream(instream);             //Start input stream
+
+    if(err_start_in) {
+      printf("Error starting input audio stream!\n");
+      printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_start_in), err_start_in);
+
+      err += 4;
+    }
+
+    err_start_out = Pa_StartStream(outstream);             //Start output stream
+
+    if(err_start_out) {
+      printf("Error starting output audio stream!\n");
+      printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_start_out), err_start_out);
+
+      err += 8;
+    } 
   }
 
-  printf("Audio streams running normally.\n******************************************************************\n");
+  if (err == 0) printf("Audio streams running normally.\n******************************************************************\n");
 
-  while(Pa_IsStreamActive(instream))  {
-    if(*ngo==0) goto StopStream;
-    //    printf("CPU: %f\n",Pa_GetStreamCpuLoad(stream));
+  while( Pa_IsStreamActive(instream) && (*ngo != 0) && (err == 0) )  {
+    //    printf("CPU: %.1f\%\n",100*Pa_GetStreamCpuLoad(instream));
     Pa_Sleep(200);
   }
 
- StopStream:
   Pa_AbortStream(instream);              // Abort stream
   Pa_CloseStream(instream);             // Close stream, we're done.
   Pa_AbortStream(outstream);              // Abort stream
   Pa_CloseStream(outstream);             // Close stream, we're done.
-  Pa_Terminate();
-  return(0);
 
-error:
-  printf("%d  %d  %f  %d  %d  %d  %d  %d\n",ndin,ndout,dnfs,err1,
-	 err2,err2a,err3,err3a);
   Pa_Terminate();
-  return(1);
+
+  return(err);
 }
 
 
 int padevsub_(int *numdev, int *ndefin, int *ndefout, 
 	      int nchin[], int nchout[])
 {
-  int      i;
+  int      i, devIdx;
   int      numDevices;
-  const    PaDeviceInfo *pdi;
+  PaDeviceInfo *pdi;
   PaError  err;
   //  PaHostApiInfo *hostapi;
-  
+
   Pa_Initialize();
 
   /*
-  n=Pa_GetHostApiCount();
-  printf("HostAPI Type #Devices \n");
-  for(i=0; i<n; i++) {
-    hostapi=Pa_GetHostApiInfo(i);
+  n = Pa_GetHostApiCount();
+  printf("HostAPI Type #Devices\n");
+  for(i = 0; i < n; i++) {
+    hostapi = Pa_GetHostApiInfo(i);
     printf(" %3d   %2d   %3d  %s\n",i,hostapi->type,
 	   hostapi->deviceCount,hostapi->name);
   }
   */
 
-  //  numDevices = Pa_CountDevices();
   numDevices = Pa_GetDeviceCount();
-  *numdev=numDevices;
+  *numdev = numDevices;
+
   if( numDevices < 0 )  {
     err = numDevices;
-    goto error;
+    Pa_Terminate();
+    return err;
   }
 
+  if ((devIdx = Pa_GetDefaultInputDevice()) > 0) {
+    *ndefin = devIdx;
+  }
+
+  if ((devIdx = Pa_GetDefaultOutputDevice()) > 0) {
+    *ndefout = devIdx;
+  }
 
   printf("\nAudio     Input    Output     Device Name\n");
   printf("Device  Channels  Channels\n");
   printf("------------------------------------------------------------------\n");
 
-  for( i=0; i<numDevices; i++ )  {
-    pdi = Pa_GetDeviceInfo( i );
-    //    if(i == Pa_GetDefaultInputDeviceID()) *ndefin=i;
-    //    if(i == Pa_GetDefaultOutputDeviceID()) *ndefout=i;
-    if(i == Pa_GetDefaultInputDevice()) *ndefin=i;
-    if(i == Pa_GetDefaultOutputDevice()) *ndefout=i;
+  for( i=0; i < numDevices; i++ )  {
+    pdi = Pa_GetDeviceInfo(i);
+//    if(i == Pa_GetDefaultInputDevice()) *ndefin = i;
+//    if(i == Pa_GetDefaultOutputDevice()) *ndefout = i;
     nchin[i]=pdi->maxInputChannels;
     nchout[i]=pdi->maxOutputChannels;
     printf("  %2d       %2d        %2d       %s\n",i,nchin[i],nchout[i],pdi->name);
   }
 
   Pa_Terminate();
-  return 0;
 
- error:
-  Pa_Terminate();
-  return err;
+  return 0;
 }
 
