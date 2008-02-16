@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "pthread.h"
+#ifdef Win32
+   #include "pthread_w32.h"
+#else
+   #include <pthread.h>
+#endif
 #include <inttypes.h>
 #include <time.h>
 #include <sys/time.h>

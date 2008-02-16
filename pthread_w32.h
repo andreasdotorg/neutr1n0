@@ -285,7 +285,7 @@ enum {
 #  endif
 #endif
 
-#include <sched.h>
+#include <sched_w32.h>
 
 /*
  * To avoid including windows.h we define only those things that we

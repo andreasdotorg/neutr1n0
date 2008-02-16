@@ -11,14 +11,15 @@
       enddo
       i=22
 
- 10   if(i.ge.11 .and. (message(i-3:i).eq.' OOO') .or. 
-     +    (message(20:22).eq.' OO')) then
-         cok='OOO'
-         flip=-1.0
-         if(message(20:22).eq.' OO') then
-            message=message(1:19)
-         else
-            message=message(1:i-4)
+ 10   if(i.ge.11) then
+         if((message(i-3:i).eq.' OOO') .or. (message(20:22).eq.' OO')) then
+            cok='OOO'
+            flip=-1.0
+            if(message(20:22).eq.' OO') then
+               message=message(1:19)
+            else
+               message=message(1:i-4)
+            endif
          endif
       endif
 
