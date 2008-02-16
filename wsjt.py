@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#---------------------------------------------------------------------- WSJT
+#----------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -2400,8 +2400,7 @@ Audio.gcom2.ndepth=ndepth.get()
 Audio.ftn_init()
 GenStdMsgs()
 Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+'        ')[:8]
-#stopmon()
-monitor()
+stopmon()
 first=1
 if g.Win32: root.iconbitmap("wsjt.ico")
 root.title('  WSJT 6     by K1JT')
