@@ -383,10 +383,14 @@ int padevsub_(int *numdev, int *ndefin, int *ndefout,
 
   if ((devIdx = Pa_GetDefaultInputDevice()) > 0) {
     *ndefin = devIdx;
+  } else {
+    *ndefin = 0;
   }
 
   if ((devIdx = Pa_GetDefaultOutputDevice()) > 0) {
     *ndefout = devIdx;
+  } else {
+    *ndefout = 0;
   }
 
   printf("\nAudio     Input    Output     Device Name\n");
