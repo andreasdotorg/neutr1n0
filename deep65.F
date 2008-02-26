@@ -217,24 +217,10 @@ C  Insert CQ message unless sync=OOO (flip=-1).
          endif
       endif
       decoded(22:22)=c
-C  Make sure everything is upper case.
-      do i=1,22
-         if(decoded(i:i).ge.'a' .and. decoded(i:i).le.'z') 
-     +     decoded(i:i)=char(ichar(decoded(i:i))-32)
-      enddo
 
-!      cflag=' '
-!      if(mode65.eq.2) bias=max(1.08*p2a,0.405)
-!      nqual=qual
-!      nquala=100.0*(p1a-bias)
-!      nqual=min(10,max(nqual,0))
-!      nquala=min(10,max(nquala,0))
-!      if(p1.gt.p1a .and. nquala.ge.1 .and. nqual.ge.1) cflag='*'
-!      write(*,3001) p1a,ip1a,p2a,ip2a,p1,ip1,p2,ip2,p2a/p2,
-!     +  nquala,nqual,nquala-nqual,cflag
-!      write(48,3001) p1a,ip1a,p2a,ip2a,p1,ip1,p2,ip2,p2a/p2,
-!     +  nquala,nqual,nquala-nqual,cflag
-! 3001 format(f7.3,i5,f7.3,i5,f7.3,i8,f7.3,i8,f7.3,3i3,2x,a1)
+C  Neutralize the SM2CEW foolishness
+      call packmsg(decoded,dgen)
+      call unpackmsg(dgen,decoded)
 
       return
       end
