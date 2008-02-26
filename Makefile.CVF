@@ -70,7 +70,7 @@ wsjt.spec: wsjt.py astro.py g.py options.py palettes.py smeter.py specjt.py
 	--tk --onefile wsjt.py
 
 jtaudio.o: jtaudio.c
-	$(CC) /nologo /c /DCVF /Fojtaudio.o jtaudio.c
+	$(CC) /nologo /c /DWin32 /Fojtaudio.o jtaudio.c
 
 init_rs.obj: init_rs.c
 	$(CC) /nologo /c /DBIGSYM=1 init_rs.c
