@@ -1236,7 +1236,9 @@ def GenStdMsgs(event=NONE):
         tx3.insert(0,"RO")
         tx4.insert(0,"RRR")
         tx5.insert(0,"73")
-        t="CQ " + options.MyCall.get()+ " "+options.MyGrid.get()[:4]
+        t="CQ " + options.MyCall.get()
+        if options.MyCall.get().find("/") == -1:
+            t=t + " " + options.MyGrid.get()[:4]
         tx6.insert(0,t.upper())
         altmsg=0
     elif mode.get()[:2]=="CW":
