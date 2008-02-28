@@ -48,6 +48,8 @@ root_geom=""
 
 #------------------------------------------------------ Global variables
 appdir=os.getcwd()
+addpfx0=""
+first=1
 g.appdir=appdir
 isync=0
 isync441=2
@@ -74,6 +76,7 @@ loopall=0
 mode=StringVar()
 mode.set("")
 mrudir=os.getcwd()
+MyCall0=""
 nafc=IntVar()
 naz=0
 ndepth=IntVar()
@@ -97,6 +100,7 @@ setseq=IntVar()
 ShOK=IntVar()
 slabel="Sync   "
 textheight=7
+ToRadio0=""
 tx6alt=""
 txsnrdb=99.
 TxFirst=IntVar()
@@ -1208,7 +1212,7 @@ def left_arrow(event=NONE):
     
 #------------------------------------------------------ GenStdMsgs
 def GenStdMsgs(event=NONE):
-    global altmsg
+    global altmsg,MyCall0,addpfx0,ToRadio0
     t=ToRadio.get().upper().strip()
     ToRadio.delete(0,99)
     ToRadio.insert(0,t)
@@ -1226,20 +1230,40 @@ def GenStdMsgs(event=NONE):
         tx6.insert(0,setmsg(options.tx6.get(),r))
     elif mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
                mode.get()[:3]=='JT4':
-        if ToRadio.get().find("/") == -1 and \
-               options.MyCall.get().find("/") == -1:
-            t=ToRadio.get() + " "+options.MyCall.get() + " "+options.MyGrid.get()[:4]
-            tx1.insert(0,t.upper())
-        else:
-            tx1.insert(0,ToRadio.get() + " "+options.MyCall.get())
+        if options.MyCall.get()!= MyCall0 or \
+               options.addpfx.get()!= addpfx0 or ToRadio.get()!=ToRadio0:
+            MyCall0=options.MyCall.get()
+            addpfx0=options.addpfx.get()
+            ToRadio0=ToRadio.get()
+            t0=("SM5BSZ "+options.MyCall.get()).upper()
+            Audio.gcom2.t0msg=(t0+'                      ')[:22]
+            nplain,naddon,ndiff=Audio.chkt0()
+            if nplain==1:
+                MsgBox("Bad 'MyCall' or bad prefix/suffix?\nPlease check on Setup | Options screen.")
+                options1()
+            t0=("SM5BSZ "+ToRadio0).upper()
+            Audio.gcom2.t0msg=(t0+'                      ')[:22]
+            nplain,naddon,ndiff=Audio.chkt0()
+            if nplain==1:
+                MsgBox("Bad call in To Radio?\nPlease check.")
+            
+        t0=(ToRadio.get() + " "+options.MyCall.get()).upper()
+        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        nplain,naddon,ndiff=Audio.chkt0()
+        if nplain==0 and naddon==0 and ndiff==0:
+            t0=t0 + " "+options.MyGrid.get()[:4]
+        tx1.insert(0,t0.upper())
         tx2.insert(0,tx1.get()+" OOO")
         tx3.insert(0,"RO")
         tx4.insert(0,"RRR")
         tx5.insert(0,"73")
-        t="CQ " + options.MyCall.get()
-        if options.MyCall.get().find("/") == -1:
-            t=t + " " + options.MyGrid.get()[:4]
-        tx6.insert(0,t.upper())
+
+        t0="CQ " + options.MyCall.get().upper()
+        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        nplain,naddon,ndiff=Audio.chkt0()
+        if nplain==0 and naddon==0 and ndiff==0:
+            t0=t0 + " "+options.MyGrid.get()[:4]
+        tx6.insert(0,t0.upper())
         altmsg=0
     elif mode.get()[:2]=="CW":
         tx1.insert(0,"[" + ToRadio.get() + " " +options.MyCall.get() + "]")
@@ -1550,6 +1574,7 @@ def update():
 #        elif mode.get()=="Echo":
 #            msg2.configure(bg='#FF0000')
         g.mode=mode.get()
+        if first: GenStdMsgs()
         first=0
 
     samfac_in=Audio.gcom1.mfsample/110250.0
@@ -2400,10 +2425,8 @@ Audio.gcom2.appdir=(appdir+'                                                    
 Audio.gcom2.azeldir=(options.azeldir.get()+'                                                                                          ')[:80]
 Audio.gcom2.ndepth=ndepth.get()
 Audio.ftn_init()
-GenStdMsgs()
 Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+'        ')[:8]
 stopmon()
-first=1
 if g.Win32: root.iconbitmap("wsjt.ico")
 root.title('  WSJT 6     by K1JT')
 import astro

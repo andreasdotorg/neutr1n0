@@ -1,4 +1,4 @@
-      program JT65karn
+      program JT65code
 
 C  Provides examples of message packing, bit and symbol ordering,
 C  Reed Solomon encoding, and other necessary details of the JT65

@@ -90,6 +90,7 @@ character*80 AzElDir     !Directory for azel.dat                GUI
 character*80 filetokilla !Filenames (full path)                 Decoder
 character*80 filetokillb
 character*12 pttport
+character*22 t0msg
 
 common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      green(500),ngreen,dgain,iter,ndecoding,ndecoding0,mousebutton,   &
@@ -103,6 +104,6 @@ common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      ndepth,nspecial,ndf,nfmid,nforce,nfrange,ss1(-224:224),ss2(-224:224),   &
      mycall,hiscall,hisgrid,txmsg,sending,mode,fname0,fnamea,         &
      fnameb,decodedfile,AppDir,AzElDir,filetokilla,filetokillb,       &
-     utcdate,pttport
+     utcdate,pttport,t0msg
 
 !### volatile /gcom2/
