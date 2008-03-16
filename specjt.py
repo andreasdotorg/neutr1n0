@@ -1,4 +1,5 @@
 #---------------------------------------------------- SpecJT
+# 2.2.08 Soundcontrol extended for Vista  DL3LST
 from Tkinter import *
 from tkMessageBox import showwarning
 import time
@@ -108,9 +109,12 @@ def rx_volume():
             return os.spawnv(os.P_NOWAIT, file, (file,) + (" -r",))
         except os.error:
             pass
+
+# Vista soundcontrol has no parameter to select the inputlevel !!   3LST
+# so we have no solution to call it
     raise os.error, "Cannot find "+file
 
-#--------------------------------------------------- tx_volume
+#--------------------------------------------------- tx_volume  ..extended for Vista
 def tx_volume():
     for path in string.split(os.environ["PATH"], os.pathsep):
         file = os.path.join(path, "sndvol32") + ".exe"
@@ -118,6 +122,15 @@ def tx_volume():
             return os.spawnv(os.P_NOWAIT, file, (file,))
         except os.error:
             pass
+
+#Vista soundcontrol is now sndvol.exe and we try to open it           3LST
+    for path in string.split(os.environ["PATH"], os.pathsep):
+        file = os.path.join(path, "sndvol") + ".exe"
+        try:
+            return os.spawnv(os.P_NOWAIT, file, (file,))
+        except os.error:
+            pass
+
     raise os.error, "Cannot find "+file
 
 #---------------------------------------------------- fdf_change
