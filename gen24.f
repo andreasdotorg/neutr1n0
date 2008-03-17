@@ -45,9 +45,9 @@ C  Encodes a JT2 or JT4 message into a wavefile.
 
 C  Set up necessary constants
       tsymbol=2520.d0/11025.d0
-      dt=1.0/(samfac*11025.0)
+      dt=1.d0/(samfac*11025.d0)
       f0=118*11025.d0/1024 + ntxdf
-      dfgen=11025.0/2520                     !4.375 Hz
+      dfgen=11025.d0/2520                     !4.375 Hz
       t=0.d0
       phi=0.d0
       j0=0
