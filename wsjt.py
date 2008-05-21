@@ -4,11 +4,11 @@
 #
 from Tkinter import *
 from tkFileDialog import *
-from Wsjt import Pmw
+from WsjtMod import Pmw
 from tkMessageBox import showwarning
-from Wsjt import g
+from WsjtMod import g
 import os,time
-from Wsjt import Audio
+from WsjtMod import Audio
 from math import log10
 try:
     from numpy.oldnumeric import zeros
@@ -18,7 +18,7 @@ except:
 #    print "importing from Numeric"
 import dircache
 import Image,ImageTk  #, ImageDraw
-from Wsjt.palettes import colormapblue, colormapgray0, colormapHot, \
+from WsjtMod.palettes import colormapblue, colormapgray0, colormapHot, \
      colormapAFMHot, colormapgray1, colormapLinrad, Colormap2Palette
 from types import *
 import array
@@ -2262,7 +2262,7 @@ lauto=0
 isync=1
 ntx.set(1)
 ndepth.set(0)
-from Wsjt import options
+from WsjtMod import options
 options.defaults()
 ModeFSK441()
 lookup()
@@ -2430,8 +2430,8 @@ Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+'        ')[:8]
 stopmon()
 if g.Win32: root.iconbitmap("wsjt.ico")
 root.title('  WSJT 6     by K1JT')
-from Wsjt import astro
-from Wsjt import specjt
+from WsjtMod import astro
+from WsjtMod import specjt
 
 # SpecJT has a "mainloop", so does not return until it is terminated.
 #root.mainloop()   #Superseded by mainloop in SpecJT
