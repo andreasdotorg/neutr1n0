@@ -12,8 +12,9 @@ CPPFLAGS += ${DEFS} -I.
 
 # WSJT specific Fortran flags
 FFLAGS += -Wall -fbounds-check -fno-second-underscore -ffixed-line-length-none -fPIC
-#FFLAGS += -Wall -fbounds-check -fno-second-underscore -fPIC
-#FFLAGS += -cpp -fno-second-underscore
+
+wsjt:	wsjt6
+
 # The default rules
 .c.o:
 	${CC} ${CPPFLAGS} ${CFLAGS} -c -o ${<:.c=.o} $<

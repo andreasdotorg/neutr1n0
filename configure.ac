@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-dnl AC_PREREQ(2.59)
+dnl AC_PREREQ(2.61)
 
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([$Id$])
@@ -107,9 +107,6 @@ sys/resource.h linux/ppdev.h dev/ppbus/ppi.h sys/stat.h fcntl.h sys/ioctl.h ])
 
 AC_HEADER_TIME
 
-AC_CHECK_HEADER([sys/soundcard.h], [HAS_SOUNDCARD_H=1], [HAS_SOUNDCARD_H=0])
-AC_CHECK_HEADER([alsa/asoundlib.h], [HAS_ASOUNDLIB_H=1], [HAS_ASOUNDLIB_H=0])
-AC_CHECK_HEADER([jack/jack.h], [HAS_JACK_H=1], [HAS_JACK_H=0])
 AC_CHECK_HEADER([samplerate.h], [HAS_SAMPLERATE_H=1], [HAS_SAMPLERATE_H=0])
 HAS_PORTAUDIO_H=0
 HAS_PORTAUDIO_LIB=0
@@ -252,22 +249,22 @@ dnl ====================================================
 
 if test "$g95" = yes; then
         FC_LIB_PATH=${G95_LIB_PATH}
-	FC=${G95}
+	FC=`basename ${G95}`
 	gfortran=no
 elif test "$gfortran" = yes; then
         FC_LIB_PATH=${GFORTRAN_LIB_PATH}
-	FC=${GFORTRAN}
+	FC=`basename ${GFORTRAN}`
 	g95=no
 fi
 
 if test -z $FC ; then
 	if test ! -z $GFORTRAN ; then
        		FC_LIB_PATH=${GFORTRAN_LIB_PATH}
-	        FC=${GFORTRAN}
+	        FC=`basename ${GFORTRAN}`
 		gfortran=yes
 	elif test ! -z $G95 ; then
        		FC_LIB_PATH=${G95_LIB_PATH}
-	        FC=${G95}
+	        FC=`basename ${G95}`
 		g95=yes
 	fi
 fi
@@ -285,12 +282,6 @@ AC_SUBST(FC, "${FC}")
 dnl set defaults
 dnl ============
 
-if test $HAS_ASOUNDLIB_H -eq 1; then
-	CPPFLAGS="-I/usr/include/alsa -I/usr/local/include/alsa $(CPPFLAGS)"	
-	LDFLAGS="${ASOUNDLIBS} ${LDFLAGS}"
-fi
-
-dnl =============
 dnl sanity tests.
 
 if test $HAS_PORTAUDIO -eq 0; then
@@ -312,18 +303,6 @@ dnl =====================
 
 dnl set conf flags
 dnl ==============
-
-if test $HAS_ASOUNDLIB_H -eq 1; then
-	AC_DEFINE(HAS_ASOUNDLIB_H, 1, )
-fi
-
-if test $HAS_SOUNDCARD_H -eq 1; then
-	AC_DEFINE(HAS_SOUNDCARD_H, 1, )
-fi
-
-if test $HAS_JACK_H -eq 1; then
-	AC_DEFINE(HAS_JACK_H, 1, )
-fi
 
 if test $HAS_PORTAUDIO_H -eq 1; then
 	AC_DEFINE(HAS_PORTAUDIO_H, 1, )
