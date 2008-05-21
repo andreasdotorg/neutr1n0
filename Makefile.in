@@ -1,3 +1,4 @@
+MV ?= mv
 CC ?= @CC@
 FFLAGS	= @FFLAGS@
 LDFLAGS	= @LDFLAGS@
@@ -109,6 +110,7 @@ Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	only: $(F2PYONLY) \
 	: $(SRCS2F90) \
 	${SRCS3C} ${AUDIOSRCS}
+	${MV} Audio.so Wsjt
 
 wsjt.spec: wsjt.py astro.py g.py options.py palettes.py smeter.py specjt.py
 
@@ -127,7 +129,8 @@ fourt.o: fourt.f
 
 .PHONY : clean
 clean:	@LOCAL_PORTAUDIO_CLEAN@
-	${RM} -f *.o *.pyc *.so *~ JT65code wsjt6
+	${RM} -f *.o *.pyc *.so *~ JT65code wsjt6 Wsjt/*.pyc Wsjt/*.pyc \
+		Wsjt/*.so
 
 distclean: clean
 	${RM} -f config.log config.status Makefile
