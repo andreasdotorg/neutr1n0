@@ -21,13 +21,20 @@ JT65code.exe: $(OBJS1)
 	$(FC) $(FFLAGS) /exe:JT65code.exe $(OBJS1)
 
 
-OBJS2C   = init_rs.o encode_rs.o decode_rs.o jtaudio.o fano.o tab.o
+OBJS2C   = init_rs.o encode_rs.o decode_rs.o jtaudio.o fano.o tab.o \
+	nhash.o
+
 F2PYONLY = ftn_init ftn_quit audio_init spec getfile azdist0 astro0 chkt0
+
 SRCS2F90 = a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	blanker.f90 decode1.f90 decode2.f90 decode3.f90 ftn_init.f90 \
 	ftn_quit.f90 get_fname.f90 getfile.f90 horizspec.f90 hscroll.f90 \
 	i1tor4.f90 pix2d.f90 pix2d65.f90 rfile.f90 savedata.f90 spec.f90 \
-	wsjtgen.f90 runqqq.f90 fivehz.f90 msgparms.f90 chkt0.f90
+	wsjtgen.f90 runqqq.f90 fivehz.f90 msgparms.f90 chkt0.f90 \
+	genwspr.f90 wqencode.f90 wqdecode.f90 packpfx.f90 unpackpfx.f90 \
+	hash.f90 packprop.f90 unpackprop.f90 packname.f90 unpackname.f90 \
+	packtext2.f90 unpacktext2.f90
+
 SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	stdecode.f indexx.f s2shape.f flat2.f gen65.f gen24.f entail.f \
 	genmet.f wsjt24.f sync24.f ps24.f fourt.f xcor24.f decode24.f\
@@ -45,7 +52,7 @@ SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	deg2grid.f dot.f ftsky.f geocentric.f GeoDist.f grid2deg.f \
 	moon2.f MoonDop.f sun.f toxyz.f pfxdump.f \
 	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f decodecw.f \
-	foldcw.f
+	foldcw.f encode232.f inter_mept.f pack50.f unpack50.f
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c
 
@@ -64,8 +71,10 @@ Audio.pyd: $(OBJS2C) $(SRCS2F90) $(SRCS2F77) $(SRCS2C)
 	-m Audio \
 	only: $(F2PYONLY) : \
 	$(SRCS2F90) $(SRCS2F77) $(SRCS2C)
+	mv Audio.pyd WsjtMod/Audio.pyd
 
-wsjt.spec: wsjt.py astro.py g.py options.py palettes.py smeter.py specjt.py
+wsjt.spec: wsjt.py WsjtMod/astro.py WsjtMod/g.py WsjtMod/options.py \
+	WsjtMod/palettes.py WsjtMod/smeter.py WsjtMod/specjt.py
 	python c:\python23\installer\makespec.py --icon wsjt.ico \
 	--tk --onefile wsjt.py
 
@@ -99,6 +108,8 @@ igray.obj: igray.c
 fano.o: fano.c
 	$(CC) /nologo /c /Fofano.o fano.c
 
+nhash.o: nhash.c
+	$(CC) /nologo /c /Fonhash.o nhash.c
 tab.o: tab.c
 	$(CC) /nologo /c /Fotab.o tab.c
 
