@@ -77,8 +77,9 @@
 	ndiag=1
 	close(16)
 
- 4	if(jz.gt.655360) jz=655360
+ 4	if(mode.lt.8 .and. jz.gt.655360) jz=655360
 	if(mode.eq.4 .and. jz.gt.330750) jz=330750	!### Fix this!
+ 	if(mode.eq.8 .and. jz.gt.1323000) jz=1323000
 
 	sum=0.
 	do j=1,jz            !Convert raw data from i*2 to real, remove DC
@@ -295,16 +296,6 @@ C  Call the decoder if DF is in range or Freeze is off.
 
 !  If we're in WSPR mode, call the wspr routines.
   	if(mode.eq.8) then
-!  Lowpass filter and decimate by 2
- 	   call lpf1(dat,jz,jz2,MouseDF,MouseDF2)
-	   idf=mousedf-mousedf2
- 	   jz=jz2
- 	   nadd=1
- 	   fzap(1)=0.
- 	   if(nzap.eq.1) call avesp2(dat,jz,nadd,mode,NFreeze,MouseDF2,
-     +       DFTolerance,fzap)
-    	   if(nzap.eq.1.and.nstest.eq.0) call bzap(dat,jz,nadd,mode,fzap)
-
  	   i=index(MyCall,char(0))
 	   if(i.le.0) i=index(MyCall,' ')
  	   mycall=MyCall(1:i-1)//'            '
@@ -373,6 +364,7 @@ C  Now the multi-tone decoding
 	call flushqqq(11)
 	call flushqqq(12)
 	call flushqqq(21)
+	print*,'End of wsjt1'
 
  	return
  	end

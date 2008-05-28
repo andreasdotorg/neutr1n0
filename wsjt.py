@@ -678,19 +678,22 @@ def ModeCW(event=NONE):
 #------------------------------------------------------ ModeWSPR
 def ModeWSPR():
     global slabel,isync,isync65,textheight,itol
+    ModeJT65()
     mode.set("WSPR")
     if lauto: toggleauto()
     cleartext()
     Audio.gcom1.trperiod=120
     iframe4b.pack_forget()
-##    text.configure(height=9)
-##    bclravg.configure(state=DISABLED)
-##    binclude.configure(state=DISABLED)
-##    bexclude.configure(state=DISABLED)
+    text.configure(height=9)
+    bclravg.configure(state=DISABLED)
+    binclude.configure(state=DISABLED)
+    bexclude.configure(state=DISABLED)
+    cbafc.configure(state=DISABLED)
+
 ##    cbfreeze.configure(state=DISABLED)
-##    cbafc.configure(state=DISABLED)
+##    btxdf.configure(state=DISABLED)
+
     if ltxdf: toggletxdf()
-    btxdf.configure(state=DISABLED)
     report.configure(state=NORMAL)
     ntx.set(1)
     GenStdMsgs()
@@ -1588,7 +1591,8 @@ def update():
             if ntx.get()==1 and noshjt65.get()==1: Audio.gcom2.ntx2=1
 
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4' or mode.get()[:2]=='CW':
+               mode.get()[:3]=='JT4' or mode.get()[:2]=='CW' or \
+               mode.get()=='WSPR':
             graph2.delete(ALL)
             graph2.create_text(80,13,anchor=CENTER,text="Moon",font=g2font)
             graph2.create_text(13,37,anchor=W, text="Az: %6.2f" % g.AzMoon,font=g2font)
@@ -1761,8 +1765,9 @@ def update():
             cmap0=g.cmap
 
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-                                     mode.get()[:3]=='JT4':
-            plot_large()
+                mode.get()[:3]=='JT4' or mode.get()=='WSPR':
+            if mode.get()!='WSPR':
+                plot_large()
         else:    
             im.putdata(Audio.gcom2.b)
             pim=ImageTk.PhotoImage(im)          #Convert Image to PhotoImage

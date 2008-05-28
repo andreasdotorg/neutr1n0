@@ -4,7 +4,7 @@ subroutine decode3(d2,jz,istart,filename)
   use dfport
 #endif
 
-  integer*2 d2(jz),d2d(65*11025)
+  integer*2 d2(jz),d2d(125*11025)
   character*24 filename
   character FileID*40
   include 'gcom1.f90'
