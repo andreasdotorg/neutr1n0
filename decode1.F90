@@ -25,7 +25,7 @@ subroutine decode1(iarg)
 
 10 continue
   if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4'  &
-       .or. mode(1:2).eq.'CW') then
+       .or. mode(1:2).eq.'CW' .or. mode(1:4).eq.'WSPR') then
      if(rxdone) then
         call savedata
         rxdone=.false.

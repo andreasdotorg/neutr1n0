@@ -117,7 +117,8 @@ subroutine wsjtgen
   dt=1.d0/fsample_out
   LTone=2
 
-  if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4') then
+  if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or.                  &
+       mode(1:3).eq.'JT4' .or. mode(1:4).eq.'WSPR') then
      if(mode(1:4).eq.'JT65') then
 !  We're in JT65 mode.
         if(mode(5:5).eq.'A') mode65=1
@@ -125,6 +126,8 @@ subroutine wsjtgen
         if(mode(5:5).eq.'C') mode65=4
         call gen65(msg,mode65,samfacout,ntxdf,iwave,nwave,sendingsh,   &
              msgsent,nmsg0)
+     else if(mode(1:4).eq.'WSPR') then
+        call genwspr(msg,samfacout,ntxdf,iwave,nwave,msgsent)
      else
         call gen24(msg,mode,mode4,samfacout,ntxdf,iwave,nwave,sendingsh,     &
              msgsent,nmsg0)

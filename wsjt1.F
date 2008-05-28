@@ -291,6 +291,27 @@ C  Call the decoder if DF is in range or Freeze is off.
      +        Nseg,MouseDF2,NAgain,ndepth,neme,idf,mycall,hiscall,
      +        hisgrid,lumsg,lcum,nspecial,ndf,NSyncOK,ccf,psavg,ndiag)
  	   goto 900
+	endif
+
+!  If we're in WSPR mode, call the wspr routines.
+  	if(mode.eq.8) then
+!  Lowpass filter and decimate by 2
+ 	   call lpf1(dat,jz,jz2,MouseDF,MouseDF2)
+	   idf=mousedf-mousedf2
+ 	   jz=jz2
+ 	   nadd=1
+ 	   fzap(1)=0.
+ 	   if(nzap.eq.1) call avesp2(dat,jz,nadd,mode,NFreeze,MouseDF2,
+     +       DFTolerance,fzap)
+    	   if(nzap.eq.1.and.nstest.eq.0) call bzap(dat,jz,nadd,mode,fzap)
+
+ 	   i=index(MyCall,char(0))
+	   if(i.le.0) i=index(MyCall,' ')
+ 	   mycall=MyCall(1:i-1)//'            '
+
+	   print*,'Calling WSPR decoder',jz
+
+ 	   goto 900
  	endif
 
 

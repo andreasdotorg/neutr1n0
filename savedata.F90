@@ -1,4 +1,3 @@
-!----------------------------------------------------------- savedata
 subroutine savedata
 
 #ifdef CVF
@@ -13,7 +12,7 @@ subroutine savedata
   save
 
   if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4'   &
-       .or. mode(1:2).eq.'CW') then
+       .or. mode(1:2).eq.'CW' .or. mode(1:4).eq.'WSPR') then
      call get_fname(hiscall,ntime,trperiod,lauto,fname0)
      ibuf1=ibuf0
      ibuf2=ibuf
@@ -31,12 +30,13 @@ subroutine savedata
 1 jza=2048*(ibuf2-ibuf1)
   if(jza.lt.0) jza=jza+NRxMax
   if(jza.lt.110250) go to 999           !Don't save files less than 10 s
-  if(jza.gt.60*11025) go to 999         !Don't save if something's fishy
+  if(jza.gt.120*11025) go to 999         !Don't save if something's fishy
   k=2048*(ibuf1-1)
   if(mode(1:4).ne.'JT65' .and. mode(1:3).ne.'JT2' .and. mode(1:3).ne.'JT4'   &
-       .and. mode(1:2).ne.'CW') k=k+3*2048
+       .and. mode(1:4).ne.'WSPR' .and. mode(1:2).ne.'CW') k=k+3*2048
   if(mode(1:4).ne.'JT65' .and. mode(1:3).ne.'JT2' .and. mode(1:3).ne.'JT4'   &
-       .and. mode(1:2).ne.'CW' .and. jza.gt.30*11025) then
+       .and. mode(1:4).ne.'WSPR' .and. mode(1:2).ne.'CW' .and.               &
+       jza.gt.30*11025) then
      k=k + (jza-30*11025)
      if(k.gt.NRxMax) k=k-NRxMax
      jza=30*11025
@@ -127,8 +127,8 @@ subroutine savedata
 30   continue
   endif
 
-999 if(mode(1:4).ne.'JT65' .and. mode(1:3).ne.'JT2' .and. mode(1:3).ne.'JT4'  &
-         .and. mode(1:2).ne.'CW') then
+999 if(mode(1:4).ne.'JT65' .and. mode(1:3).ne.'JT2' .and. mode(1:3).ne.'JT2' &
+         .and. mode(1:3).ne.'JT4' .and. mode(1:2).ne.'CW') then
      ibuf0z=ibuf0
      call get_fname(hiscall,ntime,trperiod,lauto,fname0)
   endif

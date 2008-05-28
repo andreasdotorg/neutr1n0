@@ -291,7 +291,7 @@ def update():
         root_geom=root.geometry()
         g.rms=Audio.gcom1.rms
         if isec==0: nscroll=0
-        if isec==59: newMinute=1
+        if isec==59 and (g.mode!='WSPR' or utc[4]%2==1): newMinute=1
 
     if g.showspecjt==1:
         showspecjt()
@@ -337,7 +337,7 @@ def update():
         if Audio.gcom2.monitoring:
             if minsep.get() and newMinute:
                 draw.line((0,0,749,0),fill=128)     #Draw the minute separator
-            if nscroll == 13:
+            if nscroll == 13 and (g.mode!='WSPR' or utc[4]%2==0):
                 draw.text((5,2),t0[0:5],fill=253)   #Insert time label
         else:
             if minsep.get():

@@ -193,8 +193,8 @@ def textsize():
     if textheight <= 9:
         textheight=21
     else:
-        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4':
+        if mode.get()[:4]=='JT65' or mode.get()=='WSPR' or \
+               mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
             textheight=7
         else:
             textheight=9
@@ -238,8 +238,8 @@ def dbl_click_text(event):
 
 #------------------------------------------------------ dbl_click3_text
 def dbl_click3_text(event):
-    if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4':
+    if mode.get()[:4]=='JT65' or mode.get()=='WSPR' or \
+           mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
         t=text.get('1.0',END)           #Entire contents of text box
         t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
         n=t1.rfind("\n")
@@ -675,6 +675,28 @@ def ModeCW(event=NONE):
         GenStdMsgs()
         erase()
 
+#------------------------------------------------------ ModeWSPR
+def ModeWSPR():
+    global slabel,isync,isync65,textheight,itol
+    mode.set("WSPR")
+    if lauto: toggleauto()
+    cleartext()
+    Audio.gcom1.trperiod=120
+    iframe4b.pack_forget()
+##    text.configure(height=9)
+##    bclravg.configure(state=DISABLED)
+##    binclude.configure(state=DISABLED)
+##    bexclude.configure(state=DISABLED)
+##    cbfreeze.configure(state=DISABLED)
+##    cbafc.configure(state=DISABLED)
+    if ltxdf: toggletxdf()
+    btxdf.configure(state=DISABLED)
+    report.configure(state=NORMAL)
+    ntx.set(1)
+    GenStdMsgs()
+    erase()
+
+
 #------------------------------------------------------ ModeJT2
 def ModeJT2():
     global slabel,isync,isync65,textheight,itol
@@ -758,12 +780,15 @@ def about(event=NONE):
     Label(about,text=t,font=(font1,16)).pack(padx=20,pady=5)
     t="""
 WSJT is a weak signal communications program.  It supports
-four operating modes:
+these operating modes:
 
   1. FSK441 - fast mode for meteor scatter
   2. JT6M   - optimized for meteor and ionospheric scatter on 50 MHz
   3. JT65   - for EME and troposcatter
   4. CW     - 15 WPM Morse code, messages structured for EME
+  5. JT2    - for HF and EME
+  6. JT4    - for HF and EME
+  7. WSPR   - for HF and EME
 
 Copyright (c) 2001-2007 by Joseph H. Taylor, Jr., K1JT, with
 contributions from additional authors.  WSJT is Open Source 
@@ -953,7 +978,8 @@ def azdist():
         labDist.configure(text="")
     else:
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4' or mode.get()[:2]=="CW":
+               mode.get()[:3]=='JT4' or mode.get()[:2]=="CW" or \
+               mode.get()=='WSPR':
             labAz.configure(text="Az: %d" % (naz,))
             labHotAB.configure(text="",bg='gray85')
         else:
@@ -1001,7 +1027,7 @@ def decclip(event):
 def inctol(event=NONE):
     global itol
     maxitol=5
-    if mode.get()[:4]=='JT65':
+    if mode.get()[:4]=='JT65' or mode.get()=='WSPR':
         maxitol=6
     if itol<maxitol: itol=itol+1
     ltol.configure(text='Tol    '+str(ntol[itol]))
@@ -1060,7 +1086,8 @@ def dectrperiod(event):
 def erase(event=NONE):
     graph1.delete(ALL)
     if mode.get()[:4]!="JT65" and mode.get()[:2]!="CW" and \
-            mode.get()[:3]!='JT2' and mode.get()[:3]!='JT4':
+            mode.get()!="WSPR" and mode.get()[:3]!='JT2' and \
+            mode.get()[:3]!='JT4':
         graph2.delete(ALL)
     text.configure(state=NORMAL)
     text.delete('1.0',END)
@@ -1150,7 +1177,7 @@ def toggletxdf(event=NONE):
 # Readout of graphical cursor location
 def dtdf_change(event):
     if mode.get()[:4]!='JT65' and mode.get()[:3]!='JT2' and \
-               mode.get()[:3]!='JT4':
+               mode.get()[:3]!='JT4' and mode.get()!='WSPR':
         t="%.1f" % (event.x*30.0/500.0,)
         lab6.configure(text=t,bg='green')
     else:
@@ -1174,7 +1201,7 @@ def mouse_click_g1(event):
     global nopen
     if not nopen:
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4':
+               mode.get()[:3]=='JT4' or mode.get()=='WSPR':
             Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)
         else:
             if Audio.gcom2.ndecoding==0:              #If decoder is busy, ignore
@@ -1190,7 +1217,8 @@ def mouse_click_g1(event):
 #------------------------------------------------------ double-click_g1
 def double_click_g1(event):
     if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-        mode.get()[:3]=='JT4') and Audio.gcom2.ndecoding==0:
+        mode.get()[:3]=='JT4' or mode.get()=='WSPR') and \
+        Audio.gcom2.ndecoding==0:
         g.freeze_decode=1
     
 #------------------------------------------------------ mouse_up_g1
@@ -1273,6 +1301,47 @@ def GenStdMsgs(event=NONE):
         tx4.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [RRR]")
         tx5.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [73]")
         tx6.insert(0,"[CQ " + options.MyCall.get() + "]")
+    elif mode.get()=="WSPR":
+        if options.MyCall.get()!= MyCall0 or \
+               options.addpfx.get()!= addpfx0 or ToRadio.get()!=ToRadio0:
+            MyCall0=options.MyCall.get()
+            addpfx0=options.addpfx.get()
+            ToRadio0=ToRadio.get()
+            t0=("SM5BSZ "+options.MyCall.get()).upper()
+            Audio.gcom2.t0msg=(t0+'                      ')[:22]
+            nplain,naddon,ndiff=Audio.chkt0()
+            if nplain==1:
+                MsgBox("Bad 'MyCall' or bad prefix/suffix?\nPlease check on Setup | Options screen.")
+                options1()
+            t0=("SM5BSZ "+ToRadio0).upper()
+            Audio.gcom2.t0msg=(t0+'                      ')[:22]
+            nplain,naddon,ndiff=Audio.chkt0()
+            if nplain==1:
+                MsgBox("Bad call in To Radio?\nPlease check.")
+            
+        t0=("<" + ToRadio.get() + "> "+options.MyCall.get()).upper()
+        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+##        nplain,naddon,ndiff=Audio.chkt0()
+##        if nplain==0 and naddon==0 and ndiff==0:
+##            t0=t0 + " "+options.MyGrid.get()[:4]
+        tx1.insert(0,t0.upper())
+        t2=(ToRadio.get() + " <"+options.MyCall.get() + "> S1").upper()
+        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        tx2.insert(0,t2)
+        t3=(ToRadio.get() + " <"+options.MyCall.get() + "> R S1").upper()
+        tx3.insert(0,t3)
+        t4=("<" + ToRadio.get() + "> " + options.MyCall.get() + " RRR").upper()
+        tx4.insert(0,t4)
+        t5=("73 DE "+options.MyCall.get()+ " "+options.MyGrid.get()[:4]).upper()
+        tx5.insert(0,t5)
+
+        t0="CQ " + options.MyCall.get().upper()
+        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        nplain,naddon,ndiff=Audio.chkt0()
+        if nplain==0 and naddon==0 and ndiff==0:
+            t0=t0 + " "+options.MyGrid.get()[:4]
+        tx6.insert(0,t0.upper())
+        altmsg=0
     
 #------------------------------------------------------ GenAltMsgs
 def GenAltMsgs(event=NONE):
@@ -1568,6 +1637,8 @@ def update():
             msg2.configure(bg='#FF00FF')
         elif mode.get()=="CW":
             msg2.configure(bg='#00FF00')
+        elif mode.get()=="WSPR":
+            msg2.configure(bg='#FF8888')
         elif mode.get()=="JT2":
             msg2.configure(bg='#8888FF')
         elif mode.get()[:3]=="JT4":
@@ -1744,6 +1815,8 @@ def update():
     Audio.gcom2.nchallenge=nchallenge.get()
     if mode.get()=='CW':
         Audio.gcom2.ntdecode=56
+    elif mode.get()=='WSPR':
+        Audio.gcom2.ntdecode=114
     else:
         if qdecode.get():
             Audio.gcom2.ntdecode=48
@@ -1848,6 +1921,7 @@ modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C, \
                          accelerator='Ctrl+F8')
 modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW, \
                          accelerator='Shift+Ctrl+F8')
+modemenu.add_radiobutton(label = 'WSPR', variable=mode, command = ModeWSPR)
 modemenu.add_radiobutton(label = 'JT2', variable=mode, command = ModeJT2)
 modemenu.add_radiobutton(label = 'JT4A', variable=mode, command = ModeJT4A)
 modemenu.add_radiobutton(label = 'JT4B', variable=mode, command = ModeJT4B)
@@ -2302,6 +2376,8 @@ try:
                 ModeJT6M()
             elif value=='CW':
                 ModeCW()
+            elif value=='WSPR':
+                ModeWSPR()
             elif value=='JT2':
                 ModeJT2()
             elif value[:3]=='JT4':

@@ -1,4 +1,3 @@
-!---------------------------------------------------- decode3
 subroutine decode3(d2,jz,istart,filename)
 
 #ifdef CVF
@@ -24,8 +23,8 @@ subroutine decode3(d2,jz,istart,filename)
      if(mode(5:5).eq.'B') mode65=2
      if(mode(5:5).eq.'C') mode65=4
   endif
-  if(mode.eq.'Echo') nmode=3
-  if(mode.eq.'JT6M') nmode=4
+  if(mode(1:4).eq.'Echo') nmode=3
+  if(mode(1:4).eq.'JT6M') nmode=4
   if(mode(1:2).eq.'CW') nmode=5
   if(mode(1:3).eq.'JT2') nmode=6
   if(mode(1:3).eq.'JT4') then
@@ -38,6 +37,7 @@ subroutine decode3(d2,jz,istart,filename)
 !     if(mode(4:4).eq.'F') mode4=36
 !     if(mode(4:4).eq.'G') mode4=72
   endif
+  if(mode(1:4).eq.'WSPR') nmode=8
 
 
   sum=0.
@@ -53,7 +53,8 @@ subroutine decode3(d2,jz,istart,filename)
   if(nblank.ne.0) call blanker(d2d,jz)
 
   nseg=1
-  if(mode(1:4).eq.'JT65' .or. nmode.eq.6 .or. nmode.eq.7) then
+  if(mode(1:4).eq.'JT65' .or. nmode.eq.6 .or. nmode.eq.7 .or.           &
+       nmode.eq.8) then
      i=index(FileID,'.')-3
      if(FileID(i:i).eq.'1'.or.FileID(i:i).eq.'3'.or.FileID(i:i).eq.'5'  &
           .or.FileID(i:i).eq.'7'.or.FileID(i:i).eq.'9') nseg=2
@@ -94,7 +95,7 @@ subroutine decode3(d2,jz,istart,filename)
   
   nclearave=0
   nagain=0
-  if(mode(1:4).eq.'JT65' .or. nmode.eq.6 .or. nmode.eq.7) then
+  if(mode(1:4).eq.'JT65' .or. nmode.eq.6 .or. nmode.eq.7 .or. nmode.eq.8 ) then
      call pix2d65(d2d,jz)
   else if(mode.eq.'FSK441') then
      nz=s2(1,1)

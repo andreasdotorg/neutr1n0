@@ -65,9 +65,11 @@ int main(void)
     fflush(stdout);
 
     /* Open simplified blocking I/O layer on top of PortAudio. */
+    printf("A\n");
     err = OpenAudioStream( &aOutStream, SAMPLE_RATE, paFloat32,
                            (PABLIO_WRITE | PABLIO_STEREO) );
     if( err != paNoError ) goto error;
+    printf("B\n");
 
     /* Initialize oscillator phases. */
     phases[0] = 0.0;

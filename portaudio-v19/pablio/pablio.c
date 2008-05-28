@@ -53,7 +53,7 @@
 
 static int blockingIOCallback( void *inputBuffer, void *outputBuffer,
                                unsigned long framesPerBuffer,
-                               PaTimestamp outTime, void *userData );
+                               PaTime outTime, void *userData );
 static PaError PABLIO_InitFIFO( RingBuffer *rbuf, long numFrames, long bytesPerFrame );
 static PaError PABLIO_TermFIFO( RingBuffer *rbuf );
 
@@ -66,7 +66,7 @@ static PaError PABLIO_TermFIFO( RingBuffer *rbuf );
  */
 static int blockingIOCallback( void *inputBuffer, void *outputBuffer,
                                unsigned long framesPerBuffer,
-                               PaTimestamp outTime, void *userData )
+                               PaTime outTime, void *userData )
 {
     PABLIO_Stream *data = (PABLIO_Stream*)userData;
     long numBytes = data->bytesPerFrame * framesPerBuffer;
@@ -221,7 +221,8 @@ PaError OpenAudioStream( PABLIO_Stream **rwblPtr, double sampleRate,
     /* Warning: numFrames must be larger than amount of data processed per interrupt
      *    inside PA to prevent glitches. Just to be safe, adjust size upwards.
      */
-    minNumBuffers = 2 * Pa_GetMinNumBuffers( FRAMES_PER_BUFFER, sampleRate );
+    //    minNumBuffers = 2 * Pa_GetMinNumBuffers( FRAMES_PER_BUFFER, sampleRate );
+    minNumBuffers = 2;
     numFrames = minNumBuffers * FRAMES_PER_BUFFER;
     numFrames = RoundUpToNextPowerOf2( numFrames );
 
@@ -247,11 +248,11 @@ PaError OpenAudioStream( PABLIO_Stream **rwblPtr, double sampleRate,
      * audio drivers. */
     err = Pa_OpenStream(
               &aStream->stream,
-              (doRead ? Pa_GetDefaultInputDeviceID() : paNoDevice),
+              (doRead ? Pa_GetDefaultInputDevice() : paNoDevice),
               (doRead ? aStream->samplesPerFrame : 0 ),
               format,
               NULL,
-              (doWrite ? Pa_GetDefaultOutputDeviceID() : paNoDevice),
+              (doWrite ? Pa_GetDefaultOutputDevice() : paNoDevice),
               (doWrite ? aStream->samplesPerFrame : 0 ),
               format,
               NULL,

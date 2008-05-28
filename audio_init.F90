@@ -1,4 +1,3 @@
-!------------------------------------------------ audio_init
 subroutine audio_init(ndin,ndout)
 
 #ifdef CVF
@@ -17,8 +16,13 @@ subroutine audio_init(ndin,ndout)
      if(mode(5:5).eq.'B') mode65=2
      if(mode(5:5).eq.'C') mode65=4
   endif
-  if(mode.eq.'Echo') nmode=3
-  if(mode.eq.'JT6M') nmode=4
+  if(mode(1:4).eq.'Echo') nmode=3
+  if(mode(1:4).eq.'JT6M') nmode=4
+  if(mode(1:2).eq.'CW') nmode=5
+  if(mode(1:3).eq.'JT2') nmode=6
+  if(mode(1:3).eq.'JT4') nmode=7
+  if(mode(1:4).eq.'WSPR') nmode=8
+
   ndevin=ndin
   ndevout=ndout
   TxOK=0
