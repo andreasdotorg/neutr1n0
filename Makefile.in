@@ -1,7 +1,7 @@
 MV ?= mv
 CC ?= @CC@
 FFLAGS	= @FFLAGS@
-FFLAGS	+= -fdefault-integer-8
+FFLAGS	+= -fno-range-check
 LDFLAGS	= @LDFLAGS@
 LIBS	= @LIBS@
 CPPFLAGS = @CPPFLAGS@
