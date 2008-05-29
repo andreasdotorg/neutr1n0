@@ -1,80 +1,80 @@
       SUBROUTINE FOURT(DATA,NN,NDIM,ISIGN,IFORM,WORK)
 c
-c     the cooley-tukey fast fourier transform in usasi basic fortran
+c     The Cooley-Tukey FFT in USASI basic fortran
 c
 c     transform(j1,j2,,,,) = sum(data(i1,i2,,,,)*w1**((i2-1)*(j2-1))
 c                                 *w2**((i2-1)*(j2-1))*,,,),
 c     where i1 and j1 run from 1 to nn(1) and w1=exp(isign*2*pi=
-c     sqrt(-1)/nn(1)), etc.  there is no limit on the dimensionality
-c     (number of subscripts) of the data array.  if an inverse
+c     sqrt(-1)/nn(1)), etc.  There is no limit on the dimensionality
+c     (number of subscripts) of the data array.  If an inverse
 c     transform (isign=+1) is performed upon an array of transformed
-c     (isign=-1) data, the original data will reappear.
-c     multiplied by nn(1)*nn(2)*,,,  the array of input data must be
-c     in complex format.  however, if all imaginary parts are zero (i.e.
+c     (isign=-1) data, the original data will reappear,
+c     multiplied by nn(1)*nn(2)*...  The array of input data must be
+c     in complex format.  However, if all imaginary parts are zero (i.e.
 c     the data are disguised real) running time is cut up to forty per-
-c     cent.  (for fastest transform of real data, nn(1) should be even.)
-c     the transform values are always complex and are returned in the
-c     original array of data, replacing the input data.  the length
-c     of each dimension of the data array may be any integer.  the
+c     cent.  (For fastest transform of real data, nn(1) should be even.)
+c     The transform values are always complex and are returned in the
+c     original array of data, replacing the input data.  The length
+c     of each dimension of the data array may be any integer.  The
 c     program runs faster on composite integers than on primes, and is
 c     particularly fast on numbers rich in factors of two.
 c
-c     timing is in fact given by the following formula.  let ntot be the
+c     Timing is in fact given by the following formula.  Let ntot be the
 c     total number of points (real or complex) in the data array, that
-c     is, ntot=nn(1)*nn(2)*...  decompose ntot into its prime factors,
-c     such as 2**k2 * 3**k3 * 5**k5 * ...  let sum2 be the sum of all
-c     the factors of two in ntot, that is, sum2 = 2*k2.  let sumf be
-c     the sum of all other factors of ntot, that is, sumf = 3*k3*5*k5*..
-c     the time taken by a multidimensional transform on these ntot data
-c     is t = t0 + ntot*(t1+t2*sum2+t3*sumf).  on the cdc 3300 (floating
+c     is, ntot=nn(1)*nn(2)*...  Decompose ntot into its prime factors,
+c     such as 2**k2 * 3**k3 * 5**k5 * ...  Let sum2 be the sum of all
+c     the factors of two in ntot, that is, sum2 = 2*k2.  Let sumf be
+c     the sum of all other factors of ntot, that is, sumf = 3*k3*5*k5*...
+c     The time taken by a multidimensional transform on these ntot data
+c     is t = t0 + ntot*(t1+t2*sum2+t3*sumf).  On the cdc 3300 (floating
 c     point add time = six microseconds), t = 3000 + ntot*(600+40*sum2+
 c     175*sumf) microseconds on complex data.
 c
-c     implementation of the definition by summation will run in a time
-c     proportional to ntot*(nn(1)+nn(2)+...).  for highly composite ntot
-c     the savings offered by this program can be dramatic.  a one-dimen-
+c     Implementation of the definition by summation will run in a time
+c     proportional to ntot*(nn(1)+nn(2)+...).  For highly composite ntot
+c     the savings offered by this program can be dramatic.  A one-dimen-
 c     sional array 4000 in length will be transformed in 4000*(600+
 c     40*(2+2+2+2+2)+175*(5+5+5)) = 14.5 seconds versus about 4000*
 c     4000*175 = 2800 seconds for the straightforward technique.
 c
-c     the fast fourier transform places three restrictions upon the
+c     The fast fourier transform places three restrictions upon the
 c     data.
-c     1.  the number of input data and the number of transform values
+c     1.  The number of input data and the number of transform values
 c     must be the same.
-c     2.  both the input data and the transform values must represent
+c     2.  Both the input data and the transform values must represent
 c     equispaced points in their respective domains of time and
-c     frequency.  calling these spacings deltat and deltaf, it must be
-c     true that deltaf=2*pi/(nn(i)*deltat).  of course, deltat need not
+c     frequency.  Calling these spacings deltat and deltaf, it must be
+c     true that deltaf=2*pi/(nn(i)*deltat).  Of course, deltat need not
 c     be the same for every dimension.
-c     3.  conceptually at least, the input data and the transform output
+c     3.  Conceptually at least, the input data and the transform output
 c     represent single cycles of periodic functions.
 c
-c     the calling sequence is--
+c     The calling sequence is:
 c     call fourt(data,nn,ndim,isign,iform,work)
 c
-c     data is the array used to hold the real and imaginary parts
-c     of the data on input and the transform values on output.  it
+c     Data is the array used to hold the real and imaginary parts
+c     of the data on input and the transform values on output.  It
 c     is a multidimensional floating point array, with the real and
 c     imaginary parts of a datum stored immediately adjacent in storage
-c     (such as fortran iv places them).  normal fortran ordering is
-c     expected, the first subscript changing fastest.  the dimensions
+c     (such as fortran iv places them).  Normal fortran ordering is
+c     expected, the first subscript changing fastest.  The dimensions
 c     are given in the integer array nn, of length ndim.  isign is -1
 c     to indicate a forward transform (exponential sign is -) and +1
 c     for an inverse transform (sign is +).  iform is +1 if the data are
-c     complex, 0 if the data are real.  if it is 0, the imaginary
-c     parts of the data must be set to zero.  as explained above, the
+c     complex, 0 if the data are real.  If it is 0, the imaginary
+c     parts of the data must be set to zero.  As explained above, the
 c     transform values are always complex and are stored in array data.
-c     work is an array used for working storage.  it is floating point
+c     work is an array used for working storage.  It is floating point
 c     real, one dimensional of length equal to twice the largest array
-c     dimension nn(i) that is not a power of two.  if all nn(i) are
+c     dimension nn(i) that is not a power of two.  If all nn(i) are
 c     powers of two, it is not needed and may be replaced by zero in the
-c     calling sequence.  thus, for a one-dimensional array, nn(1) odd,
-c     work occupies as many storage locations as data.  if supplied,
-c     work must not be the same array as data.  all subscripts of all
+c     calling sequence.  Thus, for a one-dimensional array, nn(1) odd,
+c     work occupies as many storage locations as data.  If supplied,
+c     work must not be the same array as data.  All subscripts of all
 c     arrays begin at one.
 c
-c     example 1.  three-dimensional forward fourier transform of a
-c     complex array dimensioned 32 by 25 by 13 in fortran iv.
+c     Example 1:  Three-dimensional forward fourier transform of a
+c     complex array dimensioned 32 by 25 by 13 in fortran IV.
 c     dimension data(32,25,13),work(50),nn(3)
 c     complex data
 c     data nn/32,25,13/
@@ -84,32 +84,32 @@ c     do 1 k=1,13
 c  1  data(i,j,k)=complex value
 c     call fourt(data,nn,3,-1,1,work)
 c
-c     example 2.  one-dimensional forward transform of a real array of
-c     length 64 in fortran ii,
+c     Example 2:  One-dimensional forward transform of a real array of
+c     length 64 in fortran II.
 c     dimension data(2,64)
 c     do 2 i=1,64
 c     data(1,i)=real part
 c  2  data(2,i)=0.
 c     call fourt(data,64,1,-1,0,0)
 c
-c     there are no error messages or error halts in this program.  the
+c     There are no error messages or error halts in this program.  The
 c     program returns immediately if ndim or any nn(i) is less than one.
 c
-c     program by norman brenner from the basic program by charles
-c     rader,  june 1967.  the idea for the digit reversal was
-c     suggested by ralph alter.
+c     Program by Norman Brenner from the basic program by Charles
+c     Rader, June 1967.  The idea for the digit reversal was
+c     suggested by Ralph Alter.
 c
-c     this is the fastest and most versatile version of the fft known
-c     to the author.  a program called four2 is available that also
-c     performs the fast fourier transform and is written in usasi basic
-c     fortran.  it is about one third as long and restricts the
+c     This is the fastest and most versatile version of the FFT known
+c     to the author.  A program called four2 is available that also
+c     performs the fast fourier transform and is written in USASI basic
+c     fortran.  It is about one third as long and restricts the
 c     dimensions of the input array (which must be complex) to be powers
-c     of two.  another program, called four1, is one tenth as long and
+c     of two.  Another program, called four1, is one tenth as long and
 c     runs two thirds as fast on a one-dimensional complex array whose
 c     length is a power of two.
 c
-c     reference--
-c     ieee audio transactions (june 1967), special issue on the fft.
+c     Reference:
+c     IEEE Audio Transactions (June 1967), special issue on the FFT.
 c
 C     .. Scalar Arguments ..
       INTEGER IFORM,ISIGN,NDIM

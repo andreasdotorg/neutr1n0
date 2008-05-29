@@ -63,6 +63,7 @@ integer msmax          !(why is this here?)
 integer lenappdir      !Length of Appdir string                 GUI
 integer idf            !Frequency offset in Hz                  Decoder
 integer ndiskdat       !1 if data read from disk, 0 otherwise   GUI
+integer nfsam          !Sample rate for data read from disk     Decoder
 integer nlines         !Available lines of waterfall data       GUI
 integer nflat          !Is waterfall to be flattened?           GUI
 integer ntdecode       !Time to start decoding in JT65 modes    GUI
@@ -100,8 +101,8 @@ common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      nclearave,nfreeze,nafc,nmode,mode65,mode4,nclip,ndebug,nblank,nport,   &
      mousedf,neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,ntxdf, &
      shok,sendingsh,d2a(ND2MAX),d2b(ND2MAX),b(60000),jza,jzb,ntime,   &
-     idinterval,msmax,lenappdir,idf,ndiskdat,nlines,nflat,ntdecode,   &
-     ntxreq,ntxnow,nchallenge,                                        &
+     idinterval,msmax,lenappdir,idf,ndiskdat,nfsam,nlines,nflat,      &
+     ntdecode,ntxreq,ntxnow,nchallenge,                               &
      ndepth,nspecial,ndf,nfmid,nforce,nfrange,ss1(-224:224),ss2(-224:224),   &
      mycall,hiscall,hisgrid,txmsg,sending,mode,fname0,fnamea,         &
      fnameb,decodedfile,AppDir,AzElDir,filetokilla,filetokillb,       &

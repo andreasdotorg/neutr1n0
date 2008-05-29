@@ -301,7 +301,7 @@ C  Call the decoder if DF is in range or Freeze is off.
 	   if(i.le.0) i=index(MyCall,' ')
  	   mycall=MyCall(1:i-1)//'            '
 
-	   print*,'Calling WSPR decoder',jz
+	   call wsjtwspr(dat,jz)
 
  	   goto 900
  	endif
@@ -365,7 +365,6 @@ C  Now the multi-tone decoding
 	call flushqqq(11)
 	call flushqqq(12)
 	call flushqqq(21)
-	print*,'End of wsjt1'
 
  	return
  	end

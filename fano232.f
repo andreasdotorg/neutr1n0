@@ -7,7 +7,7 @@ C  written by Phil Karn, KA9Q.
 
       parameter (MAXBITS=103)
       parameter (MAXDAT=(MAXBITS+7)/8)
-      integer*1 symbol(0:2*MAXBITS-1)     !Soft channel symbols (erase=128)
+      integer*1 symbol(0:2*MAXBITS-1)
       integer*1 dat(MAXDAT)               !Decoded user data, 8 bits per byte
       integer mettab(0:255,0:1)           !Metric table
 
@@ -77,7 +77,7 @@ C  Node is acceptable.  If first time visiting this node, tighten threshold:
 
 C  Move forward
             gamma(np+1)=ngamma
-            nstate(np+1)=nstate(np)+nstate(np)
+            nstate(np+1)=ishft(nstate(np),1)
             np=np+1
             if(np.eq.nbits-1) go to 100     !We're done!
 
