@@ -31,7 +31,7 @@ SRCS2F90 = a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	wsjtgen.f90 runqqq.f90 fivehz.f90 msgparms.f90 chkt0.f90 \
 	genwspr.f90 wqencode.f90 wqdecode.f90 packpfx.f90 unpackpfx.f90 \
 	packname.f90 unpackname.f90 packtext2.f90 unpacktext2.f90 \
-	packprop.f90 unpackprop.f90 hash.f90
+	packprop.f90 unpackprop.f90 hash.f90 wsjtwspr.f90
 
 SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	stdecode.f indexx.f s2shape.f flat2.f gen65.f gen24.f entail.f \
@@ -50,7 +50,10 @@ SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	deg2grid.f dot.f ftsky.f geocentric.f GeoDist.f grid2deg.f \
 	moon2.f MoonDop.f sun.f toxyz.f pfxdump.f \
 	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f decodecw.f \
-	foldcw.f rfile2.f encode232.f inter_mept.f pack50.f unpack50.f
+	foldcw.f rfile2.f encode232.f inter_mept.f pack50.f unpack50.f \
+	filbig2.f mept162a.f twkfreq.f sync162.f decode162.f \
+	ps162.f fchisq.f fano232.f ccf2.f
+
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c start_portaudio.c cutil.c
 WSJT7.EXE: Audio.pyd wsjt.spec
@@ -63,7 +66,7 @@ Audio.pyd: $(OBJS2C) $(SRCS2F90) $(SRCS2F77) $(SRCS2C)
 	--opt="-fbounds-check -ftrace=full -O2 -cpp -DUSE_PORTAUDIO" \
 	--compiler=mingw32 \
 	$(OBJS2C) \
-	libportaudio.a libsamplerate.a libpthreadGC2.a -lwinmm  \
+	libportaudio.a libfftw3f.a libsamplerate.a libpthreadGC2.a -lwinmm  \
 	-m Audio \
 	only: $(F2PYONLY) : \
 	$(SRCS2F90) $(SRCS2F77) $(SRCS2C)

@@ -12,7 +12,8 @@ C  f_stop = 187.5 Hz, ripple=0.1 dB, Atten=50 dB.
       real*8 df
 C Impulse response of filter (one side)
       real halfpulse(4)
-      complex cfilt(NFFT2)                       !Filter (complex; imag = 0)
+!Filter (complex; imag = 0)
+      complex cfilt(NFFT2)                       
       real rfilt(NFFT2)                          !Filter (real)
       integer plan1,plan3,plan5
       logical first
