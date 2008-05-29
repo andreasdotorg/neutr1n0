@@ -92,13 +92,14 @@ character*80 filetokillb
 character*12 pttport
 character*22 t0msg
 
+parameter (ND2MAX=120*12000)
 common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      green(500),ngreen,dgain,iter,ndecoding,ndecoding0,mousebutton,   &
      ndecdone,npingtime,ierr,lauto,mantx,nrestart,ntr,nmsg,nsave,nadd5, &
      dftolerance,LDecoded,rxdone,monitoring,nzap,nsavecum,minsigdb,   &
      nclearave,nfreeze,nafc,nmode,mode65,mode4,nclip,ndebug,nblank,nport,   &
      mousedf,neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,ntxdf, &
-     shok,sendingsh,d2a(661500),d2b(661500),b(60000),jza,jzb,ntime,   &
+     shok,sendingsh,d2a(ND2MAX),d2b(ND2MAX),b(60000),jza,jzb,ntime,   &
      idinterval,msmax,lenappdir,idf,ndiskdat,nlines,nflat,ntdecode,   &
      ntxreq,ntxnow,nchallenge,                                        &
      ndepth,nspecial,ndf,nfmid,nforce,nfrange,ss1(-224:224),ss2(-224:224),   &

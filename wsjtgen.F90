@@ -12,7 +12,7 @@ subroutine wsjtgen
   parameter (NMSGMAX=28)             !Max characters per message
   parameter (NSPD=25)                !Samples per dit
   parameter (NDPC=3)                 !Dits per character
-  parameter (NWMAX=661500)         !Max length of waveform = 60*11025
+  parameter (NWMAX=150*12000)        !Max length of Tx waveform
   parameter (NTONES=4)               !Number of FSK tones
 
   integer   itone(84)
@@ -75,7 +75,7 @@ subroutine wsjtgen
 
 #else
         tfile2=testfile
-	call rfile2(tfile2,hdr,44+2*661500,nr)
+	call rfile2(tfile2,hdr,44+2*120*12000,nr)
 	if(nr.le.0) then
            print*,'Error reading ',testfile
 	   stop
