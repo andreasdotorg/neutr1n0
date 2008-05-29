@@ -247,14 +247,31 @@ AC_HELP_STRING([--enable-gfortran],[Use gfortran compiler if available.]),
 dnl now set conf.h,, CPPFLAGS and CFLAGS flags as needed
 dnl ====================================================
 
-if test "$g95" = yes; then
-        FC_LIB_PATH=${G95_LIB_PATH}
-	FC=`basename ${G95}`
-	gfortran=no
-elif test "$gfortran" = yes; then
-        FC_LIB_PATH=${GFORTRAN_LIB_PATH}
-	FC=`basename ${GFORTRAN}`
-	g95=no
+F2PYFLAGS=""
+
+if test ! -z $GFORTRAN ; then
+	echo "*** gfortran compiler found"
+	if test "$gfortran" = yes; then
+       		FC_LIB_PATH=${GFORTRAN_LIB_PATH}
+		FC=`basename ${GFORTRAN}`
+		g95=no
+		FFLAGS="$FFLAGS -fno-range-check -ffixed-line-length-none"
+		F2PYFLAGS="--f77exec=${FC} --f90exec=${FC}"
+	fi
+else
+	echo "*** No gfortran compiler found"
+fi
+
+if test ! -z $G95 ; then
+	echo "*** g95 compiler found"
+	if test "$g95" = yes; then
+		FC_LIB_PATH=${G95_LIB_PATH}
+		FC=`basename ${G95}`
+		gfortran=no
+		F2PYFLAGS="--fcompiler=${FC}"
+	fi
+else
+	echo "*** No g95 compiler found"
 fi
 
 if test -z $FC ; then
@@ -262,10 +279,13 @@ if test -z $FC ; then
        		FC_LIB_PATH=${GFORTRAN_LIB_PATH}
 	        FC=`basename ${GFORTRAN}`
 		gfortran=yes
+		FFLAGS="$FFLAGS -fno-range-check -ffixed-line-length-none"
+		F2PYFLAGS="--f77exec=${FC} --f90exec=${FC}"
 	elif test ! -z $G95 ; then
        		FC_LIB_PATH=${G95_LIB_PATH}
 	        FC=`basename ${G95}`
 		g95=yes
+		F2PYFLAGS="--fcompiler=${FC}"
 	fi
 fi
 
@@ -321,6 +341,8 @@ AC_SUBST(CPPFLAGS, "${CPPFLAGS}")
 AC_SUBST(LDFLAGS, "${LDFLAGS}")
 AC_SUBST(LIBS, "${LIBS}")
 AC_SUBST(CFLAGS)
+AC_SUBST(FFLAGS)
+AC_SUBST(F2PYFLAGS)
 AC_SUBST(LOCAL_PORTAUDIO,"${LOCAL_PORTAUDIO}")
 AC_SUBST(LOCAL_PORTAUDIO_CLEAN,"${LOCAL_PORTAUDIO_CLEAN}")
 
@@ -334,9 +356,7 @@ echo
 
 if test $g95 == "yes"; then
 	echo "Using g95 as fortran compiler.";
-fi
-
-if test $gfortran == "yes"; then
+elif test $gfortran == "yes"; then
 	echo "Using gfortran as fortran compiler.";
 fi
 

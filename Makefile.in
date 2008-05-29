@@ -1,7 +1,9 @@
 MV ?= mv
 CC ?= @CC@
 FFLAGS	= @FFLAGS@
-FFLAGS	+= -fno-range-check
+F2PYFLAGS=	@F2PYFLAGS@
+#for gfortran F2PYFLAGS=--f77exec=${FC} --f90exec=${FC}
+#for g95      F2PYFLAGS=--fcompiler=${FC}
 LDFLAGS	= @LDFLAGS@
 LIBS	= @LIBS@
 CPPFLAGS = @CPPFLAGS@
@@ -13,7 +15,7 @@ CFLAGS += ${DEFS}
 CPPFLAGS += ${DEFS} -I.
 
 # WSJT specific Fortran flags
-FFLAGS += -Wall -fbounds-check -fno-second-underscore -ffixed-line-length-none -fPIC
+FFLAGS += -Wall -fbounds-check -fno-second-underscore -fPIC
 
 wsjt:	wsjt6
 
@@ -107,10 +109,13 @@ wsjt6:	@LOCAL_PORTAUDIO@ Audio.so
 deep65.o: deep65.F
 	$(FC) -c -O0 -Wall -fPIC deep65.F
 
+# gfortran
+# F2PYFLAGS = "--f77exec=${FC} --f90exec=${FC}"
+
 Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	 ${F2PY} -c --quiet --opt="-O ${CFLAGS} \
 	-fno-second-underscore"	$(OBJS2C) $(OBJS2F77) -m Audio \
-	--f77exec=${FC} --f90exec=${FC} ${CPPFLAGS} ${LDFLAGS} ${LIBS} \
+	${F2PYFLAGS} ${CPPFLAGS} ${LDFLAGS} ${LIBS} \
 	only: $(F2PYONLY) \
 	: $(SRCS2F90) \
 	${SRCS3C} ${AUDIOSRCS}
