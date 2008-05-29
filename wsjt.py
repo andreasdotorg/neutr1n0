@@ -24,7 +24,7 @@ from types import *
 import array
 
 root = Tk()
-Version="5.9.8 r" + "$Rev$"[6:-1]
+Version="7.0 r" + "$Rev$"[6:-1]
 print "******************************************************************"
 print "WSJT Version " + Version + ", by K1JT"
 print "Revision date: " + \
@@ -787,13 +787,13 @@ these operating modes:
 
   1. FSK441 - fast mode for meteor scatter
   2. JT6M   - optimized for meteor and ionospheric scatter on 50 MHz
-  3. JT65   - for EME and troposcatter
+  3. JT65   - for HF, EME, and troposcatter
   4. CW     - 15 WPM Morse code, messages structured for EME
   5. JT2    - for HF and EME
   6. JT4    - for HF and EME
   7. WSPR   - for HF and EME
 
-Copyright (c) 2001-2007 by Joseph H. Taylor, Jr., K1JT, with
+Copyright (c) 2001-2008 by Joseph H. Taylor, Jr., K1JT, with
 contributions from additional authors.  WSJT is Open Source 
 software, licensed under the GNU General Public License (GPL).
 Source code and programming information may be found at 
@@ -1926,7 +1926,6 @@ modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C, \
                          accelerator='Ctrl+F8')
 modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW, \
                          accelerator='Shift+Ctrl+F8')
-modemenu.add_radiobutton(label = 'WSPR', variable=mode, command = ModeWSPR)
 modemenu.add_radiobutton(label = 'JT2', variable=mode, command = ModeJT2)
 modemenu.add_radiobutton(label = 'JT4A', variable=mode, command = ModeJT4A)
 modemenu.add_radiobutton(label = 'JT4B', variable=mode, command = ModeJT4B)
@@ -1935,6 +1934,7 @@ modemenu.add_radiobutton(label = 'JT4D', variable=mode, command = ModeJT4D)
 modemenu.add_radiobutton(label = 'JT4E', variable=mode, command = ModeJT4E)
 modemenu.add_radiobutton(label = 'JT4F', variable=mode, command = ModeJT4F)
 modemenu.add_radiobutton(label = 'JT4G', variable=mode, command = ModeJT4G)
+modemenu.add_radiobutton(label = 'WSPR', variable=mode, command = ModeWSPR)
 #modemenu.add_radiobutton(label = 'Echo', variable=mode, command = ModeEcho,
 #                         state=DISABLED)
 
@@ -2510,7 +2510,7 @@ Audio.ftn_init()
 Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+'        ')[:8]
 stopmon()
 if g.Win32: root.iconbitmap("wsjt.ico")
-root.title('  WSJT 6     by K1JT')
+root.title('  WSJT 7     by K1JT')
 from WsjtMod import astro
 from WsjtMod import specjt
 
