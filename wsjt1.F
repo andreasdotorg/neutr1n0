@@ -301,7 +301,7 @@ C  Call the decoder if DF is in range or Freeze is off.
 	   if(i.le.0) i=index(MyCall,' ')
  	   mycall=MyCall(1:i-1)//'            '
 
-	   call wsjtwspr(dat,jz)
+	   call wsjtwspr(dat,jz,cfile6,ndiag,MinSigdB)
 
  	   goto 900
  	endif

@@ -122,6 +122,8 @@ subroutine wqdecode(data0,message,ntype)
      else
         message=callsign(:i1)//'<...> '//'R '//crpt
      endif
+     call hash(callsign,i1-1,ih)
+     dcall(ih)=callsign(:i1-1)
 
 ! pfx/call R and report (msg #4; types -37 to -54)
   else if(ntype.le.-37 .and. ntype.ge.-54) then

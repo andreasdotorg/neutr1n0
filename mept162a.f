@@ -1,4 +1,4 @@
-      subroutine mept162a(c2,jz)
+      subroutine mept162a(c2,jz,cfile6,ndiag,minsync)
 
 C  Orchestrates the process of finding, synchronizing, and decoding 
 C  WSPR signals.
@@ -6,6 +6,7 @@ C  WSPR signals.
       character*22 message
       character*70 outfile
       character*11 datetime
+      character*8 cfile6
       logical first
       real*8 f0,freq
       real ps(-256:256)
@@ -17,7 +18,6 @@ C  WSPR signals.
       data first/.true./
       save
 
-      outfile='080530_0000.wav'
       f0=0.d0
 
 C  Mix 1500 Hz +/- 100 Hz to baseband, and downsample by 1/32
@@ -59,31 +59,24 @@ C  Look for sync patterns, get DF and DT
          a(3)=0.
          call twkfreq(c2,c3,jz,a)                    !Remove drift
 
-         minsync=1                                   !####
          nsync=nint(snrsync)
          nsnrx=nint(snrx)
          if(nsnrx.lt.-33) nsnrx=-33
          if(nsync.lt.0) nsync=0
          freq=f0 + 1.d-6*(dfx+1500.0)
          message='                      '
-         if(nsync.ge.minsync .and. nsnrx.ge.-33) then      !### -31 dB limit?
+         if(nsync.ge.minsync .and. nsnrx.ge.-30) then      !### -31 dB limit?
             dt=1.0/375
             do idt=0,128
                ii=(idt+1)/2
                if(mod(idt,2).eq.1) ii=-ii
                i1=nint((dtx+2.0)/dt) + ii !Start index for synced symbols
                if(i1.ge.1) then
-                  i2=i1 + jz - 1
-!  Fix this earlier!
-                  c4(1:jz-i1+1)=c3(i1:)
+                  c4(1:45000-i1+1)=c3(i1:45000)
                   c4(jz-i1+2:)=0.
-               else if(i1.eq.0) then
-                  c4(1)=0.
-                  c4(2:jz)=c3(jz-1)
                else
-                  c4(:-i1+1)=0
-                  i2=jz+i1
-                  c4(-i1:)=c3(:i2)
+                  c4(1:-i1+1)=0.
+                  c4(-i1+2:45000)=c3(1:45000+i1-1)
                endif
                call decode162(c4,jz,message,ncycles,metric,nerr)
                if(message(1:6).ne.'      ') go to 23
@@ -91,14 +84,16 @@ C  Look for sync patterns, get DF and DT
             go to 24
  23         width=0.
 !            call rect(c3,dtx,0.0,message,dfx2,width,pmax)
-            i2=index(outfile,'.')-1
-            datetime=outfile(i2-10:i2)
-            datetime(7:7)=' '
             ndf=nint(dfx)
             nf1=nint(-a(2))
-            write(11,1012) 0,nsync,nsnrx,dtx,ndf,nf1,message
-            write(*,1012) 0,nsync,nsnrx,dtx,ndf,nf1,message
- 1012       format(i6.6,i4,i4,f5.1,i6,i3,2x,a22)
+            if(ndiag.ne.0) then
+               write(11,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message,
+     +           ii,ncycles/81
+            else
+               write(11,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message
+            endif
+!            write(*,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message
+ 1012       format(a6,i4,i4,f5.1,i6,i3,2x,a22,15x,i4,i6)
             i1=index(message,' ')
          endif
  24      continue

@@ -245,6 +245,13 @@ def dbl_click3_text(event):
         n=t1.rfind("\n")
         rpt=t1[n+12:n+15]
         if rpt[0:1] == " ": rpt=rpt[1:]
+        if mode.get()=='WSPR':
+            i=int((int(rpt)+33)/3)
+            if i<1: i=1
+            if i>9: i=9
+            rpt="S%d" % (i,)
+            report.delete(0,END)
+            report.insert(0,rpt)
         dbl_click_call(t,t1,rpt,event)
 
 #------------------------------------------------------ dbl_click_ave
@@ -259,6 +266,8 @@ def dbl_click_call(t,t1,rpt,event):
     i1=t1.rfind(' ')+1              #index of preceding space
     i2=i1+t[i1:].find(' ')          #index of next space
     hiscall=t[i1:i2]                #selected word, assumed as callsign
+    if hiscall[0:1]=='<' and hiscall [i2-i1-1:]=='>':
+        hiscall=hiscall[1:i2-i1-1]
     ToRadio.delete(0,END)
     ToRadio.insert(0,hiscall)
     i3=t1.rfind('\n')+1             #start of selected line
@@ -270,7 +279,8 @@ def dbl_click_call(t,t1,rpt,event):
         if setseq.get(): TxFirst.set((nsec/Audio.gcom1.trperiod)%2)
         lookup()
         GenStdMsgs()
-        if rpt <> "OOO":
+        if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+           mode.get()[:3]=='JT4') and rpt <> "OOO":
             n=tx1.get().rfind(" ")
             t2=tx1.get()[0:n+1]
             tx2.delete(0,END)
@@ -683,22 +693,30 @@ def ModeWSPR():
     if lauto: toggleauto()
     cleartext()
     Audio.gcom1.trperiod=120
+    
     iframe4b.pack_forget()
     text.configure(height=9)
+
     bclravg.configure(state=DISABLED)
     binclude.configure(state=DISABLED)
     bexclude.configure(state=DISABLED)
     cbafc.configure(state=DISABLED)
-
-##    cbfreeze.configure(state=DISABLED)
+    cbnb.configure(state=DISABLED)
+    cbzap.configure(state=DISABLED)
+    lclip.configure(state=DISABLED)
+    nfreeze.set(1)
+    cbfreeze.configure(state=DISABLED)
 ##    btxdf.configure(state=DISABLED)
 
     if ltxdf: toggletxdf()
     report.configure(state=NORMAL)
+    report.delete(0,END)
+    report.insert(0,'S1')
+    itol=2
+    inctol()
     ntx.set(1)
     GenStdMsgs()
     erase()
-
 
 #------------------------------------------------------ ModeJT2
 def ModeJT2():
@@ -1030,8 +1048,8 @@ def decclip(event):
 def inctol(event=NONE):
     global itol
     maxitol=5
-    if mode.get()[:4]=='JT65' or mode.get()=='WSPR':
-        maxitol=6
+    if mode.get()[:4]=='JT65': maxitol=6
+    if mode.get()=='WSPR': maxitol=3
     if itol<maxitol: itol=itol+1
     ltol.configure(text='Tol    '+str(ntol[itol]))
 
@@ -1122,6 +1140,9 @@ def defaults():
     if g.mode=="JT6M":
         isync=-10
         itol=4
+        ltol.configure(text='Tol    '+str(ntol[itol]))
+    if g.mode=="WSPR":
+        itol=3
         ltol.configure(text='Tol    '+str(ntol[itol]))
     lsync.configure(text=slabel+str(isync))
 
@@ -1328,10 +1349,11 @@ def GenStdMsgs(event=NONE):
 ##        if nplain==0 and naddon==0 and ndiff==0:
 ##            t0=t0 + " "+options.MyGrid.get()[:4]
         tx1.insert(0,t0.upper())
-        t2=(ToRadio.get() + " <"+options.MyCall.get() + "> S1").upper()
+        r=report.get()
+        t2=(ToRadio.get() + " <"+options.MyCall.get() + "> " + r).upper()
         Audio.gcom2.t0msg=(t0+'                      ')[:22]
         tx2.insert(0,t2)
-        t3=(ToRadio.get() + " <"+options.MyCall.get() + "> R S1").upper()
+        t3=(ToRadio.get() + " <"+options.MyCall.get() + "> R " + r).upper()
         tx3.insert(0,t3)
         t4=("<" + ToRadio.get() + "> " + options.MyCall.get() + " RRR").upper()
         tx4.insert(0,t4)
@@ -1601,7 +1623,7 @@ def update():
             graph2.create_text(13,109,anchor=W,text="Dgrd:%5.1f" % g.Dgrd,font=g2font)
 
     if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-        mode.get()[:3]=='JT4') and g.freeze_decode:
+        mode.get()[:3]=='JT4' or mode.get()=='WSPR') and g.freeze_decode:
         itol=2
         ltol.configure(text='Tol    '+str(50))
         Audio.gcom2.dftolerance=50

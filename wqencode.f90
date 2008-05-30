@@ -87,7 +87,7 @@ subroutine wqencode(msg,ntype,data0)
      ntype=6
      i1=index(msg,'>')
      call1=msg(2:i1-1)
-     read(msg(i1+1:),*,err=31) k,muf,ccur,cxp
+     read(msg(i1+1:),*,err=31,end=31) k,muf,ccur,cxp
      go to 130
 31   call2=msg(i1+2:)
      call hash(call1,i1-2,ih)
