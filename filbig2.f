@@ -24,7 +24,6 @@ C Impulse response of filter (one side)
      +     0.045847258328/
       save
 
-      first=.true.
       if(nmax.lt.0) go to 900
       if(first) then
          npatience=FFTW_ESTIMATE
@@ -93,12 +92,17 @@ C      i0 is the bin number in ca and cb closest to f0.
 
 C  Do the short reverse transform, to go back to time domain.
       call sfftw_execute_(plan3)
-!      go to 999
+      go to 999
 
- 900  call sfftw_destroy_plan_(plan1)
-      call sfftw_destroy_plan_(plan3)
-      call sfftw_destroy_plan_(plan5)
-!      print*,'Destroying FFTW plans'
+ 900  if(plan1.ne.0) then
+!         print*,'Destroying FFTW plans'
+         call sfftw_destroy_plan_(plan1)
+         call sfftw_destroy_plan_(plan3)
+         call sfftw_destroy_plan_(plan5)
+         plan1=0
+         plan3=0
+         plan5=0
+      endif
 
  999  return
       end
