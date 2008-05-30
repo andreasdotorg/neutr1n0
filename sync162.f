@@ -1,4 +1,4 @@
-      subroutine sync162(c2,jz,ps,sstf,kz)
+      subroutine sync162(c2,jz,ndftol,ps,sstf,kz)
 
 C  Find MEPT_JT sync signals, with best-fit DT and DF.  
 

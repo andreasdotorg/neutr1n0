@@ -15,7 +15,7 @@ C Impulse response of filter (one side)
 !Filter (complex; imag = 0)
       complex cfilt(NFFT2)                       
       real rfilt(NFFT2)                          !Filter (real)
-      integer*8 plan1,plan3,plan5
+      real*8 plan1,plan3,plan5
       logical first
       include 'fftw3.f'
       equivalence (rfilt,cfilt)
