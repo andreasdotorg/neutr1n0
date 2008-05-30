@@ -183,10 +183,8 @@ C  Compute power spectrum for each step, and get average
          a(2)=-0.5*drift(k)
          a(3)=0.
          lagpk=nint((dtx(k)+2)/(128*dt))
-!         lag1=max(-200,8*lagpk-16)
-!         lag2=min(200,8*lagpk+16)
-         lag1=-200
-         lag2=200
+         lag1=max(-200,8*lagpk-16)
+         lag2=min(200,8*lagpk+16)
          ccf=-fchisq(c2,jz,375.0,a,lag1,lag2,ccfbest,dtbest)
          ipk=nint(freq(k)/df)
          snrx=db(max(psavg(ipk),0.0001)) - 26.5         !Empirical
