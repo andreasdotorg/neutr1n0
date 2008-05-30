@@ -1,5 +1,4 @@
       subroutine mept162a(c2,jz)
-!      subroutine mept162a(outfile,f0,minsync,id,npts,rms,nsec,ltest,ndec)
 
 C  Orchestrates the process of finding, synchronizing, and decoding 
 C  WSPR signals.
@@ -41,8 +40,6 @@ C  Mix 1500 Hz +/- 100 Hz to baseband, and downsample by 1/32
          enddo
          ps(k)=1.e-8*sq
          freq=df2*k
-         write(62,3001) freq,ps(k)
- 3001    format(f10.3,e12.3)
       enddo
 
 C  Compute pixmap.dat
@@ -70,7 +67,6 @@ C  Look for sync patterns, get DF and DT
          freq=f0 + 1.d-6*(dfx+1500.0)
          message='                      '
          if(nsync.ge.minsync .and. nsnrx.ge.-33) then      !### -31 dB limit?
-            print*,'A ',nsync,nsnrx,dtx,dfx,drift
             dt=1.0/375
             do idt=0,128
                ii=(idt+1)/2
@@ -95,7 +91,6 @@ C  Look for sync patterns, get DF and DT
             go to 24
  23         width=0.
 !            call rect(c3,dtx,0.0,message,dfx2,width,pmax)
-            print*,'D: ',message,ncycles/81,metric
             i2=index(outfile,'.')-1
             datetime=outfile(i2-10:i2)
             datetime(7:7)=' '

@@ -36,8 +36,6 @@ C  The WSPR pseudo-random sync pattern:
             j=16*i + lag
             if(j.ge.1 .and. j.le.nz) x=x+ss(j)*pr(i)
          enddo
-         write(66,3006) lag,x
- 3006    format(i5,e12.3)
 !         ccf(lag)=x
          if(x.gt.ccfbest) then
             ccfbest=x

@@ -90,18 +90,15 @@ C      i0 is the bin number in ca and cb closest to f0.
          c4a(i)=rfilt(i)*ca(j)
       enddo
       n4=min(int(nmax*375.0/11025.0),NFFT2)
-!      c4a(
 
 C  Do the short reverse transform, to go back to time domain.
-      print*,'B',NFFT1,NFFT2,plan3
       call sfftw_execute_(plan3)
-      print*,'C',n4,plan3
 !      go to 999
 
  900  call sfftw_destroy_plan_(plan1)
       call sfftw_destroy_plan_(plan3)
       call sfftw_destroy_plan_(plan5)
-      print*,'Destroying FFTW plans'
+!      print*,'Destroying FFTW plans'
 
  999  return
       end

@@ -166,9 +166,7 @@ C  Compute power spectrum for each step, and get average
       k=0
       do i=-NF0,NF0
          if(keep(i).ne.0) then
-            x=10.0*log10(p1(i)) - 22 + 2.7       !### ??? ###
-            write(63,3003) i,x
- 3003       format(i5,f10.3)
+            x=10.0*log10(p1(i)) - 22       !### ??? ###
             if(x.ge.0.5) then
                k=k+1
                p1(k)=x
