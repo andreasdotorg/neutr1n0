@@ -18,7 +18,7 @@ C  WSPR signals.
       data first/.true./
       save
 
-      outfile='000001'
+      outfile='080530_0000.wav'
       f0=0.d0
 
 C  Mix 1500 Hz +/- 100 Hz to baseband, and downsample by 1/32
@@ -95,12 +95,15 @@ C  Look for sync patterns, get DF and DT
             go to 24
  23         width=0.
 !            call rect(c3,dtx,0.0,message,dfx2,width,pmax)
+            print*,'D: ',message,ncycles/81,metric
             i2=index(outfile,'.')-1
             datetime=outfile(i2-10:i2)
             datetime(7:7)=' '
+            ndf=nint(dfx)
             nf1=nint(-a(2))
-            write(*,1012) datetime(8:11),nsnrx,dtx,freq,nf1,message
- 1012       format(a4,i4,f5.1,f11.6,i3,2x,a22)
+            write(11,1012) 0,nsync,nsnrx,dtx,ndf,nf1,message
+            write(*,1012) 0,nsync,nsnrx,dtx,ndf,nf1,message
+ 1012       format(i6.6,i4,i4,f5.1,i6,i3,2x,a22)
             i1=index(message,' ')
          endif
  24      continue

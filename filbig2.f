@@ -15,7 +15,7 @@ C Impulse response of filter (one side)
 !Filter (complex; imag = 0)
       complex cfilt(NFFT2)                       
       real rfilt(NFFT2)                          !Filter (real)
-      integer plan1,plan3,plan5
+      integer*8 plan1,plan3,plan5
       logical first
       include 'fftw3.f'
       equivalence (rfilt,cfilt)
@@ -24,17 +24,18 @@ C Impulse response of filter (one side)
      +     0.045847258328/
       save
 
+      first=.true.
       if(nmax.lt.0) go to 900
       if(first) then
          npatience=FFTW_ESTIMATE
 !         npatience=FFTW_MEASURE
 C  Plan the FFTs just once
          call sfftw_plan_dft_1d_(plan1,NFFT1,ca,ca,
-     +        FFTW_BACKWARD,npatience)
+     +        FFTW_FORWARD,npatience)                      !BACK
          call sfftw_plan_dft_1d_(plan3,NFFT2,c4a,c4a,
-     +        FFTW_FORWARD,npatience)
+     +        FFTW_BACKWARD,npatience)                     !FOR
          call sfftw_plan_dft_1d_(plan5,NFFT2,cfilt,cfilt,
-     +        FFTW_BACKWARD,npatience)
+     +        FFTW_FORWARD,npatience)                      !BACK
 
 C  Convert impulse response to filter function
          do i=1,NFFT2
@@ -88,13 +89,14 @@ C      i0 is the bin number in ca and cb closest to f0.
          if(j.lt.1) j=j+NFFT1                  !### $$$ ###
          c4a(i)=rfilt(i)*ca(j)
       enddo
+      n4=min(int(nmax*375.0/11025.0),NFFT2)
+!      c4a(
 
 C  Do the short reverse transform, to go back to time domain.
       print*,'B',NFFT1,NFFT2,plan3
       call sfftw_execute_(plan3)
-      n4=min(int(nmax*375.0/11025.0),NFFT2)
       print*,'C',n4,plan3
-      go to 999
+!      go to 999
 
  900  call sfftw_destroy_plan_(plan1)
       call sfftw_destroy_plan_(plan3)
