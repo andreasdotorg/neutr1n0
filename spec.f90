@@ -58,6 +58,7 @@ subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
   if(mode(1:3).eq.'JT2') nmode=6
   if(mode(1:3).eq.'JT4') nmode=7
   if(mode(1:4).eq.'WSPR') nmode=8
+  if(mode(1:4).eq.'JT64') nmode=9
 
   nlines=0
   newdat=0

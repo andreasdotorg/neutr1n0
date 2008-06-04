@@ -22,6 +22,7 @@ subroutine audio_init(ndin,ndout)
   if(mode(1:3).eq.'JT2') nmode=6
   if(mode(1:3).eq.'JT4') nmode=7
   if(mode(1:4).eq.'WSPR') nmode=8
+  if(mode(1:4).eq.'JT64') nmode=9
 
   ndevin=ndin
   ndevout=ndout

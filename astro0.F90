@@ -50,6 +50,7 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
   if(mode(1:3).eq.'JT2') nmode=6
   if(mode(1:3).eq.'JT4') nmode=7
   if(mode(1:4).eq.'WSPR') nmode=8
+  if(mode(1:4).eq.'JT64') nmode=9
   uth=uth8
 
   call astro(AppDir,nyear,month,nday,uth,nfreq,hisgrid,2,nmode,1,    &

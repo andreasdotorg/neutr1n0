@@ -38,6 +38,7 @@ subroutine decode3(d2,jz,istart,filename)
 !     if(mode(4:4).eq.'G') mode4=72
   endif
   if(mode(1:4).eq.'WSPR') nmode=8
+  if(mode(1:4).eq.'JT64') nmode=9
 
 
   sum=0.
