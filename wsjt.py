@@ -641,6 +641,13 @@ def ModeJT65C(event=NONE):
         mode.set("JT65C")
         ModeJT65()
 
+#------------------------------------------------------ ModeJT64A
+def ModeJT64A(event=NONE):
+    if g.mode != "JT64A":
+        if lauto: toggleauto()
+        mode.set("JT64A")
+        ModeJT65()
+
 #------------------------------------------------------ ModeJT6M
 def ModeJT6M(event=NONE):
     global slabel,isync,isync6m,itol
@@ -1656,7 +1663,7 @@ def update():
     lab3.configure(text=t)
     if mode.get() != g.mode or first:
         if mode.get()=="FSK441":
-            msg2.configure(bg='yellow')
+            msg2.configure(bg='#FFFF00')
         elif mode.get()[:4]=="JT65":
             msg2.configure(bg='#00FFFF')
         elif mode.get()=="JT6M":
@@ -1665,6 +1672,8 @@ def update():
             msg2.configure(bg='#00FF00')
         elif mode.get()=="WSPR":
             msg2.configure(bg='#FF8888')
+        elif mode.get()[:4]=="JT64":
+            msg2.configure(bg='#CCFFFF')
         elif mode.get()=="JT2":
             msg2.configure(bg='#8888FF')
         elif mode.get()[:3]=="JT4":
@@ -1957,6 +1966,7 @@ modemenu.add_radiobutton(label = 'JT4E', variable=mode, command = ModeJT4E)
 modemenu.add_radiobutton(label = 'JT4F', variable=mode, command = ModeJT4F)
 modemenu.add_radiobutton(label = 'JT4G', variable=mode, command = ModeJT4G)
 modemenu.add_radiobutton(label = 'WSPR', variable=mode, command = ModeWSPR)
+modemenu.add_radiobutton(label = 'JT64A', variable=mode, command = ModeJT64A)
 #modemenu.add_radiobutton(label = 'Echo', variable=mode, command = ModeEcho,
 #                         state=DISABLED)
 

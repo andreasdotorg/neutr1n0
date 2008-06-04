@@ -118,7 +118,9 @@ subroutine wsjtgen
   LTone=2
 
   if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or.                  &
-       mode(1:3).eq.'JT4' .or. mode(1:4).eq.'WSPR') then
+       mode(1:3).eq.'JT4' .or. mode(1:4).eq.'WSPR' .or.                &
+       mode(1:4).eq.'JT64') then
+
      if(mode(1:4).eq.'JT65') then
 !  We're in JT65 mode.
         if(mode(5:5).eq.'A') mode65=1
@@ -128,9 +130,15 @@ subroutine wsjtgen
              msgsent,nmsg0)
      else if(mode(1:4).eq.'WSPR') then
         call genwspr(msg,samfacout,ntxdf,iwave,nwave,msgsent)
-     else
+     else if(mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4' ) then
         call gen24(msg,mode,mode4,samfacout,ntxdf,iwave,nwave,sendingsh,     &
              msgsent,nmsg0)
+     else if(mode(1:4).eq.'JT64') then
+        mode64=1
+        call gen64(msg,mode64,samfacout,ntxdf,iwave,nwave,sendingsh,   &
+             msgsent,nmsg0)
+     else
+        stop 'Unknown Tx mode requested.'
      endif
 
      if(lcwid) then
