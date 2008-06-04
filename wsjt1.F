@@ -304,6 +304,42 @@ C  Call the decoder if DF is in range or Freeze is off.
  	   goto 900
  	endif
 
+!  JT64 mode:
+  	if(mode.eq.9) then
+	   mode64=1
+ 	   nstest=0
+ 	   if(ntx2.ne.1) call short65(dat,jz,NFreeze,MouseDF,
+     +        DFTolerance,mode64,nspecial,nstest,dfsh,iderrsh,
+     +        idriftsh,snrsh,ss1,ss2,nwsh,idfsh)
+!  Lowpass filter and decimate by 2
+ 	   call lpf1(dat,jz,jz2,MouseDF,MouseDF2)
+	   idf=mousedf-mousedf2
+ 	   jz=jz2
+ 	   nadd=1
+ 	   fzap(1)=0.
+ 	   if(nzap.eq.1) call avesp2(dat,jz,nadd,mode,NFreeze,MouseDF2,
+     +       DFTolerance,fzap)
+    	   if(nzap.eq.1.and.nstest.eq.0) call bzap(dat,jz,nadd,mode,fzap)
+
+ 	   i=index(MyCall,char(0))
+	   if(i.le.0) i=index(MyCall,' ')
+ 	   mycall=MyCall(1:i-1)//'            '
+ 	   i=index(HisCall,char(0))
+	   if(i.le.0) i=index(HisCall,' ')
+ 	   hiscall=HisCall(1:i-1)//'            '
+
+!  Offset data by about 1 s.
+! 	    jztest=126*2048
+	   jztest=11025*ntdecode/2 - 2755
+ 	   if(jz.ge.jztest) call wsjt64(dat(4097),jz-4096,cfile6,
+     +        NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode64,Nseg,
+     +        MouseDF2,NAgain,ndepth,nchallenge,neme,idf,idfsh,
+     +        mycall,hiscall,hisgrid,lumsg,lcum,nspecial,ndf,
+     +        nstest,dfsh,snrsh,
+     +        NSyncOK,ccf,psavg,ndiag,nwsh)
+ 	   goto 900
+
+ 	endif
 
 !  We're in FSK441 mode. Compute the 2D spectrum.
 	df=11025.0/256.0            !FFT resolution ~43 Hz
