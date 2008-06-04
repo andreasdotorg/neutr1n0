@@ -1,3 +1,1 @@
-gcc -c wrapkarn.c
-gcc -c igray.c
-f77 -o JT65code -fno-second-underscore JT65code_all.f igray.o wrapkarn.o init_rs.o encode_rs.o decode_rs.o
+./configure --with-portaudio-include-dir=portaudio-v19/include --with-portaudio-lib-dir=/home/joe/wsjt/trunk/portaudio-v19/lib/.libs

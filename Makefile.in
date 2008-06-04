@@ -13,6 +13,7 @@ CFLAGS	+= -DBIGSYM=1 -fPIC
 DEFS = @DEFS@
 CFLAGS += ${DEFS}
 CPPFLAGS += ${DEFS} -I.
+LIBS += /usr/lib/libfftw3f.a
 
 # WSJT specific Fortran flags
 FFLAGS += -Wall -fbounds-check -fno-second-underscore -fPIC
@@ -56,7 +57,8 @@ SRCS2F90 = abc441.F90 astro0.F90 audio_init.F90 azdist0.f90 \
 	wsjtgen.F90 runqqq.F90 fivehz.F90 msgparms.f90 chkt0.f90 \
 	genwspr.f90 wqencode.f90 wqdecode.f90 packpfx.f90 unpackpfx.f90 \
 	packname.f90 unpackname.f90 packtext2.f90 unpacktext2.f90 \
-	packprop.f90 unpackprop.f90 hash.f90
+	packprop.f90 unpackprop.f90 hash.f90 wsjtwspr.f90 gen64.f90
+
 OBJS2F90 = ${SRCS2F90:.f90=.o}
 
 SRCS2F77 = wsjt1.f astro.f azdist.f coord.f dcoord.f deg2grid.f \
@@ -77,7 +79,9 @@ SRCS2F77 = wsjt1.f astro.f azdist.f coord.f dcoord.f deg2grid.f \
         short65.f slope.f spec2d65.f sync65.f unpackcall.f \
         unpackgrid.f unpackmsg.f unpacktext.f xcor.f xfft.f xfft2.f wsjt65.f \
 	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f decodecw.f \
-	foldcw.f rfile2.f encode232.f inter_mept.f pack50.f unpack50.f
+	foldcw.f rfile2.f encode232.f inter_mept.f pack50.f unpack50.f \
+	filbig2.f mept162a.f twkfreq.f sync162.f decode162.f \
+	ps162.f fchisq.f fano232.f ccf2.f wsjt64.f sync64.f 
 
 OBJS2F77 = ${SRCS2F77:.f=.o} deep65.o
 
