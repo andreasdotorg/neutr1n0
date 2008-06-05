@@ -1,11 +1,12 @@
 MV ?= mv
 CC ?= @CC@
 FFLAGS	= @FFLAGS@
-F2PYFLAGS=	@F2PYFLAGS@
-#for gfortran F2PYFLAGS=--f77exec=${FC} --f90exec=${FC}
-#for g95      F2PYFLAGS=--fcompiler=${FC}
 LDFLAGS	= @LDFLAGS@
-LIBS	= @LIBS@
+#
+# XXX N.B. this is non standard
+#
+LIBS	= ./libfftw3single.a
+LIBS	+= @LIBS@
 CPPFLAGS = @CPPFLAGS@
 CFLAGS	= @CFLAGS@
 # WSJT specific C flags
@@ -13,7 +14,6 @@ CFLAGS	+= -DBIGSYM=1 -fPIC
 DEFS = @DEFS@
 CFLAGS += ${DEFS}
 CPPFLAGS += ${DEFS} -I.
-LIBS += /usr/lib/libfftw3f.a
 
 # WSJT specific Fortran flags
 FFLAGS += -Wall -fbounds-check -fno-second-underscore -fPIC
@@ -32,6 +32,7 @@ wsjt:	wsjt6
 
 OS=@OS@
 FC=@FC@
+FCV=@FCV@
 COMPILER += @FC_LIB_PATH@
 
 LDFLAGS	+= -L${COMPILER}
@@ -88,45 +89,32 @@ OBJS2F77 = ${SRCS2F77:.f=.o} deep65.o
 SRCS2C	= init_rs.c encode_rs.c decode_rs.c fano.o tab.c nhash.c cutil.c
 OBJS2C  = ${SRCS2C:.c=.o}
 
-# for unix @AUDIO@ will be a2d.f90, jtaudio.c start_portaudio.c
-
 SRCS3C	= ptt_unix.c igray.c wrapkarn.c
 OBJS3C  = ${SRCS3C:.c=.o}
-AUDIOSRCS = @AUDIO@
+AUDIOSRCS =	a2d.f90 jtaudio.c start_portaudio.c resample.c
 
 all:	wsjt6 JT65code
 
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
 
-portaudio:	portaudio-v19/lib/.libs/libportaudio.a
-
-portaudio-v19/lib/.libs/libportaudio.a:
-	(cd portaudio-v19;./configure --with-pic --with-jack=no)
-	(cd portaudio-v19;${MAKE})
-
-portaudio_clean:
-	(cd portaudio-v19;${MAKE} clean)
-
-wsjt6:	@LOCAL_PORTAUDIO@ Audio.so
+wsjt6:	Audio.so
 
 deep65.o: deep65.F
 	$(FC) -c -O0 -Wall -fPIC deep65.F
 
-# gfortran
-# F2PYFLAGS = "--f77exec=${FC} --f90exec=${FC}"
-
 Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	 ${F2PY} -c --quiet --opt="-O ${CFLAGS} \
 	-fno-second-underscore"	$(OBJS2C) $(OBJS2F77) -m Audio \
-	${F2PYFLAGS} ${CPPFLAGS} ${LDFLAGS} ${LIBS} \
+	--fcompiler=${FCV} --f77exec=${FC} --f90exec=${FC} \
+	${CPPFLAGS} ${LDFLAGS} ${LIBS} \
 	only: $(F2PYONLY) \
 	: $(SRCS2F90) \
 	${SRCS3C} ${AUDIOSRCS}
 	${MV} Audio.so WsjtMod
 
 wsjt.spec: wsjt.py WsjtMod/astro.py WsjtMod/g.py wsjtMod/options.py \
-	WsjtMod/ palettes.py WsjtMod/smeter.py WsjtMod/specjt.py
+	WsjtMod/palettes.py WsjtMod/smeter.py WsjtMod/specjt.py
 
 init_rs_int.o: init_rs.c
 	$(CC) $(CFLAGS) -c -DBIGSYM=1 -o init_rs_int.o init_rs.c
@@ -142,7 +130,7 @@ fourt.o: fourt.f
 	$(FC) -c -O fourt.f
 
 .PHONY : clean
-clean:	@LOCAL_PORTAUDIO_CLEAN@
+clean:
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt6 WsjtMod/*.pyc WsjtMod/*.pyc \
 		WsjtMod/*.so
 

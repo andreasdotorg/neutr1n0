@@ -23,7 +23,7 @@ C     The transform will be real and returned to the input array.
       integer nn(NPMAX),ns(NPMAX),nf(NPMAX),nl(NPMAX)
       real*8 plan(NPMAX)                   !Should be i*8
       data nplan/0/
-      include 'fftw3.f'
+      include <fftw3.f>
       save
 
       if(nfft.lt.0) go to 999

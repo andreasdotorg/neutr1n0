@@ -22,7 +22,9 @@ CFLAGS="$OLD_CFLAGS"
 dnl Lets guess at some likely places for extra libs/includes XXX -db
 CPPFLAGS="-I/usr/local/include ${CPPFLAGS}"
 LDFLAGS="-L/usr/local/lib ${LDFLAGS}"
-LIBS=" -lpthread ${LIBS}"
+dnl XXX check for fftw3 in configure!
+LIBS=" -lpthread -lfftw3f ${LIBS}"
+FCV=""
 
 AC_MSG_CHECKING([uname -s for Cygwin, Solaris or HPUX])
 case `uname -s` in
@@ -85,11 +87,9 @@ AC_PATH_PROG(G95, g95)
 AC_MSG_CHECKING([g95 lib path])
 G95_LIB_PATH=`${G95} -print-file-name=`
 AC_MSG_RESULT(${G95_LIB_PATH})
-AC_PATH_PROG(GFORTRAN, gfortran)
-dnl
-dnl FreeBSD currently installs gfortran as gfortran42
-dnl
+AC_MSG_CHECKING([g95 lib path])
 AC_PATH_PROG(GFORTRAN, gfortran42)
+AC_PATH_PROG(GFORTRAN, gfortran)
 AC_MSG_CHECKING([gfortran lib path])
 GFORTRAN_LIB_PATH=`${GFORTRAN} -print-file-name=`
 AC_MSG_RESULT(${GFORTRAN_LIB_PATH})
@@ -256,7 +256,7 @@ if test ! -z $GFORTRAN ; then
 		FC=`basename ${GFORTRAN}`
 		g95=no
 		FFLAGS="$FFLAGS -fno-range-check -ffixed-line-length-none"
-		F2PYFLAGS="--f77exec=${FC} --f90exec=${FC}"
+		FCV="gnu95"
 	fi
 else
 	echo "*** No gfortran compiler found"
@@ -268,7 +268,8 @@ if test ! -z $G95 ; then
 		FC_LIB_PATH=${G95_LIB_PATH}
 		FC=`basename ${G95}`
 		gfortran=no
-		F2PYFLAGS="--fcompiler=${FC}"
+		FFLAGS="${FFLAGS} -ftrace=full -cpp"
+		FCV="g95"
 	fi
 else
 	echo "*** No g95 compiler found"
@@ -279,13 +280,14 @@ if test -z $FC ; then
        		FC_LIB_PATH=${GFORTRAN_LIB_PATH}
 	        FC=`basename ${GFORTRAN}`
 		gfortran=yes
-		FFLAGS="$FFLAGS -fno-range-check -ffixed-line-length-none"
-		F2PYFLAGS="--f77exec=${FC} --f90exec=${FC}"
+		FFLAGS="${FFLAGS} -fno-range-check -ffixed-line-length-none"
+		FCV="gnu95"
 	elif test ! -z $G95 ; then
        		FC_LIB_PATH=${G95_LIB_PATH}
 	        FC=`basename ${G95}`
 		g95=yes
-		F2PYFLAGS="--fcompiler=${FC}"
+		FFLAGS="${FFLAGS} -ftrace=full -cpp"
+		FCV="g95"
 	fi
 fi
 
@@ -298,6 +300,7 @@ AC_DEFINE_UNQUOTED(FC_LIB_PATH, "${FC_LIB_PATH}", [Path to fortran libs.])
 AC_SUBST(FC_LIB_PATH, "${FC_LIB_PATH}")
 AC_DEFINE_UNQUOTED(FC, "${FC}", [Fortran compiler.])
 AC_SUBST(FC, "${FC}")
+AC_SUBST(FCV, "${FCV}")
 
 dnl set defaults
 dnl ============
@@ -305,20 +308,8 @@ dnl ============
 dnl sanity tests.
 
 if test $HAS_PORTAUDIO -eq 0; then
-	portaudio_include_dir="portaudio-v19/include"
-	LIBS="${LIBS} ${RTLIBS} -lsamplerate portaudio-v19/lib/.libs/libportaudio.a"
-	LOCAL_PORTAUDIO="portaudio"
-	LOCAL_PORTAUDIO_CLEAN="portaudio_clean"
-else
-	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
-	LIBS="${LIBS} ${RTLIBS} -lsamplerate -lportaudio"
-	LOCAL_PORTAUDIO=""
-	LOCAL_PORTAUDIO_CLEAN=""
+	AC_MSG_ERROR([You need to install an usable portaudio v19; see README])
 fi
-	AC_SUBST(AUDIO, "a2d.f90 jtaudio.c resample.c start_portaudio.c")
-	AC_DEFINE(USE_PORTAUDIO, 1, [Define if you want PORTAUDIO used.])
-	CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
-
 dnl =====================
 
 dnl set conf flags
@@ -326,10 +317,14 @@ dnl ==============
 
 if test $HAS_PORTAUDIO_H -eq 1; then
 	AC_DEFINE(HAS_PORTAUDIO_H, 1, )
+	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
+	LIBS="${LIBS} -lportaudio"
+	CPPFLAGS="-I${portaudio_include_dir} $(CPPFLAGS)"
 fi
 
 if test $HAS_SAMPLERATE_H -eq 1; then
         AC_DEFINE(HAS_SAMPLERATE_H, 1, )
+	LIBS="${LIBS} -lsamplerate"
 fi
 
 if test "$F2PY" = ""; then
@@ -343,8 +338,6 @@ AC_SUBST(LIBS, "${LIBS}")
 AC_SUBST(CFLAGS)
 AC_SUBST(FFLAGS)
 AC_SUBST(F2PYFLAGS)
-AC_SUBST(LOCAL_PORTAUDIO,"${LOCAL_PORTAUDIO}")
-AC_SUBST(LOCAL_PORTAUDIO_CLEAN,"${LOCAL_PORTAUDIO_CLEAN}")
 
 AC_OUTPUT
 dnl AC_CONFIG_FILES(Makefile)
@@ -360,11 +353,6 @@ elif test $gfortran == "yes"; then
 	echo "Using gfortran as fortran compiler.";
 fi
 
-echo
-
-if test $HAS_PORTAUDIO -eq 0; then
-	echo "Using built in portaudio distribution"
-fi
 
 echo
 echo "Compiling $PACKAGE_NAME $PACKAGE_VERSION"

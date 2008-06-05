@@ -707,10 +707,8 @@ OS
 CLOBBER
 FC_LIB_PATH
 FC
-AUDIO
+FCV
 F2PYFLAGS
-LOCAL_PORTAUDIO
-LOCAL_PORTAUDIO_CLEAN
 LIBOBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -3043,7 +3041,8 @@ CFLAGS="$OLD_CFLAGS"
 
 CPPFLAGS="-I/usr/local/include ${CPPFLAGS}"
 LDFLAGS="-L/usr/local/lib ${LDFLAGS}"
-LIBS=" -lpthread ${LIBS}"
+LIBS=" -lpthread -lfftw3f ${LIBS}"
+FCV=""
 
 { $as_echo "$as_me:$LINENO: checking uname -s for Cygwin, Solaris or HPUX" >&5
 $as_echo_n "checking uname -s for Cygwin, Solaris or HPUX... " >&6; }
@@ -4271,8 +4270,10 @@ $as_echo_n "checking g95 lib path... " >&6; }
 G95_LIB_PATH=`${G95} -print-file-name=`
 { $as_echo "$as_me:$LINENO: result: ${G95_LIB_PATH}" >&5
 $as_echo "${G95_LIB_PATH}" >&6; }
-# Extract the first word of "gfortran", so it can be a program name with args.
-set dummy gfortran; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking g95 lib path" >&5
+$as_echo_n "checking g95 lib path... " >&6; }
+# Extract the first word of "gfortran42", so it can be a program name with args.
+set dummy gfortran42; ac_word=$2
 { $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if test "${ac_cv_path_GFORTRAN+set}" = set; then
@@ -4311,8 +4312,8 @@ $as_echo "no" >&6; }
 fi
 
 
-# Extract the first word of "gfortran42", so it can be a program name with args.
-set dummy gfortran42; ac_word=$2
+# Extract the first word of "gfortran", so it can be a program name with args.
+set dummy gfortran; ac_word=$2
 { $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if test "${ac_cv_path_GFORTRAN+set}" = set; then
@@ -7319,7 +7320,7 @@ if test ! -z $GFORTRAN ; then
 		FC=`basename ${GFORTRAN}`
 		g95=no
 		FFLAGS="$FFLAGS -fno-range-check -ffixed-line-length-none"
-		F2PYFLAGS="--f77exec=${FC} --f90exec=${FC}"
+		FCV="gnu95"
 	fi
 else
 	echo "*** No gfortran compiler found"
@@ -7331,7 +7332,8 @@ if test ! -z $G95 ; then
 		FC_LIB_PATH=${G95_LIB_PATH}
 		FC=`basename ${G95}`
 		gfortran=no
-		F2PYFLAGS="--fcompiler=${FC}"
+		FFLAGS="${FFLAGS} -ftrace=full -cpp"
+		FCV="g95"
 	fi
 else
 	echo "*** No g95 compiler found"
@@ -7342,13 +7344,14 @@ if test -z $FC ; then
        		FC_LIB_PATH=${GFORTRAN_LIB_PATH}
 	        FC=`basename ${GFORTRAN}`
 		gfortran=yes
-		FFLAGS="$FFLAGS -fno-range-check -ffixed-line-length-none"
-		F2PYFLAGS="--f77exec=${FC} --f90exec=${FC}"
+		FFLAGS="${FFLAGS} -fno-range-check -ffixed-line-length-none"
+		FCV="gnu95"
 	elif test ! -z $G95 ; then
        		FC_LIB_PATH=${G95_LIB_PATH}
 	        FC=`basename ${G95}`
 		g95=yes
-		F2PYFLAGS="--fcompiler=${FC}"
+		FFLAGS="${FFLAGS} -ftrace=full -cpp"
+		FCV="g95"
 	fi
 fi
 
@@ -7373,29 +7376,16 @@ _ACEOF
 
 FC="${FC}"
 
+FCV="${FCV}"
+
 
 
 
 if test $HAS_PORTAUDIO -eq 0; then
-	portaudio_include_dir="portaudio-v19/include"
-	LIBS="${LIBS} ${RTLIBS} -lsamplerate portaudio-v19/lib/.libs/libportaudio.a"
-	LOCAL_PORTAUDIO="portaudio"
-	LOCAL_PORTAUDIO_CLEAN="portaudio_clean"
-else
-	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
-	LIBS="${LIBS} ${RTLIBS} -lsamplerate -lportaudio"
-	LOCAL_PORTAUDIO=""
-	LOCAL_PORTAUDIO_CLEAN=""
+	{ { $as_echo "$as_me:$LINENO: error: You need to install an usable portaudio v19; see README" >&5
+$as_echo "$as_me: error: You need to install an usable portaudio v19; see README" >&2;}
+   { (exit 1); exit 1; }; }
 fi
-	AUDIO="a2d.f90 jtaudio.c resample.c start_portaudio.c"
-
-
-cat >>confdefs.h <<\_ACEOF
-#define USE_PORTAUDIO 1
-_ACEOF
-
-	CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
-
 
 
 if test $HAS_PORTAUDIO_H -eq 1; then
@@ -7403,6 +7393,9 @@ if test $HAS_PORTAUDIO_H -eq 1; then
 #define HAS_PORTAUDIO_H 1
 _ACEOF
 
+	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
+	LIBS="${LIBS} -lportaudio"
+	CPPFLAGS="-I${portaudio_include_dir} $(CPPFLAGS)"
 fi
 
 if test $HAS_SAMPLERATE_H -eq 1; then
@@ -7410,6 +7403,7 @@ if test $HAS_SAMPLERATE_H -eq 1; then
 #define HAS_SAMPLERATE_H 1
 _ACEOF
 
+	LIBS="${LIBS} -lsamplerate"
 fi
 
 if test "$F2PY" = ""; then
@@ -7426,10 +7420,6 @@ LIBS="${LIBS}"
 
 
 
-
-LOCAL_PORTAUDIO="${LOCAL_PORTAUDIO}"
-
-LOCAL_PORTAUDIO_CLEAN="${LOCAL_PORTAUDIO_CLEAN}"
 
 
 cat >confcache <<\_ACEOF
@@ -8551,11 +8541,6 @@ elif test $gfortran == "yes"; then
 	echo "Using gfortran as fortran compiler.";
 fi
 
-echo
-
-if test $HAS_PORTAUDIO -eq 0; then
-	echo "Using built in portaudio distribution"
-fi
 
 echo
 echo "Compiling $PACKAGE_NAME $PACKAGE_VERSION"
