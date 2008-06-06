@@ -5,7 +5,6 @@ LDFLAGS	= @LDFLAGS@
 #
 # XXX N.B. this is non standard
 #
-LIBS	= ./libfftw3single.a
 LIBS	+= @LIBS@
 CPPFLAGS = @CPPFLAGS@
 CFLAGS	= @CFLAGS@

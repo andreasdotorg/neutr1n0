@@ -22,8 +22,7 @@ CFLAGS="$OLD_CFLAGS"
 dnl Lets guess at some likely places for extra libs/includes XXX -db
 CPPFLAGS="-I/usr/local/include ${CPPFLAGS}"
 LDFLAGS="-L/usr/local/lib ${LDFLAGS}"
-dnl XXX check for fftw3 in configure!
-LIBS=" -lpthread -lfftw3f ${LIBS}"
+LIBS=" -lpthread ${LIBS}"
 FCV=""
 
 AC_MSG_CHECKING([uname -s for Cygwin, Solaris or HPUX])
@@ -107,6 +106,8 @@ sys/resource.h linux/ppdev.h dev/ppbus/ppi.h sys/stat.h fcntl.h sys/ioctl.h ])
 
 AC_HEADER_TIME
 
+AC_CHECK_HEADER([fftw3.h], [HAS_FFTW3_H=1], [HAS_FFTW3_H=0])
+
 AC_CHECK_HEADER([samplerate.h], [HAS_SAMPLERATE_H=1], [HAS_SAMPLERATE_H=0])
 HAS_PORTAUDIO_H=0
 HAS_PORTAUDIO_LIB=0
@@ -129,6 +130,7 @@ fi
 
 AC_CHECK_LIB(rt, clock_gettime, [RTLIBS="-lrt"], [RTLIBS=""])
 AC_CHECK_LIB(asound, snd_pcm_open, [ASOUNDLIBS="-lasound"], [ASOUNDLIBS=""])
+AC_CHECK_LIB(fftw3f, fftwf_mkplan, [FFTW3LIBS="-lfftw3f"], [FFTW3LIBS=""])
 
 AC_CHECK_SIZEOF(int64_t)
 AC_CHECK_SIZEOF(long long)
@@ -310,6 +312,13 @@ dnl sanity tests.
 if test $HAS_PORTAUDIO -eq 0; then
 	AC_MSG_ERROR([You need to install an usable portaudio v19; see README])
 fi
+if test $HAS_FFTW3_H -eq 0; then
+	AC_MSG_ERROR([You need to install the fftw3 libraries])
+fi
+if test $HAS_SAMPLERATE_H -eq 0; then
+	AC_MSG_ERROR([You need to install the samplerate library])
+fi
+
 dnl =====================
 
 dnl set conf flags
@@ -319,12 +328,17 @@ if test $HAS_PORTAUDIO_H -eq 1; then
 	AC_DEFINE(HAS_PORTAUDIO_H, 1, )
 	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
 	LIBS="${LIBS} -lportaudio"
-	CPPFLAGS="-I${portaudio_include_dir} $(CPPFLAGS)"
+	CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
 fi
 
 if test $HAS_SAMPLERATE_H -eq 1; then
         AC_DEFINE(HAS_SAMPLERATE_H, 1, )
 	LIBS="${LIBS} -lsamplerate"
+fi
+
+if test $HAS_FFTW3_H -eq 1; then
+	AC_DEFINE(HAS_FFTW3_H, 1, )
+	LIBS="${LIBS} -lfftw3f"
 fi
 
 if test "$F2PY" = ""; then
