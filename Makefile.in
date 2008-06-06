@@ -2,9 +2,6 @@ MV ?= mv
 CC ?= @CC@
 FFLAGS	= @FFLAGS@
 LDFLAGS	= @LDFLAGS@
-#
-# XXX N.B. this is non standard
-#
 LIBS	+= @LIBS@
 CPPFLAGS = @CPPFLAGS@
 CFLAGS	= @CFLAGS@

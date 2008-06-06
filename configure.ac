@@ -128,8 +128,6 @@ if test "$gcc_cv_header_string" = "yes"; then
 	AC_DEFINE(STRING_WITH_STRINGS, 1, [Define to 1 if string.h may be included along with strings.h])
 fi
 
-AC_CHECK_LIB(rt, clock_gettime, [RTLIBS="-lrt"], [RTLIBS=""])
-AC_CHECK_LIB(asound, snd_pcm_open, [ASOUNDLIBS="-lasound"], [ASOUNDLIBS=""])
 AC_CHECK_LIB(fftw3f, fftwf_mkplan, [FFTW3LIBS="-lfftw3f"], [FFTW3LIBS=""])
 
 AC_CHECK_SIZEOF(int64_t)
@@ -210,8 +208,8 @@ AC_CONFIG_FILES(		\
 )
 
 dnl =========================================
-portaudio_lib_dir=""
-portaudio_include_dir=""
+portaudio_lib_dir="/usr/lib"
+portaudio_include_dir="/usr/include"
 
 AC_ARG_WITH([portaudio-include-dir],
 AC_HELP_STRING([--with-portaudio-include-dir=<path>],
@@ -225,7 +223,8 @@ AC_HELP_STRING([--with-portaudio-lib-dir=<path>],
 
 dnl make sure portaudio dirs are valid
 dnl ==================================
-if test -e ${portaudio_lib_dir}/libportaudio.so -o -e ${portaudio_lib_dir}/libportaudio.a;then
+if test -e ${portaudio_lib_dir}/libportaudio.so \
+    -o -e ${portaudio_lib_dir}/libportaudio.a;then
 	HAS_PORTAUDIO_LIB=1
 fi
 if test -e ${portaudio_include_dir}/portaudio.h; then
@@ -309,9 +308,6 @@ dnl ============
 
 dnl sanity tests.
 
-if test $HAS_PORTAUDIO -eq 0; then
-	AC_MSG_ERROR([You need to install an usable portaudio v19; see README])
-fi
 if test $HAS_FFTW3_H -eq 0; then
 	AC_MSG_ERROR([You need to install the fftw3 libraries])
 fi
@@ -320,7 +316,6 @@ if test $HAS_SAMPLERATE_H -eq 0; then
 fi
 
 dnl =====================
-
 dnl set conf flags
 dnl ==============
 
@@ -329,6 +324,37 @@ if test $HAS_PORTAUDIO_H -eq 1; then
 	LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
 	LIBS="${LIBS} -lportaudio"
 	CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
+	AC_CHECK_LIB(portaudio, Pa_GetVersion, \
+		[HAS_PORTAUDIO_VERSION=1], [HAS_PORTAUDIO_VERSION=0])
+	if test $HAS_PORTAUDIO_VERSION -eq 0; then
+		AC_MSG_ERROR([This is likely portaudio v18; you need v19])
+	fi
+else
+	AC_MSG_RESULT([Trying FreeBSD paths])
+	portaudio_lib_dir="/usr/local/lib/portaudio2"
+	portaudio_include_dir="/usr/local/include/portaudio2"
+dnl
+dnl Try again to make sure portaudio dirs are valid
+dnl
+	if test -e ${portaudio_lib_dir}/libportaudio.so -o -e \
+		${portaudio_lib_dir}/libportaudio.a;then
+		HAS_PORTAUDIO_LIB=1
+	fi
+	if test -e ${portaudio_include_dir}/portaudio.h; then
+		HAS_PORTAUDIO_H=1
+	fi
+	if test $HAS_PORTAUDIO_H -eq 1 -a $HAS_PORTAUDIO_LIB -eq 1; then
+		HAS_PORTAUDIO=1
+		AC_DEFINE(HAS_PORTAUDIO_H, 1, )
+		LDFLAGS="-L${portaudio_lib_dir} ${LDFLAGS}"
+		LIBS="${LIBS} -lportaudio"
+		CPPFLAGS="-I${portaudio_include_dir} ${CPPFLAGS}"
+		AC_CHECK_LIB(portaudio, Pa_GetVersion, \
+			[HAS_PORTAUDIO_VERSION=1], [HAS_PORTAUDIO_VERSION=0])
+		if test $HAS_PORTAUDIO_VERSION -eq 0; then
+			AC_MSG_ERROR([This is likely portaudio v18; you need v19])
+		fi
+	fi
 fi
 
 if test $HAS_SAMPLERATE_H -eq 1; then
