@@ -72,12 +72,12 @@ C  Remove baseline and one dB for good measure.
 
 C  If this is a "mouse pick" and no ping was found, force a pseudo-ping 
 C  at center of data.
-	if(pick.and.nping.eq.0) then
+        if(pick.and.nping.eq.0) then
            if(nping.le.99) nping=nping+1
-	   pingdat(1,nping)=0.5*jz*dt
-	   pingdat(2,nping)=0.16
-	   pingdat(3,nping)=1.0
-	endif
+           pingdat(1,nping)=0.5*jz*dt
+           pingdat(2,nping)=0.16
+           pingdat(3,nping)=1.0
+        endif
 
       bigpeak=0.
       do iping=1,nping

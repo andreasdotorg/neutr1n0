@@ -1,18 +1,18 @@
-	SUBROUTINE COORD(A0,B0,AP,BP,A1,B1,A2,B2)
+        SUBROUTINE COORD(A0,B0,AP,BP,A1,B1,A2,B2)
 
 C  Examples:
 C  1. From ha,dec to az,el:
-C	call coord(pi,pio2-lat,0.,lat,ha,dec,az,el)
+C       call coord(pi,pio2-lat,0.,lat,ha,dec,az,el)
 C  2. From az,el to ha,dec:
-C	call coord(pi,pio2-lat,0.,lat,az,el,ha,dec)
+C       call coord(pi,pio2-lat,0.,lat,az,el,ha,dec)
 C  3. From ra,dec to l,b
-C	call coord(4.635594495,-0.504691042,3.355395488,0.478220215,
-C	  ra,dec,l,b)
+C       call coord(4.635594495,-0.504691042,3.355395488,0.478220215,
+C         ra,dec,l,b)
 C  4. From l,b to ra,dec
-C	call coord(1.705981071d0,-1.050357016d0,2.146800277d0,
+C       call coord(1.705981071d0,-1.050357016d0,2.146800277d0,
 C         0.478220215d0,l,b,ra,dec)
 C  5. From ecliptic latitude (eb) and longitude (el) to ra, dec:
-C	call coord(0.e0,0.e0,-pio2,pio2-23.443*pi/180,ra,dec,el,eb)
+C       call coord(0.e0,0.e0,-pio2,pio2-23.443*pi/180,ra,dec,el,eb)
 
       SB0=sin(B0)
       CB0=cos(B0)

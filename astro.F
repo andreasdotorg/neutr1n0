@@ -22,13 +22,13 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       save first
 
       if(first) then
-	do i=80,1,-1
-	   if(ichar(AppDir(i:i)).ne.0 .and. 
+        do i=80,1,-1
+           if(ichar(AppDir(i:i)).ne.0 .and. 
      +            ichar(AppDir(i:i)).ne.32) goto 1
-	enddo
- 1	lenappdir=i
+        enddo
+ 1      lenappdir=i
         call zero(nsky,180*180)
-	fname=Appdir(1:lenappdir)//'/TSKY.DAT'
+        fname=Appdir(1:lenappdir)//'/TSKY.DAT'
 #ifdef CVF
         open(13,file=fname,status='old',form='binary',err=10)
         read(13) nsky

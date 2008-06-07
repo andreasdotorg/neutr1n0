@@ -75,21 +75,21 @@ subroutine wsjtgen
 
 #else
         tfile2=testfile
-	call rfile2(tfile2,hdr,44+2*120*12000,nr)
-	if(nr.le.0) then
+        call rfile2(tfile2,hdr,44+2*120*12000,nr)
+        if(nr.le.0) then
            print*,'Error reading ',testfile
-	   stop
+           stop
         endif
-	do i=1,ndata/2
-	   iwave(i)=jwave(i)
+        do i=1,ndata/2
+           iwave(i)=jwave(i)
         enddo
 #endif
         nwave=ndata/2
         do i=nwave,NTXMAX
            iwave(i)=0
         enddo
-	sending=txmsg
-	sendingsh=2
+        sending=txmsg
+        sendingsh=2
         go to 999
      endif
 
