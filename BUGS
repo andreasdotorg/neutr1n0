@@ -1,3 +1,9 @@
+$Id:$
+
+Please make sure you have ulimit -c not set to 0, if it is set to
+0 we will not get a core file and that makes our debugging job
+harder. i.e. ulimit -c unlimited please.
+
 If you have a problem we need the following:
 
 1) The name of the OS, distribution
