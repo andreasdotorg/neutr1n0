@@ -8,7 +8,7 @@ AC_COPYRIGHT([$Id$])
 
 AC_INIT([wsjt],[5.9.6])
 
-AC_PREFIX_DEFAULT(/usr/local/)
+AC_PREFIX_DEFAULT("/usr/local/")
 
 OLD_CFLAGS="$CFLAGS"
 dnl Checks for programs.
@@ -204,7 +204,7 @@ dnl a custom prefix with a trailing slash
 fi
 
 AC_CONFIG_FILES(		\
-	Makefile		
+	Makefile setup.py
 )
 
 dnl =========================================
@@ -296,12 +296,12 @@ if test -z $FC ; then
 		AC_MSG_ERROR([You need g95 or gfortran])
 fi
 
-
 AC_DEFINE_UNQUOTED(FC_LIB_PATH, "${FC_LIB_PATH}", [Path to fortran libs.])
 AC_SUBST(FC_LIB_PATH, "${FC_LIB_PATH}")
 AC_DEFINE_UNQUOTED(FC, "${FC}", [Fortran compiler.])
 AC_SUBST(FC, "${FC}")
 AC_SUBST(FCV, "${FCV}")
+AC_SUBST(PREFIX, "${prefix}")
 
 dnl set defaults
 dnl ============

@@ -94,12 +94,9 @@ all:	wsjt6 JT65code
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
 
-wsjt6:	Audio.so
+wsjt6:	WsjtMod/Audio.so
 
-deep65.o: deep65.F
-	$(FC) -c -O0 -Wall -fPIC deep65.F
-
-Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
+WsjtMod/Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	 ${F2PY} -c --quiet --opt="-O ${CFLAGS} \
 	-fno-second-underscore"	$(OBJS2C) $(OBJS2F77) -m Audio \
 	--fcompiler=${FCV} --f77exec=${FC} --f90exec=${FC} \
@@ -126,6 +123,9 @@ fourt.o: fourt.f
 	$(FC) -c -O fourt.f
 
 .PHONY : clean
+install:	WsjtMod/Audio.so
+	${PYTHON} setup.py install
+
 clean:
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt6 WsjtMod/*.pyc WsjtMod/*.pyc \
 		WsjtMod/*.so
