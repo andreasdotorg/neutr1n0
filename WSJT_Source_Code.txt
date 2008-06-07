@@ -268,16 +268,23 @@ can now be compiled in Windows as follows:
 
 In Linux or FreeBSD, do the following:
 
-  $ ./configure --enable-portaudio (or --enable-alsa or --enable-oss)
+  $ ./configure
   $ make
 
 
-8  Present status (January 17, 2006)
+8a  Present status (January 17, 2006)
 ----------------------------------------------------------------------
 
 WSJT version 5.9.2 (built from SVN revision 115) has been released for
 Windows.  It is is fully functional in Linux and BSD, as well, but
 presently need to be compiled locally.  In due course we plan to
 provide distributions for standard *nix distributions.
+
+8b  Present status (June 7, 2008)
+
+The latest stable working version of WSJT in svn is 789. The head of the
+tree might work, it might also burn down your house. You have been warned!
+Bug reports are welcome, but please read BUGS so we have something
+to work with.
 
 
