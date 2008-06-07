@@ -61,24 +61,20 @@ int lseek_(int *fd,int *offset, int *origin)
 int usleep_(unsigned long *microsec)
 {
   usleep(*microsec);
+  return(0);
 }
 
 /* returns random numbers between 0 and 32767 to FORTRAN program */
 int iran_(int *arg)
 {
   return (rand());
+  return(0);
 }
 
 int exit_(int *n)
 {
   printf("\n\n");
   exit(*n);
-}
-
-struct tm *
-gmtime_r_(const time_t *clock, struct tm *result)
-{
-  //  gmtime_r(clock, result);
 }
 
 time_t time_(void)
