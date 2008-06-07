@@ -134,7 +134,8 @@ if test "$gcc_cv_header_string" = "yes"; then
 	AC_DEFINE(STRING_WITH_STRINGS, 1, [Define to 1 if string.h may be included along with strings.h])
 fi
 
-AC_CHECK_LIB(fftw3f, fftwf_mkplan, \
+dnl check for a fortran shim entry point
+AC_CHECK_LIB(fftw3f, sfftw_destroy_plan__, \
 	[HAS_FFTW3FLIBS=1], [HAS_FFTW3FLIBS=0])
 
 
@@ -365,6 +366,9 @@ fi
 
 if test $HAS_FFTW3_H -eq 1; then
 	AC_DEFINE(HAS_FFTW3_H, 1, )
+else
+	fail=1
+	echo "You are missing the fftw3.h include file"
 fi
 
 if test "$F2PY" = ""; then
@@ -378,6 +382,7 @@ if test $HAS_FFTW3FLIBS -eq 1; then
 else
 	fail =1
 	echo "You are missing the fortran shim lib for fftw3 you need libfftw3f."
+	echo "It is also possible your libfftw3f is missing the fortran shim entry points."
 fi
 
 dnl
