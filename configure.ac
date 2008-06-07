@@ -177,9 +177,7 @@ AC_CONFIG_FILES(		\
 )
 
 dnl =========================================
-
 dnl pick gfortran or g95
-dnl ====================
 
 AC_ARG_ENABLE(g95,
 AC_HELP_STRING([--enable-g95],[Use G95 compiler if available.]),
@@ -191,7 +189,7 @@ AC_HELP_STRING([--enable-gfortran],[Use gfortran compiler if available.]),
 
 dnl now set conf.h,, CPPFLAGS and CFLAGS flags as needed
 dnl ====================================================
-
+ 
 if test ! -z $GFORTRAN ; then
 	echo "*** gfortran compiler found"
 	if test "$gfortran" = yes; then
