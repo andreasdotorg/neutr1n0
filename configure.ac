@@ -8,6 +8,10 @@ AC_COPYRIGHT([$Id$])
 
 AC_INIT([wsjt],[5.9.6])
 
+dnl Sneakier way to get a Version into setup.py
+rev=`echo "$Rev: 848 $"|awk '{print $2}'`
+version="7.0 r${rev}"
+
 AC_PREFIX_DEFAULT("/usr/local/")
 
 OLD_CFLAGS="$CFLAGS"
@@ -95,6 +99,7 @@ AC_MSG_RESULT(${GFORTRAN_LIB_PATH})
 AC_MSG_CHECKING([OS])
 OS=`uname`
 AC_SUBST(OS, "${OS}")
+AC_SUBST(VERSION, "${version}")
 
 dnl Checks for header files.
 
@@ -380,7 +385,7 @@ AC_SUBST(FFLAGS)
 AC_SUBST(F2PYFLAGS)
 
 AC_OUTPUT
-dnl AC_CONFIG_FILES(Makefile)
+dnl AC_CONFIG_FILES(Makefile setup.py)
 
 dnl do summary
 
