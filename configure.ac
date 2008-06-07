@@ -134,7 +134,9 @@ if test "$gcc_cv_header_string" = "yes"; then
 	AC_DEFINE(STRING_WITH_STRINGS, 1, [Define to 1 if string.h may be included along with strings.h])
 fi
 
-AC_CHECK_LIB(fftw3f, fftwf_mkplan, [FFTW3LIBS="-lfftw3f"], [FFTW3LIBS=""])
+AC_CHECK_LIB(fftw3f, fftwf_mkplan, \
+	[HAS_FFTW3FLIBS=1], [HAS_FFTW3FLIBS=0])
+
 
 dnl Check for stdarg.h - if we can't find it, halt configure
 AC_CHECK_HEADER(stdarg.h, , [AC_MSG_ERROR([** stdarg.h could not be found - wsjt will not compile without it **])])
@@ -363,12 +365,19 @@ fi
 
 if test $HAS_FFTW3_H -eq 1; then
 	AC_DEFINE(HAS_FFTW3_H, 1, )
-	LIBS="${LIBS} -lfftw3f"
 fi
 
 if test "$F2PY" = ""; then
 	echo "You are missing f2py, trying local copy."
 	F2PY="python f2py.py";	
+fi
+
+if test $HAS_FFTW3FLIBS -eq 1; then
+	LIBS="${LIBS} -lfftw3f"
+	AC_DEFINE(HAS_FFTW3FLIBS, 1, )
+else
+	fail =1
+	echo "You are missing the fortran shim lib for fftw3 you need libfftw3f."
 fi
 
 dnl
