@@ -2481,7 +2481,12 @@ try:
         elif key == 'AddPrefix': options.addpfx.set(value.replace("_"," ").lstrip())
         elif key == 'AuxRA': options.auxra.set(value)
         elif key == 'AuxDEC': options.auxdec.set(value)
-        elif key == 'AzElDir': options.azeldir.set(value.replace("#"," "))
+        elif key == 'AzElDir':
+	    options.azeldir.set(value.replace("#"," "))
+            try:
+		os.stat(options.azeldir.get())
+	    except:
+		options.azeldir.set(os.getcwd())
         elif key == 'TxFirst': TxFirst.set(value)
         elif key == 'KB8RQ': kb8rq.set(value)
         elif key == 'K2TXB': k2txb.set(value)
