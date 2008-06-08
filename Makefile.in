@@ -1,5 +1,4 @@
 MV ?= mv
-MKDIR ?= mkdir
 CC ?= @CC@
 FFLAGS	= @FFLAGS@
 LDFLAGS	= @LDFLAGS@
@@ -105,7 +104,6 @@ WsjtMod/Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	only: $(F2PYONLY) \
 	: $(SRCS2F90) \
 	${SRCS3C} ${AUDIOSRCS}
-	${MKDIR} -p build/lib/WsjtMod
 	${MV} Audio.so WsjtMod
 
 wsjt.spec: wsjt.py WsjtMod/astro.py WsjtMod/g.py wsjtMod/options.py \

@@ -4,6 +4,7 @@ version = "WSJT Version " + "@VERSION@" + ", by K1JT"
 
 from distutils.core import setup
 from distutils.file_util import copy_file
+import os
 
 def wsjt_install(install):
 #
@@ -11,7 +12,8 @@ def wsjt_install(install):
 # I'm doing a nasty hack here to support our hybrid build system -db
 #
 	if install == 1:
-		copy_file('WsjtMod/Audio.so', 'build/lib/WsjtMod')
+	    os.makedirs('build/lib/WsjtMod')
+	    copy_file('WsjtMod/Audio.so', 'build/lib/WsjtMod')
 	setup(name='Wsjt',
 	version=version,
 	description='Wsjt Python Module for Weak Signal detection',
@@ -35,7 +37,7 @@ for the very challenging EME (Earth-Moon-Earth) path.
 if __name__ == '__main__':
 	import sys
 	if 'install' in sys.argv:
-		wsjt_install(1)
+	    wsjt_install(1)
 	else:
-		wsjt_install(0)
+	    wsjt_install(0)
 
