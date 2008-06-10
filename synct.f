@@ -2,7 +2,8 @@
 
 C  Gets a refined value of jstart.
 
-      parameter (NMAX=30*11025)
+C      parameter (NMAX=30*11025)
+      parameter (NMAX=1024*1024)
       parameter (NB3=3*512)
       real data(jz)
       real*8 dpha,twopi
@@ -17,6 +18,10 @@ C  Convert data to baseband (complex result) using quadrature LO.
       dpha=twopi*f0/11025.d0
       dz=cmplx(cos(dpha),-sin(dpha))
       z=1.d0/dz
+      if(jz .ge. NMAX) then
+             print*,"synct jz >= NMAX ", jz
+             stop
+      endif
       do i=1,jz
          z=z*dz
          c(i)=data(i)*z
