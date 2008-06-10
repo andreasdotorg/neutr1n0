@@ -9,7 +9,7 @@ C  the "OOO" message.
       parameter (NHMAX=1260)           !Max length of power spectra
       parameter (NSMAX=525)            !Max number of half-symbol steps
       real s2(NHMAX,NSMAX)             !2d spectrum, stepped by half-symbols
-      real a(NSMAX),a2(NSMAX)
+      real a(NSMAX)
       real ccf(-5:540)
       integer npr2(207)
       real pr2(207)

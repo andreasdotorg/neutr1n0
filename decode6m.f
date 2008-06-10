@@ -4,7 +4,11 @@
 C  Decode a JT6M message.  Data must start at the beginning of a 
 C  sync symbol; sync frequency is assumed to be f0.
 
-      parameter (NMAX=30*11025)
+C      parameter (NMAX=30*11025)
+C There must be a better way of doing this 
+C NMAX is overruled in lfp1 to be 1024*1024 which is called from here -db
+C
+      parameter (NMAX=1024*1024)
       real data(jz)              !Raw data
       real s2db(0:43,646)        !Spectra of symbols
 c      real s2(128,646)
