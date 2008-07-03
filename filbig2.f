@@ -29,12 +29,21 @@ C Impulse response of filter (one side)
          npatience=FFTW_ESTIMATE
 !         npatience=FFTW_MEASURE
 C  Plan the FFTs just once
+#ifdef CVF
          call sfftw_plan_dft_1d_(plan1,NFFT1,ca,ca,
      +        FFTW_FORWARD,npatience)                      !BACK
          call sfftw_plan_dft_1d_(plan3,NFFT2,c4a,c4a,
      +        FFTW_BACKWARD,npatience)                     !FOR
          call sfftw_plan_dft_1d_(plan5,NFFT2,cfilt,cfilt,
      +        FFTW_FORWARD,npatience)                      !BACK
+#else
+         call sfftw_plan_dft_1d(plan1,NFFT1,ca,ca,
+     +        FFTW_FORWARD,npatience)                      !BACK
+         call sfftw_plan_dft_1d(plan3,NFFT2,c4a,c4a,
+     +        FFTW_BACKWARD,npatience)                     !FOR
+         call sfftw_plan_dft_1d(plan5,NFFT2,cfilt,cfilt,
+     +        FFTW_FORWARD,npatience)                      !BACK
+#endif
 
 C  Convert impulse response to filter function
          do i=1,NFFT2
@@ -46,8 +55,12 @@ C  Convert impulse response to filter function
             cfilt(i)=fac*halfpulse(i)
             cfilt(NFFT2+2-i)=fac*halfpulse(i)
          enddo
-         call sfftw_execute_(plan5)
 
+#ifdef CVF
+         call sfftw_execute_(plan5)
+#else
+         call sfftw_execute(plan5)
+#endif
          base=cfilt(NFFT2/2+1)
          do i=1,NFFT2
             rfilt(i)=real(cfilt(i))-base
@@ -70,7 +83,13 @@ C  If we just have a new f0, continue with the existing ca and cb.
                ca(i)=0.
             enddo
          endif
+
+#ifdef CVF
          call sfftw_execute_(plan1)
+#else
+         call sfftw_execute(plan1)
+#endif
+
          newdat=0
       endif
 
@@ -91,14 +110,25 @@ C      i0 is the bin number in ca and cb closest to f0.
       n4=min(int(nmax*375.0/11025.0),NFFT2)
 
 C  Do the short reverse transform, to go back to time domain.
+#ifdef CVF
       call sfftw_execute_(plan3)
+#else
+      call sfftw_execute(plan3)
+#endif
+
       go to 999
 
  900  if(plan1.ne.0) then
 !         print*,'Destroying FFTW plans'
+#ifdef CVF
          call sfftw_destroy_plan_(plan1)
          call sfftw_destroy_plan_(plan3)
          call sfftw_destroy_plan_(plan5)
+#else
+         call sfftw_destroy_plan(plan1)
+         call sfftw_destroy_plan(plan3)
+         call sfftw_destroy_plan(plan5)
+#endif
          plan1=0
          plan3=0
          plan5=0
