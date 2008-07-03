@@ -84,12 +84,13 @@ end subroutine getfile
 
 subroutine check_endian
 
-  parameter (NDMAX=661500)  ! =60*11025
+  parameter (NDMAX=120*11025)
 
   integer*1 d1(NDMAX)
   integer*1 hdr(44),n1
   integer*2 d2(NDMAX)
   integer*2 nfmt2,nchan2,nbitsam2,nbytesam2
+  integer*2 iswap_short
   character*4 ariff,awave,afmt,adata
   common/hdr/ariff,lenfile,awave,afmt,lenfmt,nfmt2,nchan2, &
      nsamrate,nbytesec,nbytesam2,nbitsam2,adata,ndata,d2
@@ -115,20 +116,21 @@ subroutine check_endian
 1000 format('Converting file to big-endian',i10)
 
   return
-  end subroutine check_endian
+end subroutine check_endian
 
-  integer function iswap_int(idat)
+integer function iswap_int(idat)
 
   itemp1 = ior(ishft(idat,24), iand(ishft(idat,8), z'00ff0000'))
   itemp0 = ior(iand(ishft(idat,-8), z'0000ff00'), iand(ishft(idat,-24),z'000000ff'))
   iswap_int = ior(itemp1,itemp0)
   
-  end function iswap_int
+end function iswap_int
 
-  integer*2 function iswap_short(idat)
+integer*2 function iswap_short(idat)
 
-  integer*2 idat
+  integer*2 idat,m2
+  data m2/255/
 
-  iswap_short = ior(ishft(idat,8), iand(ishft(idat,-8), z'00ff'))
+  iswap_short = ior(ishft(idat,8), iand(ishft(idat,-8), m2))
 
-  end function iswap_short 
+end function iswap_short
