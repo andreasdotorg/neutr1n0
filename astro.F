@@ -36,6 +36,16 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
 #else
         call rfile2(fname,nsky,129600,nr)
         if(nr.ne.129600) go to 10
+        nsky4=nsky(1,1)
+        if (iabs(nsky4).gt.500) then
+          write(*,1000)
+ 1000     format('Converting TSKY.DAT')
+          do i=1,360
+            do j=1,180
+              nsky(i,j) = iswap_short(nsky(i,j))
+            enddo
+          enddo
+        endif 
 #endif
         ltsky=.true.
         first=.false.

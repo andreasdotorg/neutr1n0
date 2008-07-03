@@ -135,7 +135,7 @@ if test "$gcc_cv_header_string" = "yes"; then
 fi
 
 dnl check for a fortran shim entry point
-AC_CHECK_LIB(fftw3f, sfftw_destroy_plan__, \
+AC_CHECK_LIB(fftw3f, sfftw_destroy_plan_, \
 	[HAS_FFTW3FLIBS=1], [HAS_FFTW3FLIBS=0])
 
 

@@ -43,6 +43,7 @@ subroutine getfile(fname,len)
   call rfile2(fname,hdr,44+2*NDMAX,nr)
 #endif
 
+  call check_endian
   if(nbitsam2.eq.8) then
      if(ndata.gt.NDMAX) ndata=NDMAX
 
@@ -52,9 +53,9 @@ subroutine getfile(fname,len)
 #endif
 
      do i=1,ndata
-        n1=d1(i)
-        n4=n4+128
-        d2c(i)=250*n1
+        n4=d1(i)
+        if (n4.lt.0) n4=256+n4
+        d2c(i)=250*n4
      enddo
      jzc=ndata
 
@@ -80,3 +81,54 @@ subroutine getfile(fname,len)
 999 close(10)
   return
 end subroutine getfile
+
+subroutine check_endian
+
+  parameter (NDMAX=661500)  ! =60*11025
+
+  integer*1 d1(NDMAX)
+  integer*1 hdr(44),n1
+  integer*2 d2(NDMAX)
+  integer*2 nfmt2,nchan2,nbitsam2,nbytesam2
+  character*4 ariff,awave,afmt,adata
+  common/hdr/ariff,lenfile,awave,afmt,lenfmt,nfmt2,nchan2, &
+     nsamrate,nbytesec,nbytesam2,nbitsam2,adata,ndata,d2
+  equivalence (ariff,hdr),(n1,n4),(d1,d2)
+
+  if (nfmt2.eq.16) return             ! correct endianess for this CPU
+  write(*,1000)
+  lenfile = iswap_int(lenfile)
+  lenfmt = iswap_int(lenfmt)
+  nfmt2 = iswap_short(nfmt2)
+  nchan2 = iswap_short(nchan2)
+  nsamrate = iswap_int(nsamrate)
+  nbytesec = iswap_int(nbytesec)
+  nbytesam2 = iswap_short(nbytesam2)
+  nbitsam2 = iswap_short(nbitsam2)
+  ndata = iswap_int(ndata)
+  if (nbitsam2.eq.8) return           ! header converted.   Data are bytes
+
+  do i=1,ndata/2
+    d2(i) = iswap_short(d2(i))
+  enddo
+
+1000 format('Converting file to big-endian',i10)
+
+  return
+  end subroutine check_endian
+
+  integer function iswap_int(idat)
+
+  itemp1 = ior(ishft(idat,24), iand(ishft(idat,8), z'00ff0000'))
+  itemp0 = ior(iand(ishft(idat,-8), z'0000ff00'), iand(ishft(idat,-24),z'000000ff'))
+  iswap_int = ior(itemp1,itemp0)
+  
+  end function iswap_int
+
+  integer*2 function iswap_short(idat)
+
+  integer*2 idat
+
+  iswap_short = ior(ishft(idat,8), iand(ishft(idat,-8), z'00ff'))
+
+  end function iswap_short 

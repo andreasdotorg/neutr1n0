@@ -22,6 +22,9 @@ C  Longest allowed data analysis is 1 second.
       data c/' 123456789.,?/# $ABCD FGHIJKLMNOPQRSTUVWXY 0EZ  '/
       data wgt/1.0,4.0,6.0,4.0,1.0/
 
+      do i=1,NDMAX
+        dit(i)=0
+      enddo
       NSPD=25                                !Change if FSK110 is implemented
       LTone=2
       NBaud=11025/NSPD
@@ -121,7 +124,7 @@ C  Finally, decode the message.
          j=(i-1)*3+jsync
          nc=16*dit(j) + 4*dit(j+1) +dit(j+2)
          msg(i:i)=' '
-         if(nc.le.47) msg(i:i)=c(nc+1:nc+1)
+         if(nc.le.47 .and. nc.ge.0) msg(i:i)=c(nc+1:nc+1)
       enddo
 
       return

@@ -1879,25 +1879,25 @@ def update():
     if altmsg: tx6alt=tx6.get()    
 # Queue up the next update
     ldate.after(100,update)
-    
+
 #------------------------------------------------------ Top level frame
 frame = Frame(root)
 
 #------------------------------------------------------ Menu Bar
-mbar = Frame(frame)
-mbar.pack(fill = X)
+mbar = Menu(root)
+root.config(menu=mbar)
+
+# Tearoff menus make less sense under darwin
+use_tearoff = (sys.platform != 'darwin')
 
 #------------------------------------------------------ File Menu
-filebutton = Menubutton(mbar, text = 'File')
-filebutton.pack(side = LEFT)
-filemenu = Menu(filebutton, tearoff=0)
-filebutton['menu'] = filemenu
-filemenu.add('command', label = 'Open', command = openfile, \
-             accelerator='Ctrl+O')
-filemenu.add('command', label = 'Open next in directory', command = opennext, \
-             accelerator='F6')
+filemenu = Menu(mbar, tearoff=0)
+filemenu.add('command',label = "Open", \
+            command = openfile, accelerator = 'Ctrl+O')
+filemenu.add('command', label = 'Open next in directory', \
+            command = opennext, accelerator = 'F6')
 filemenu.add('command', label = 'Decode remaining files in directory', \
-             command = decodeall, accelerator='Shift+F6')
+            command = decodeall, accelerator='Shift+F6')
 filemenu.add_separator()
 filemenu.add('command', label = 'Delete all *.WAV files in RxWav', \
              command = delwav)
@@ -1906,11 +1906,10 @@ filemenu.add('command', label = 'Erase ALL.TXT', command = del_all)
 filemenu.add_separator()
 filemenu.add('command', label = 'Exit', command = quit)
 
+mbar.add_cascade(label="File", menu=filemenu)
+
 #------------------------------------------------------ Setup menu
-setupbutton = Menubutton(mbar, text = 'Setup')
-setupbutton.pack(side = LEFT)
-setupmenu = Menu(setupbutton, tearoff=0)
-setupbutton['menu'] = setupmenu
+setupmenu = Menu(mbar, tearoff=0)
 setupmenu.add('command', label = 'Options', command = options1, \
               accelerator='F2')
 setupmenu.add_separator()
@@ -1947,16 +1946,24 @@ modemenu.add_radiobutton(label = 'FSK441', variable=mode, \
 # Can use the following to retrieve the state:
 # state=modemenu.entrycget(0,"state")
 
-modemenu.add_radiobutton(label = 'JT6M', variable=mode, command = ModeJT6M, \
-                        accelerator='Shift+F7')
-modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A, \
-                         accelerator='F8')
-modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B, \
-                         accelerator='Shift+F8')
-modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C, \
-                         accelerator='Ctrl+F8')
-modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW, \
-                         accelerator='Shift+Ctrl+F8')
+if (sys.platform=='darwin') :
+    modemenu.add_radiobutton(label = 'JT6M', variable=mode, command = ModeJT6M)
+    modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A)
+    modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B)
+    modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C)
+    modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW)
+else:
+    modemenu.add_radiobutton(label = 'JT6M', variable=mode, command = ModeJT6M, \
+                             accelerator='Shift+F7')
+    modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A, \
+                             accelerator='F8')
+    modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B, \
+                             accelerator='Shift+F8')
+    modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C, \
+                             accelerator='Ctrl+F8')
+    modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW, \
+                             accelerator='Shift+Ctrl+F8')
+    
 modemenu.add_radiobutton(label = 'JT2', variable=mode, command = ModeJT2)
 modemenu.add_radiobutton(label = 'JT4A', variable=mode, command = ModeJT4A)
 modemenu.add_radiobutton(label = 'JT4B', variable=mode, command = ModeJT4B)
@@ -1995,11 +2002,10 @@ decodemenu.JT65.add_separator()
 decodemenu.add_cascade(label = 'FSK441',menu=decodemenu.FSK441)
 decodemenu.add_cascade(label = 'JT65',menu=decodemenu.JT65)
 
+mbar.add_cascade(label="Decode", menu=decodemenu)
+
 #------------------------------------------------------ Save menu
-savebutton = Menubutton(mbar, text = 'Save')
-savebutton.pack(side = LEFT)
-savemenu = Menu(savebutton, tearoff=1)
-savebutton['menu'] = savemenu
+savemenu = Menu(mbar, tearoff=use_tearoff)
 nsave=IntVar()
 savemenu.add_radiobutton(label = 'None', variable=nsave,value=0)
 savemenu.add_radiobutton(label = 'Save decoded', variable=nsave,value=1)
@@ -2007,11 +2013,10 @@ savemenu.add_radiobutton(label = 'Save if Auto On', variable=nsave,value=2)
 savemenu.add_radiobutton(label = 'Save all', variable=nsave,value=3)
 nsave.set(0)
 
+mbar.add_cascade(label="Save", menu=savemenu)
+
 #------------------------------------------------------ Band menu
-bandbutton = Menubutton(mbar, text = 'Band')
-bandbutton.pack(side = LEFT)
-bandmenu = Menu(bandbutton, tearoff=1)
-bandbutton['menu'] = bandmenu
+bandmenu = Menu(mbar, tearoff=use_tearoff)
 nfreq=IntVar()
 bandmenu.add_radiobutton(label = '1.8', variable=nfreq,value=2)
 bandmenu.add_radiobutton(label = '3.5', variable=nfreq,value=4)
@@ -2029,11 +2034,11 @@ bandmenu.add_radiobutton(label = '432', variable=nfreq,value=432)
 bandmenu.add_radiobutton(label = '1296', variable=nfreq,value=1296)
 bandmenu.add_radiobutton(label = '2304', variable=nfreq,value=2304)
 nfreq.set(144)
+
+mbar.add_cascade(label="Band", menu=bandmenu)
+
 #------------------------------------------------------ Help menu
-helpbutton = Menubutton(mbar, text = 'Help')
-helpbutton.pack(side = LEFT)
-helpmenu = Menu(helpbutton, tearoff=0)
-helpbutton['menu'] = helpmenu
+helpmenu = Menu(mbar, tearoff=0)
 helpmenu.add('command', label = 'Keyboard shortcuts', command = shortcuts, \
              accelerator='F1')
 helpmenu.add('command', label = 'Special mouse commands', \
@@ -2046,6 +2051,8 @@ helpmenu.add('command', label = 'Available suffixes and add-on prefixes', \
              command = prefixes)
 helpmenu.add('command', label = 'About WSJT', command = about, \
              accelerator='Ctrl+F1')
+
+mbar.add_cascade(label="Help", menu=helpmenu)
 
 #------------------------------------------------------ Graphics areas
 iframe1 = Frame(frame, bd=1, relief=SUNKEN)
@@ -2218,7 +2225,10 @@ labToRadio.grid(column=0,row=0)
 ToRadio=Entry(f5a,width=9)
 ToRadio.insert(0,'W8WN')
 ToRadio.grid(column=1,row=0,pady=3)
-bLookup=Button(f5a, text='Lookup',underline=0,command=lookup,padx=1,pady=1)
+if (sys.platform == 'darwin'):
+    bLookup=Button(f5a, text='Lookup',underline=0,command=lookup)
+else:
+    bLookup=Button(f5a, text='Lookup',underline=0,command=lookup,padx=1,pady=1)
 bLookup.grid(column=2,row=0,sticky='EW',padx=4)
 labGrid=Label(f5a,text='Grid:', width=9, relief=FLAT)
 labGrid.grid(column=0,row=1)
@@ -2288,8 +2298,10 @@ shmsg=Checkbutton(f5c,text='Sh Msg',justify=RIGHT,variable=ShOK,
             command=restart2)
 btxdf=Button(f5c,text='TxDF = 0',command=toggletxdf,
             padx=1,pady=1)
-genmsg=Button(f5c,text='GenStdMsgs',underline=0,command=GenStdMsgs,
-            padx=1,pady=1)
+if (sys.platform=='darwin'):
+    genmsg=Button(f5c,text='GenStdMsgs',underline=0,command=GenStdMsgs)
+else:
+    genmsg=Button(f5c,text='GenStdMsgs',underline=0,command=GenStdMsgs,padx=1,pady=1)
 auto=Button(f5c,text='Auto is Off',underline=0,command=toggleauto,
             padx=1,pady=1)
 auto.focus_set()
@@ -2305,42 +2317,60 @@ auto.grid(column=0,row=5,sticky='EW',padx=4)
 ntx=IntVar()
 tx1=Entry(f5c,width=24)
 rb1=Radiobutton(f5c,value=1,variable=ntx)
-b1=Button(f5c, text='Tx1',underline=2,command=btx1,padx=1,pady=1)
+if (sys.platform=='darwin'):
+    b1=Button(f5c, text='Tx1',underline=2,command=btx1)
+else:
+    b1=Button(f5c, text='Tx1',underline=2,command=btx1,padx=1,pady=1)
 tx1.grid(column=1,row=0)
 rb1.grid(column=2,row=0)
 b1.grid(column=3,row=0)
 
 tx2=Entry(f5c,width=24)
 rb2=Radiobutton(f5c,value=2,variable=ntx)
-b2=Button(f5c, text='Tx2',underline=2,command=btx2,padx=1,pady=1)
+if (sys.platform=='darwin'):
+    b2=Button(f5c, text='Tx2',underline=2,command=btx2)
+else:
+    b2=Button(f5c, text='Tx2',underline=2,command=btx2,padx=1,pady=1)
 tx2.grid(column=1,row=1)
 rb2.grid(column=2,row=1)
 b2.grid(column=3,row=1)
 
 tx3=Entry(f5c,width=24)
 rb3=Radiobutton(f5c,value=3,variable=ntx)
-b3=Button(f5c, text='Tx3',underline=2,command=btx3,padx=1,pady=1)
+if (sys.platform=='darwin'):
+    b3=Button(f5c, text='Tx3',underline=2,command=btx3)
+else:
+    b3=Button(f5c, text='Tx3',underline=2,command=btx3,padx=1,pady=1)
 tx3.grid(column=1,row=2)
 rb3.grid(column=2,row=2)
 b3.grid(column=3,row=2)
 
 tx4=Entry(f5c,width=24)
 rb4=Radiobutton(f5c,value=4,variable=ntx)
-b4=Button(f5c, text='Tx4',underline=2,command=btx4,padx=1,pady=1)
+if (sys.platform=='darwin'):
+    b4=Button(f5c, text='Tx4',underline=2,command=btx4)
+else:
+    b4=Button(f5c, text='Tx4',underline=2,command=btx4,padx=1,pady=1)
 tx4.grid(column=1,row=3)
 rb4.grid(column=2,row=3)
 b4.grid(column=3,row=3)
 
 tx5=Entry(f5c,width=24)
 rb5=Radiobutton(f5c,value=5,variable=ntx)
-b5=Button(f5c, text='Tx5',underline=2,command=btx5,padx=1,pady=1)
+if (sys.platform=='darwin'):
+    b5=Button(f5c, text='Tx5',underline=2,command=btx5)
+else:
+    b5=Button(f5c, text='Tx5',underline=2,command=btx5,padx=1,pady=1)
 tx5.grid(column=1,row=4)
 rb5.grid(column=2,row=4)
 b5.grid(column=3,row=4)
 
 tx6=Entry(f5c,width=24)
 rb6=Radiobutton(f5c,value=6,variable=ntx)
-b6=Button(f5c, text='Tx6',underline=2,command=btx6,padx=1,pady=1)
+if (sys.platform=='darwin'):
+    b6=Button(f5c, text='Tx6',underline=2,command=btx6)
+else:
+    b6=Button(f5c, text='Tx6',underline=2,command=btx6,padx=1,pady=1)
 tx6.grid(column=1,row=5)
 rb6.grid(column=2,row=5)
 b6.grid(column=3,row=5)

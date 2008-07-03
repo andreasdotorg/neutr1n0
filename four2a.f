@@ -21,7 +21,7 @@ C     The transform will be real and returned to the input array.
       complex a(nfft)
       complex aa(32768)
       integer nn(NPMAX),ns(NPMAX),nf(NPMAX),nl(NPMAX)
-      real*8 plan(NPMAX)                   !Should be i*8
+      integer plan(NPMAX)                   !As recommended by fftw3 docs
       data nplan/0/
       include <fftw3.f>
       save
@@ -52,15 +52,15 @@ C  Planning: FFTW_ESTIMATE, FFTW_MEASURE, FFTW_PATIENT, FFTW_EXHAUSTIVE
       endif
       call sleep_msec(0)
       if(isign.eq.-1 .and. iform.eq.1) then
-         call sfftw_plan_dft_1d_(plan(i),nfft,a,a,
+         call sfftw_plan_dft_1d(plan(i),nfft,a,a,
      +        FFTW_FORWARD,nspeed)
       else if(isign.eq.1 .and. iform.eq.1) then
-         call sfftw_plan_dft_1d_(plan(i),nfft,a,a,
+         call sfftw_plan_dft_1d(plan(i),nfft,a,a,
      +        FFTW_BACKWARD,nspeed)
       else if(isign.eq.-1 .and. iform.eq.0) then
-         call sfftw_plan_dft_r2c_1d_(plan(i),nfft,a,a,nspeed)
+         call sfftw_plan_dft_r2c_1d(plan(i),nfft,a,a,nspeed)
       else if(isign.eq.1 .and. iform.eq.-1) then
-         call sfftw_plan_dft_c2r_1d_(plan(i),nfft,a,a,nspeed)
+         call sfftw_plan_dft_c2r_1d(plan(i),nfft,a,a,nspeed)
       else
          stop 'Unsupported request in four2a'
       endif
@@ -73,12 +73,12 @@ C  Planning: FFTW_ESTIMATE, FFTW_MEASURE, FFTW_PATIENT, FFTW_EXHAUSTIVE
       endif
 
  10   call sleep_msec(0)
-      call sfftw_execute_(plan(i))
+      call sfftw_execute(plan(i))
       call sleep_msec(0)
       return
 
  999  do i=1,nplan
-         call sfftw_destroy_plan_(plan(i))
+         call sfftw_destroy_plan(plan(i))
       enddo
 
       return

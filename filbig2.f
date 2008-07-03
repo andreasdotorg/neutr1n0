@@ -55,7 +55,6 @@ C  Convert impulse response to filter function
             cfilt(i)=fac*halfpulse(i)
             cfilt(NFFT2+2-i)=fac*halfpulse(i)
          enddo
-
 #ifdef CVF
          call sfftw_execute_(plan5)
 #else
@@ -83,13 +82,11 @@ C  If we just have a new f0, continue with the existing ca and cb.
                ca(i)=0.
             enddo
          endif
-
 #ifdef CVF
          call sfftw_execute_(plan1)
 #else
          call sfftw_execute(plan1)
 #endif
-
          newdat=0
       endif
 
