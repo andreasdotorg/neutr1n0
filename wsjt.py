@@ -1968,24 +1968,27 @@ if (sys.platform != 'darwin'):
 else:    
     modemenu = Menu(mbar, tearoff=use_tearoff)
 
-modemenu.add_radiobutton(label = 'FSK441', variable=mode, \
-    command = ModeFSK441, state=NORMAL, accelerator='F7')
-
 # To enable menu item 0:
 # modemenu.entryconfig(0,state=NORMAL)
 # Can use the following to retrieve the state:
 # state=modemenu.entrycget(0,"state")
 
-modemenu.add_radiobutton(label = 'JT6M', variable=mode, command = ModeJT6M, \
-                        accelerator='Shift+F7')
-modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A, \
-                         accelerator='F8')
-modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B, \
-                         accelerator='Shift+F8')
-modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C, \
-                         accelerator='Ctrl+F8')
-modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW, \
-                         accelerator='Shift+Ctrl+F8')
+if (sys.platform=='darwin') :
+    # accelerators break radiobutton behaviour in Darwin
+    modemenu.add_radiobutton(label = 'FSK441', variable=mode,command = ModeFSK441, state=NORMAL)
+    modemenu.add_radiobutton(label = 'JT6M', variable=mode, command = ModeJT6M)
+    modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A)
+    modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B)
+    modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C)
+    modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW)
+else:
+    modemenu.add_radiobutton(label = 'FSK441', variable=mode,command = ModeFSK441, state=NORMAL, accelerator='F7')
+    modemenu.add_radiobutton(label = 'JT6M', variable=mode, command = ModeJT6M,accelerator='Shift+F7')
+    modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A,accelerator='F8')
+    modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B,accelerator='Shift+F8')
+    modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C,accelerator='Ctrl+F8')
+    modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW,accelerator='Shift+Ctrl+F8')
+
 modemenu.add_radiobutton(label = 'JT2', variable=mode, command = ModeJT2)
 modemenu.add_radiobutton(label = 'JT4A', variable=mode, command = ModeJT4A)
 modemenu.add_radiobutton(label = 'JT4B', variable=mode, command = ModeJT4B)
