@@ -22,6 +22,7 @@ C  Longest allowed data analysis is 1 second.
       data c/' 123456789.,?/# $ABCD FGHIJKLMNOPQRSTUVWXY 0EZ  '/
       data wgt/1.0,4.0,6.0,4.0,1.0/
 
+      kpk=0 !shut up compiler warnings -db
       do i=1,NDMAX
         dit(i)=0
       enddo
@@ -48,7 +49,7 @@ C  NB: this might be improved by including a bandpass correction to ps.
          enddo
          k=i-ia+1
          psmo(k)=sum
-         kpk=0
+
          if(sum.gt.smax) then
             smax=sum
             noffset=nint(i*df-LTone*NBaud)

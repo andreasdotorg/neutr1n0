@@ -13,6 +13,7 @@ c###    sdown=slim-1.0
         snrlim=10.0**(0.1*slim) - 1.0
         sdown=10.0*log10(0.25*snrlim+1.0)
 
+        i0=0 !Shut up compiler warnings -db
         do i=2,nz
            if(s(i).ge.slim .and. .not.inside) then
               i0=i

@@ -8,7 +8,7 @@
       dlat=mod(ng,180)-90
       dlong=(ng/180)*2 - 180 + 2
       call deg2grid(dlong,dlat,grid6)
-      grid=grid6
+      grid=grid6(1:4) !XXX explicitly truncate this -db
       go to 100
 
  10   n=ng-NGBASE-1

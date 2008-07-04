@@ -31,7 +31,7 @@ subroutine get_fname(hiscall,ntime,trperiod,lauto,fname)
   it(6)=mod(it(6),100)
   write(fname,1000) (it(j),j=6,1,-1)
 1000 format('_',3i2.2,'_',3i2.2,'.WAV')
-  tag=hiscall
+  tag=hiscall(1:7) !XXX explicitly truncate this -db
   i=index(hiscall,'/')
   if(i.ge.5) tag=hiscall(1:i-1)
   if(i.ge.2.and.i.le.4) tag=hiscall(i+1:)

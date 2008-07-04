@@ -86,6 +86,8 @@ C  Compute oversampled symbol spectra
       ia=15.0/df2
       ib=18.333/df2
       ymax=-99.
+      ipk=0 !shut up compiler warnings -db
+      kpk=0 !shut up compiler warnings -db
       do i=ia,ib                         !Do two-harmonic summing
          ih=i/2
          if(2*ih.eq.i) then
