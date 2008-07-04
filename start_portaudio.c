@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef Win32
-   #include "pthread_w32.h"
+#ifdef CVF
+#include "pthread_w32.h"
 #else
-   #include <pthread.h>
+#include <pthread.h>
 #endif
 //#include <inttypes.h>
 #include <time.h>
@@ -12,7 +12,8 @@
 extern void decode1_(int *iarg);
 extern void a2d_(int *iarg);
 
-int start_threads_(int *ndevin, int *ndevout, short y1[], short y2[],
+int
+start_threads_(int *ndevin, int *ndevout, short y1[], short y2[],
 	int *nbuflen, int *iwrite, short iwave[],
 	int *nwave, int *nfsample, int *nsamperbuf,
 	int *TRPeriod, int *TxOK, int *ndebug,
@@ -25,8 +26,10 @@ int start_threads_(int *ndevin, int *ndevout, short y1[], short y2[],
 
  /* snd_pcm_start */
   //  printf("start_threads: creating thread for a2d\n");
-  iret1 = pthread_create(&thread1,NULL,a2d_,&iarg1);
+  iret1 = pthread_create(&thread1,NULL,
+			 (void *)a2d_,&iarg1);
   //  printf("start_threads: creating thread for decode1_\n");
-  iret2 = pthread_create(&thread2,NULL,decode1_,&iarg2);
+  iret2 = pthread_create(&thread2,NULL,
+			 (void *)decode1_,&iarg2);
   return (0);
 }

@@ -62,7 +62,8 @@ typedef struct _SYSTEMTIME
 #endif
 
 //  Input callback routine:
-static int SoundIn( void *inputBuffer, void *outputBuffer,
+static int
+SoundIn( void *inputBuffer, void *outputBuffer,
 		       unsigned long framesPerBuffer,
 		       const PaStreamCallbackTimeInfo* timeInfo, 
 		       PaStreamCallbackFlags statusFlags,
@@ -130,7 +131,8 @@ static int SoundIn( void *inputBuffer, void *outputBuffer,
 }
 
 //  Output callback routine:
-static int SoundOut( void *inputBuffer, void *outputBuffer,
+static int
+SoundOut( void *inputBuffer, void *outputBuffer,
 		       unsigned long framesPerBuffer,
 		       const PaStreamCallbackTimeInfo* timeInfo, 
 		       PaStreamCallbackFlags statusFlags,
@@ -259,8 +261,8 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
 		       dSampleRate,            //Sample rate
 		       2048,            //Frames per buffer
 		       paNoFlag,
-		       SoundIn,         //Callback routine
-		       &data);          //address of data structure
+		       (PaStreamCallback *)SoundIn,  //Callback routine
+		       (void *)&data);  //address of data structure
 
     if(err_open_in) {   // We should have no error here usually
       printf("Error opening input audio stream:\n");
@@ -294,8 +296,8 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
 		       dSampleRate,            //Sample rate
 		       2048,            //Frames per buffer
 		       paNoFlag,
-		       SoundOut,        //Callback routine
-		       &data);          //address of data structure
+		       (PaStreamCallback *)SoundOut,  //Callback routine
+		       (void *)&data);  //address of data structure
 
     if(err_open_out) {     // We should have no error here usually
       printf("Error opening output audio stream!\n");
@@ -356,7 +358,7 @@ int padevsub_(int *numdev, int *ndefin, int *ndefout,
 {
   int      i, devIdx;
   int      numDevices;
-  PaDeviceInfo *pdi;
+  const PaDeviceInfo *pdi;
   PaError  err;
   //  PaHostApiInfo *hostapi;
 

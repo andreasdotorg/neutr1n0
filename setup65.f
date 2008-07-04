@@ -64,10 +64,10 @@ C  Determine the reference symbols for each data symbol.
                if (pr(m+n).gt.0.0) go to 20
             endif
          enddo
-         go to 22
+         go to 22 !XXX fixed obsolete -db
  20      mref(k,2)=m+n
- 22   enddo
-
+      enddo
+ 22   continue
 C  Now do it all again, using opposite logic on pr(i)
       k=0
       mr1=0
@@ -98,9 +98,9 @@ C  Now do it all again, using opposite logic on pr(i)
                if (pr(m+n).lt.0.0) go to 120
             endif
          enddo
-         go to 122
+         go to 122 !XXX fixed obsolete -db
  120     mref2(k,2)=m+n
- 122  enddo
-
+      enddo
+ 122  continue
       return
       end
