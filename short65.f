@@ -92,7 +92,6 @@ C  Find strongest line in each of the 4 phases, repeating for each drift rate.
          n2best=nbest+2
          if(n2best.gt.4) n2best=nbest-2
          xdf=min(ipk(nbest),ipk(n2best))*df - 1270.46
-! XXX fixed obsolete goto 10 -db
          if(NFreeze.eq.1 .and. abs(xdf-mousedf).gt.DFTolerance) goto 10
 
          idiff=abs(ipk(nbest)-ipk(n2best))
@@ -123,8 +122,9 @@ C  Find strongest line in each of the 4 phases, repeating for each drift rate.
             endif
          endif
          if(nstest.eq.0) nspecial=0
-      enddo
  10   continue
+      enddo
+
 
       if(nstest.eq.0) nspecialbest=0
       df4=4.0*df

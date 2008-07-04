@@ -121,7 +121,7 @@ C  Discard this ping if DF outside tolerance limits or bauderr too big.
 C  (However, if the ping was mouse-picked, proceed anyway.)
 
          if(.not.pick .and. ((noffset.lt.nf1 .or. noffset.gt.nf2) .or.
-     +      (abs(bauderr).gt.qrnlimit))) goto 100 !XXX fixed obsolete -db
+     +      (abs(bauderr).gt.qrnlimit))) goto 100
 
 C  If it's the best ping yet, save the spectrum:
          if(peak.gt.bigpeak) then
@@ -138,7 +138,8 @@ C  If it's the best ping yet, save the spectrum:
          write(line(nline),1050) cfile6,tstart,mswidth,int(peak),
      +        nwidth,nstrength,noffset,msg3,msg,cf
  1050    format(a6,f5.1,i5,i3,1x,2i1,i5,1x,a3,1x,a40,1x,a1)
-      enddo
  100  continue
+      enddo
+
       return
       end

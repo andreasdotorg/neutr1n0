@@ -57,7 +57,7 @@ C  Most of the time in this routine is in this loop.
       smax=-1.e9
       do ip=4,22,2               !Compute periodogram for allowed msg periods
          if(NFixLen.ne.0 .and. ip.ne.4 .and. ip.ne.lmsg1 
-     +     .and. ip.ne.lmsg2) go to 5 !XXX fixed obsolete -db
+     +     .and. ip.ne.lmsg2) go to 5
          f=1.0/ip
          s=0.
          do lag=0,kz-1
@@ -67,8 +67,9 @@ C  Most of the time in this routine is in this loop.
             smax=s
             msglen=ip                            !Save best message length
          endif
-      enddo
  5    continue
+      enddo
+
 
 C  Average the symbols from s2db into s2dc.
 

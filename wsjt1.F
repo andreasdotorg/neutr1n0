@@ -371,7 +371,7 @@ C  Now the multi-tone decoding
            do i=1,npkept
               j=indx(i)
               if(pick .and. STFound .and.
-     +          line(j)(29:31).eq.'   ') goto 10 !XXX fixed obsolete -db
+     +          line(j)(29:31).eq.'   ') goto 10
               write(lumsg,1050) line(j) !Write to decoded.txt
  1050         format(a79)
               if(lcum) write(21,1050) line(j) !Write to ALL.TXT
@@ -382,8 +382,8 @@ C  Now the multi-tone decoding
                  tbest=tping(j)
                  stbest = (msg3.ne.'   ')
               endif
-           enddo
  10        continue
+           enddo
         endif
 
         dt=1.0/11025.0                !Compute spectrum for pink curve
