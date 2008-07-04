@@ -106,6 +106,8 @@ C  Get drift rate and compute ftrack.
       jmax=0
       if(nafc.eq.1) jmax=25
       ssmax=0.
+      jpk=0 !Shut up compiler warnings. -db
+      ipk=0 !Shut up compiler warnings. -db
       do j=-jmax,jmax
          do i=-25,25
             ss=0.

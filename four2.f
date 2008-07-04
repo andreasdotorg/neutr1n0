@@ -142,6 +142,10 @@ C     STORE ARRAYS WITH THE FIRST SUBSCRIPT INCREASING FASTEST.
 
       real*8 twopi,wstpr,wstpi,wr,wi,w2r,w2i,w3r,w3i,wtempr
 
+      w3i=0.
+      w2r=0.
+      w2i=0.
+      w3r=0.
       TWOPI=6.2831853072*FLOAT(ISIGN)
       IP0=2
       IP1=IP0*NPREV

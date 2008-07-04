@@ -18,7 +18,6 @@ C  The value 450 is empirical:
       real ccfred(-450:450)            !Peak of ccfblue, as function of freq
       real ccfred1(-224:224)           !Peak of ccfblue, as function of freq
       real ccf64(-224:224)
-      real tmp(450)
       integer ic6(6)
       integer isync(63)
       data ic6/0,1,4,3,5,2/,idum/-1/

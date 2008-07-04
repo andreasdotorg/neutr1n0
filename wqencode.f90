@@ -4,10 +4,9 @@ subroutine wqencode(msg,ntype,data0)
 
   parameter (MASK15=32767)
   character*22 msg
-  character*12 call1,call2,callsign
+  character*12 call1,call2
   character*4 grid
-  character*3 cdbm
-  character*9 name
+!  character*9 name
   character ccur*4,cxp*2
   logical lbad1,lbad2
   integer*1 data0(11)

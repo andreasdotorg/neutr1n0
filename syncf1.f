@@ -58,6 +58,7 @@ C  NB: could also compute a "blue" spectrum, using the sync-off intervals.
       dftol=min(DFTolerance,25)
       if(nfreeze.eq.1) dftol=DFTolerance
 C  Find improved value for f0
+      ipk=0 !Shut up compiler warning -db
       smax=0.
       ia=(f0-dftol)/df
       ib=(f0+dftol)/df + 0.999

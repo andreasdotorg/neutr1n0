@@ -20,7 +20,6 @@ C  Find MEPT_JT sync signals, with best-fit DT and DF.
       integer keep(-NH:NH)
       real a(5)
       real sstf(5,275)
-      character*22 message
       real tmp(275)
       integer npr3(162)
       real pr3(162)

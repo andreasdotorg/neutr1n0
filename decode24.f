@@ -5,9 +5,7 @@
 C  Decodes JT65 data, assuming that DT and DF have already been determined.
 
       real dat(npts)                        !Raw data
-      real s2(77,126)
-      real s3(64,63)
-      real ftrack(126)
+!      real s3(64,63)
       character decoded*22,deepmsg*22
 C XXX are these not shadowing the subroutine parameters? -db
       character mycall*12,hiscall*12,hisgrid*6

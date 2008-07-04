@@ -16,7 +16,6 @@ subroutine fivehz
 
   parameter (NTRING=64)
   real*8 tt1(0:NTRING-1)
-  real*8 tstart,tstop,t60
   logical first,txtime,filled
   integer ptt
   integer TxOKz

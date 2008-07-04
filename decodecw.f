@@ -13,7 +13,7 @@
       real f1(300),f2(300)
       real x(65536)
       real y2(32)
-      real*8 dt,f0,phi,dhpi,twopi
+      real*8 dt,f0,phi,twopi
       complex c(NMAX),z,cx(0:32768)
       equivalence (x,cx)
 

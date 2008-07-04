@@ -25,6 +25,7 @@ C  (LTone+3)*NBaud+DFTolerance.
 
       ia=(LTone*NBaud-DFTolerance)/df - 5.0
       ib=((LTone+3)*NBaud+DFTolerance)/df - 4.0
+      ipk=0 !Shut up compiler warnings. -db
       do j=1,nz
          smax=0.
          do i=ia,ib                      !Get the spectral peak
@@ -78,6 +79,7 @@ C  (uness perhaps it is redundant).
 
 C  Now check for redundant detections.  (Not sure, now, why I chose
 C  the time span 0.11 s.)
+            peak0=0.0 !Shut up compiler warnings. -db
             if(tstart-ts0.gt.0.11) then
                peak0=0.                 !If time diff>0.11s, start fresh
             else

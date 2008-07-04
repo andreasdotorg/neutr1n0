@@ -18,7 +18,7 @@
       i4=64*iand(n2,3)                           !2 bits
       dat(7)=i1
       dat(8)=0
-      dat(8)=0
+      dat(9)=0
       dat(10)=0
       dat(11)=0
 

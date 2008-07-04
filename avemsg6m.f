@@ -79,6 +79,7 @@ C  Average the symbols from s2db into s2dc.
          wgt(k)=wgt(k)+1.0
       enddo
 
+      ipk=0 !Shut up compiler warnings. -db
       do j=1,msglen                            !Hard-decode the avg msg,
          smax=-1.e9                            !picking max bin for each char
          do i=1,43

@@ -5,7 +5,7 @@ C  Decode MEPT_JT data, assuming that DT and DF have already been determined.
       complex c4(npts)
       character*22 message
       real*8 dt,df,twopi,f0,f1,dphi0,dphi1
-      complex*16 cz,cz1,c0,c1
+      complex*16 c0,c1
       complex*16 w0,w1,ws0,ws1
       integer*1 i1,symbol(162)
       integer*1 data1(11)

@@ -30,6 +30,7 @@ C       call coord(0.d0,0.d0,-pio2,pio2-23.443*pi/180,ra,dec,el,eb)
       SBB=sin(AP-A0)*CB0
       SA2=SAA*CBB-CAA*SBB
       CA2=CAA*CBB+SAA*SBB
+      TA2O2=0.0 !Shut up compiler warnings. -db
       IF(CA2.LE.0.D0) TA2O2=(1.D0-CA2)/SA2 
       IF(CA2.GT.0.D0) TA2O2=SA2/(1.D0+CA2)
       A2=2.D0*atan(TA2O2)

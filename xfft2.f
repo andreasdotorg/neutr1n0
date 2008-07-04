@@ -73,6 +73,12 @@ c
   149 MMAX = 2
   150 IF (MMAX-NH) 151,174,174
   151 LMAX = MAX0(4,MMAX/2)
+      WR=0  !Shut up compiler warnings. -db
+      WI=0  !Shut up compiler warnings. -db
+      W2I=0 !Shut up compiler warnings. -db
+      W2R=0 !Shut up compiler warnings. -db
+      W3I=0 !Shut up compiler warnings. -db
+      W3R=0 !Shut up compiler warnings. -db
       DO 173 L = 2,LMAX,4
           M = L
           IF (MMAX-2) 156,156,152

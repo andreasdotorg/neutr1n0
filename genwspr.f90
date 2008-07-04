@@ -4,8 +4,6 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,msgsent)
 
   parameter (NMAX=120*12000)     !Max length of wave file
   parameter (MAXSYM=176)
-  character*12 call1,call2
-  character*4 grid,grid2
   character*22 message           !Message to be generated
   integer*2 iwave(NMAX)          !Generated wave file
   real*8 samfacout,fsample
@@ -13,7 +11,7 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,msgsent)
   integer*1 data0(11),i1
   integer npr3(162)
   real pr3(162)
-  logical first,lbad1,lbad2
+  logical first
   real*8 t,dt,phi,f,f0,dfgen,dphi,pi,twopi,tsymbol
   character*22 msgsent           !Message sent
   equivalence(i1,i4)
@@ -98,11 +96,7 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,msgsent)
            if(n.lt.-32767) n=-32767
         endif
         iwave(i)=n
-10      continue
      enddo
   enddo
-
-100 continue
-
   return
 end subroutine genwspr

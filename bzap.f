@@ -31,6 +31,7 @@ C  This is a kludge:
          ia=(fzap(izap)-tol)/df 
          ib=(fzap(izap)+tol)/df
          smax=0.
+         ipk=0 !Shut up compiler warnings. -db
          do i=ia+1,ib+1
             s=real(c(i))**2 + aimag(c(i))**2
             if(s.gt.smax) then

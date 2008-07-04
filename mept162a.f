@@ -4,8 +4,6 @@ C  Orchestrates the process of finding, synchronizing, and decoding
 C  WSPR signals.
 
       character*22 message
-      character*70 outfile
-      character*11 datetime
       character*8 cfile6
       logical first
       real ps(-256:256)

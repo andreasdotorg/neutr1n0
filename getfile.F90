@@ -75,11 +75,15 @@ subroutine getfile(fname,len)
 
   ndiskdat=1
   mousebutton=0
-  go to 999
+  close(10)
+  return
 
+#ifdef CVF
 998 ierr=1001
 999 close(10)
-  return
+    return
+#endif
+
 end subroutine getfile
 
 subroutine check_endian

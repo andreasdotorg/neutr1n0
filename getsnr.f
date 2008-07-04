@@ -2,6 +2,7 @@
 
       real x(nz)
 
+      ipk=0 !Shut up compiler warnings. -db
       smax=-1.e30
       do i=1,nz
          if(x(i).gt.smax) then

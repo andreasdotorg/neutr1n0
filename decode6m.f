@@ -121,6 +121,7 @@ C  Is it time to write out the results?
             endif
             j0=j
             smax1=-1.e9
+            ipk=0 !Shut up compiler warning. -db
             do i=1,43                         !Pick max bin for 1st char
                if(s2db(i,j).gt.smax1) then
                   smax1=s2db(i,j)

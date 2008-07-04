@@ -43,6 +43,8 @@ C  Compute probabilities for most reliable symbol values
          enddo
 
          s2=-1.e30
+         i1=0 !Shut up compiler warnings. -db
+         i2=0 !Shut up compiler warnings. -db
          do i=1,64
             if(i.ne.i1 .and. signal(i,j).gt.s2) then
                s2=signal(i,j)
