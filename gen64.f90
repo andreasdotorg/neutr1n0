@@ -8,7 +8,6 @@ subroutine gen64(message,mode64,samfac,ntxdf,iwave,nwave,  &
   character*22 msgsent          !Message as it will be received
   real*8 t,dt,phi,f,f0,dfgen,dphi,twopi,samfac,tsymbol
   integer*2 iwave(NMAX)  !Generated wave file
-  integer dgen(12)
   integer sent(63)
   integer sendingsh
   integer ic6(6)
