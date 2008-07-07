@@ -69,12 +69,10 @@ C  Compute spatial polarization offset
       xx=sin(lat/rad)*cos(ElMoon/rad) - cos(lat/rad)*
      +     cos(AzMoon/rad)*sin(ElMoon/rad)
       yy=cos(lat/rad)*sin(AzMoon/rad)
-      if(NStation.eq.1) then
-         poloffset1=rad*atan2(yy,xx)
-      else
-         poloffset2=rad*atan2(yy,xx)
-      endif
-
+      poloffset1=0                                  !Silence compiler warning
+      poloffset2=0
+      if(NStation.eq.1) poloffset1=rad*atan2(yy,xx)
+      if(NStation.eq.2) poloffset2=rad*atan2(yy,xx)
       techo=2.0 * dist/2.99792458e5                 !Echo delay time
       doppler=-freq*vr/2.99792458e5                 !One-way Doppler
       t408=ftsky(ldeg,bdeg)                         !Read sky map

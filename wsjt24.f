@@ -86,7 +86,7 @@ C  If we get here, we have achieved sync!
       endif
 
       call decode24(dat,npts,dtx,dfx,flip,ndepth,neme,
-     +   mycall,hiscall,hisgrid,mode,mode4,nafc,decoded,
+     +   mycall,hiscall,hisgrid,mode,mode4,decoded,
      +   ncount,deepmsg,qual)
  200  kvqual=0
       if(ncount.ge.0) kvqual=1
