@@ -14,7 +14,7 @@ C  already been done.
       logical lcum
       character decoded*22,cfile6*6,special*5,cooo*3
       character*22 deepmsg
-      character*67 line,ave1,ave2
+      character*67 ave1,ave2
       character*1 csync
       character*12 mycall
       character*12 hiscall
