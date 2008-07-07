@@ -5,7 +5,8 @@ C  Apply AFC corrections to ca, returning corrected data in cb
       complex ca(jz),cb(jz)
       real a(5)
       real*8 twopi
-      complex*16 w,wstep
+      complex*16 w
+      complex*16 wstep
       data twopi/0.d0/
       save twopi
 
