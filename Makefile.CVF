@@ -5,7 +5,7 @@ FC = df
 #To do bounds checking (with useless reports) put "/check:all" in the
 # --opt= line below (line 56, more or less ...)
 #FFLAGS = /traceback /check:all
-FFLAGS = /traceback /fast /nologo
+FFLAGS = /traceback /fast /nologo /warn
 
 all:    JT65code.exe WSJT7.EXE
 
@@ -53,7 +53,7 @@ SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	moon2.f MoonDop.f sun.f toxyz.f pfxdump.f \
 	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f decodecw.f \
 	foldcw.f encode232.f inter_mept.f pack50.f unpack50.f \
-	filbig2.f mept162a.f twkfreq.f sync162.f decode162.f \
+	filbig2.F mept162a.f twkfreq.f sync162.f decode162.f \
 	ps162.f fchisq.f fano232.f ccf2.f wsjt64.f sync64.f
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c
