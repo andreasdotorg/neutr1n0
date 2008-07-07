@@ -7,7 +7,8 @@ FC = df
 #FFLAGS = /traceback /check:all
 FFLAGS = /traceback /fast /nologo /warn
 
-all:    JT65code.exe WSJT7.EXE
+#all:    JT65code.exe WSJT7.EXE
+all:    WSJT7.EXE
 
 OBJS1 = JT65code.obj nchar.obj grid2deg.obj packmsg.obj packtext.obj \
 	packcall.obj packgrid.obj unpackmsg.obj unpacktext.obj \

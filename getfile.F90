@@ -100,8 +100,9 @@ subroutine check_endian
      nsamrate,nbytesec,nbytesam2,nbitsam2,adata,ndata,d2
   equivalence (ariff,hdr),(n1,n4),(d1,d2)
 
-  if (nfmt2.eq.16) return             ! correct endianess for this CPU
+  if (nfmt2.eq.1) return             ! correct endianess for this CPU
   write(*,1000)
+1000 format('Converting file to big-endian',i10)
   lenfile = iswap_int(lenfile)
   lenfmt = iswap_int(lenfmt)
   nfmt2 = iswap_short(nfmt2)
@@ -117,7 +118,6 @@ subroutine check_endian
     d2(i) = iswap_short(d2(i))
   enddo
 
-1000 format('Converting file to big-endian',i10)
 
   return
 end subroutine check_endian
