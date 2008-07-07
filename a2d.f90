@@ -9,6 +9,7 @@ subroutine a2d(iarg)
 ! This call does not normally return, as the background portion of
 ! JTaudio goes into a test-and-sleep loop.
 
+  idevin=iarg                                !Silence compiler warning
   idevin=ndevin
   idevout=ndevout
   call padevsub(numdevs,ndefin,ndefout,nchin,nchout)

@@ -1,4 +1,4 @@
-      subroutine gencw(msg,wpm0,freqcw,samfac,TRPeriod,iwave,nwave)
+      subroutine gencw(msg,wpm0,freqcw,samfac,iwave,nwave)
 
 C  Generates array iwave() containing an audio signal corresponding
 C  to an EME CW message.
@@ -6,7 +6,6 @@ C  to an EME CW message.
       parameter (NMAX=150*11025)
       character*22 msg,s1,s2,s3
       integer*2 iwave(NMAX)
-      integer TRPeriod
       integer*1 idat(5000),idat1(460),idat2(200),idat3(200)
       real*8 dt,t,twopi,pha,dpha,tdit,samfac
       data twopi/6.283185307d0/

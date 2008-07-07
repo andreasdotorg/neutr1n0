@@ -17,7 +17,7 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       common/sky/ nsky(360,180)
       common/echo/xdop(2),techo,ElMoon,mjd
       equivalence (n1sky,nsky)
-      data first/.true./
+      data first/.true./,ltsky/.false./
       data rad/57.2957795/
       save first
 
@@ -69,8 +69,11 @@ C  Compute spatial polarization offset
       xx=sin(lat/rad)*cos(ElMoon/rad) - cos(lat/rad)*
      +     cos(AzMoon/rad)*sin(ElMoon/rad)
       yy=cos(lat/rad)*sin(AzMoon/rad)
-      if(NStation.eq.1) poloffset1=rad*atan2(yy,xx)
-      if(NStation.eq.2) poloffset2=rad*atan2(yy,xx)
+      if(NStation.eq.1) then
+         poloffset1=rad*atan2(yy,xx)
+      else
+         poloffset2=rad*atan2(yy,xx)
+      endif
 
       techo=2.0 * dist/2.99792458e5                 !Echo delay time
       doppler=-freq*vr/2.99792458e5                 !One-way Doppler

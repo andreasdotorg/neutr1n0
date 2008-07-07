@@ -18,6 +18,7 @@ subroutine decode1(iarg)
   data sending0/'                      '/
   save
 
+  ntr0=iarg                                    !Silence compiler warning
   ntr0=ntr
   ns0=999999
 

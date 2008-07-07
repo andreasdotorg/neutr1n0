@@ -1,6 +1,6 @@
       subroutine sync162(c2,jz,ndftol,ps,sstf,kz)
 
-C  Find MEPT_JT sync signals, with best-fit DT and DF.  
+C  Find WSPR sync signals, with best-fit DT and DF.  
 
       complex c2(jz)
       parameter (NFFT=512)             !Length of FFTs
@@ -39,6 +39,7 @@ C  Find MEPT_JT sync signals, with best-fit DT and DF.
       do i=1,nsym
          pr3(i)=2*npr3(i)-1
       enddo
+      if(ndftol.eq.-999) go to 999            !Silence compiler warning
 
 C  Do FFTs of twice symbol length, stepped by half symbols.  
       nq=NFFT/4
@@ -194,6 +195,6 @@ C  Compute power spectrum for each step, and get average
          sstf(5,k)=drift(k)
       enddo
       
-      return
+ 999  return
       end
 

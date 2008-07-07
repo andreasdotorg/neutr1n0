@@ -1,7 +1,6 @@
       subroutine wsjt24(dat,npts,cfile6,NClearAve,MinSigdB,
-     +  DFTolerance,NFreeze,NAFC,mode,mode4,Nseg,MouseDF,NAgain,
-     +  ndepth,neme,idf,mycall,hiscall,hisgrid,lumsg,lcum,
-     +  nspecial,ndf,NSyncOK,ccfblue,ccfred,ndiag)
+     +  DFTolerance,NFreeze,mode,mode4,Nseg,MouseDF,NAgain,
+     +  idf,lumsg,lcum,nspecial,ndf,NSyncOK,ccfblue,ccfred,ndiag)
 
 C  Orchestrates the process of decoding JT2 and JT4 messages, using 
 C  data that have been 2x downsampled.  
@@ -23,12 +22,12 @@ C  data that have been 2x downsampled.
       save
 
       mode65=2
-
       if(first) then
          nsave=0
          first=.false.
          ave1=' '
          ave2=' '
+         if(nspecial.eq.999) go to 900        !Silence compiler warning
       endif
 
       naggressive=0

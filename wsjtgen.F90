@@ -181,7 +181,7 @@ subroutine wsjtgen
 !     wpm=15.
      wpm=17.
      freqcw=800.
-     call gencw(msg,wpm,freqcw,samfacout,TRPeriod,iwave,nwave)
+     call gencw(msg,wpm,freqcw,samfacout,iwave,nwave)
      goto 900
   endif
 

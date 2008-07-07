@@ -36,9 +36,9 @@ C  Calculate i in range 0-42:
 
       k=1
       do i=1,nmsg,2
-         call gentone(x(k),-1,k)               !Generate a sync tone
-         call gentone(x(k),imsg(i),k)          !First character
-         call gentone(x(k),imsg(i+1),k)        !Second character
+         call gentone(x(k),-1,k,samfac)               !Generate a sync tone
+         call gentone(x(k),imsg(i),k,samfac)          !First character
+         call gentone(x(k),imsg(i+1),k,samfac)        !Second character
       enddo
 
       do i=1,nwave

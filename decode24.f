@@ -1,6 +1,5 @@
-      subroutine decode24(dat,npts,dtx,dfx,flip,ndepth,neme,
-     +  mycall,hiscall,hisgrid,mode,mode4,nafc,decoded,ncount,
-     +  deepmsg,qual)
+      subroutine decode24(dat,npts,dtx,dfx,flip,mode,mode4,nafc,
+     +  decoded,ncount,deepmsg,qual)
 
 C  Decodes JT65 data, assuming that DT and DF have already been determined.
 

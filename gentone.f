@@ -1,11 +1,13 @@
-      subroutine gentone(x,n,k)
+      subroutine gentone(x,n,k,samfac)
 
       real*4 x(512)
-
-      dt=1.0/11025.0
-      f=(n+51)*11025.0/512.0
+      real*8 dt,f,twopi,samfac
+      
+      twopi=8*datan(1.d0)
+      dt=1.d0/(samfac*11025.d0)
+      f=(n+51)*11025.d0/512.d0
       do i=1,512
-         x(i)=sin(6.2831853*i*dt*f)
+         x(i)=sin(twopi*i*dt*f)
       enddo
       k=k+512
 
