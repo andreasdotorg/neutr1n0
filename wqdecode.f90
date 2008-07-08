@@ -280,9 +280,9 @@ subroutine wqdecode(data0,message,ntype)
   else if(ntype.eq.-57) then
      ng=n2/128
      call unpacktext2(n1,ng,message)
-  else if(ntype.eq.-64) then
-     message='<Unknown message type>'
-     message='******** ??? ********'
+  else 
+!     message='<Unknown message type>'
+     message='BadMsg: '//callsign
   endif
 
   do i=1,22

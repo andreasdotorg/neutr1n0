@@ -160,6 +160,7 @@ def set_freezedf(event):
 #        if n>600:  n=600
         if n<-1270: n=-1270
         if n>3800: n=3800
+        if g.mode=="WSPR": n=n+1270-1500
         Audio.gcom2.mousedf=n
     else:
         decode_request(event)
@@ -192,7 +193,9 @@ def df_mark():
                     c.create_line(x1-0.5,25,x1-0.5,12,fill=color)
                     c.create_line(x1+0.5,25,x1+0.5,12,fill=color)
                 for i in range(n):
-                    x1=(Audio.gcom2.mousedf + i*fstep)/df + dx
+                    mdf=Audio.gcom2.mousedf
+                    if g.mode=="WSPR": mdf=mdf-1270+1500
+                    x1=(mdf + i*fstep)/df + dx
                     j=12
                     if i>0: j=15
                     if i!=1: c.create_line(x1-0.5,25,x1-0.5,j,fill=color)
@@ -210,7 +213,9 @@ def df_mark():
                     c.create_line(x1-0.5,25,x1-0.5,12,fill=color)
                     c.create_line(x1+0.5,25,x1+0.5,12,fill=color)
                 for i in range(n):
-                    x1=(Audio.gcom2.mousedf + i*fstep)/(2*df) + dx
+                    mdf=Audio.gcom2.mousedf
+                    if g.mode=="WSPR": mdf=mdf-1270+1500
+                    x1=(mdf + i*fstep)/(2*df) + dx
                     j=12
                     if i>0: j=15
                     if i!=1: c.create_line(x1-0.5,25,x1-0.5,j,fill=color)
@@ -410,7 +415,11 @@ def update():
 #-------------------------------------------------------- draw_axis
 def draw_axis():
     xmid=fmid
-    if naxis.get(): xmid=xmid-1270.46
+    if naxis.get():
+        if g.mode=='WSPR':
+            xmid=xmid-1500
+        else:
+            xmid=xmid-1270.46
     c.delete(ALL)
     if nspeed0.get()<6:
 # Draw the frequency or DF tick marks
@@ -449,9 +458,11 @@ def draw_axis():
                 x1=(Audio.gcom2.mousedf-600)/dff + dx
                 x2=(Audio.gcom2.mousedf+600)/dff + dx
             else:
-                tol=Audio.gcom2.dftolerance    
-                x1=(Audio.gcom2.mousedf-tol)/dff + dx
-                x2=(Audio.gcom2.mousedf+tol)/dff + dx
+                tol=Audio.gcom2.dftolerance
+                mdf=Audio.gcom2.mousedf
+                if g.mode=="WSPR": mdf=mdf-1270+1500
+                x1=(mdf-tol)/dff + dx
+                x2=(mdf+tol)/dff + dx
             c.create_line(x1,25,x2,25,fill='green',width=2)
             
     else:

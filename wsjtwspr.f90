@@ -5,7 +5,7 @@ subroutine wsjtwspr(dat,jz,cfile6,ndiag)
   complex c2(45000)
   include 'gcom2.f90'
 
-  f0=1270.46 + mousedf
+  f0=1500 + mousedf
   newdat=1
   if(nagain.eq.1) newdat=0
   call filbig2(dat,jz,f0,newdat,c2,n4)

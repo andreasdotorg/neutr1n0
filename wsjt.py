@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------- WSJT
+#--------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -103,6 +103,10 @@ slabel="Sync   "
 textheight=7
 ToRadio0=""
 tx6alt=""
+tx6list=("73 DE call grid", "73 DE p/call", "TNX name 73 GL",
+         "OP name 73 GL", "pwr W gain dbd", "pwr W gain dbd 73 GL",
+         "pwr W DIPOLE", "pwr W VERTICAL", "PSE QSY freq KHZ",
+         "WX wx temp F wind", "WX wx temp C wind")
 txsnrdb=99.
 TxFirst=IntVar()
 green=zeros(500,'f')
@@ -186,6 +190,19 @@ def testmsgs():
     tx5.insert(0,"@1000")
     tx6.insert(0,"@2000")
 
+#------------------------------------------------------ msg6list
+def msg6list(event=NONE):
+    tx6dialog=Pmw.ComboBoxDialog(root, title="Message Tx6",
+        buttons=('OK','cancel'),defaultbutton='OK',
+        scrolledlist_items=tx6list,listbox_width=22)
+    tx6dialog.geometry(msgpos())
+    if g.Win32: tx6dialog.iconbitmap("wsjt.ico")
+    tx6dialog.tkraise()
+    t=tx6dialog.activate()
+    if t=='OK':
+        t=tx6dialog.get()
+        tx6.delete(0,99)
+        tx6.insert(0,t)
 
 #------------------------------------------------------ textsize
 def textsize():
@@ -699,11 +716,10 @@ def ModeWSPR():
     mode.set("WSPR")
     if lauto: toggleauto()
     cleartext()
+    lab2.configure(text='FileID      Sync     dB       DT          DF  Drift')
     Audio.gcom1.trperiod=120
-    
     iframe4b.pack_forget()
     text.configure(height=9)
-
     bclravg.configure(state=DISABLED)
     binclude.configure(state=DISABLED)
     bexclude.configure(state=DISABLED)
@@ -1232,8 +1248,11 @@ def mouse_click_g1(event):
     global nopen
     if not nopen:
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4' or mode.get()=='WSPR':
+               mode.get()[:3]=='JT4':
             Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)
+        elif mode.get()=='WSPR':
+# Fix this: ??
+            Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)            
         else:
             if Audio.gcom2.ndecoding==0:              #If decoder is busy, ignore
                 Audio.gcom2.nagain=1
@@ -2404,6 +2423,7 @@ b6=Button(f5c, text='Tx6',underline=2,command=btx6,padx=1,pady=1)
 tx6.grid(column=1,row=5)
 rb6.grid(column=2,row=5)
 b6.grid(column=3,row=5)
+Widget.bind(tx6,'<Double-Button-3>',msg6list)
 
 f5c.pack(side=LEFT,fill=BOTH)
 iframe5.pack(expand=1, fill=X, padx=4)

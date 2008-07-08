@@ -1,4 +1,4 @@
-      subroutine sync162(c2,jz,ndftol,ps,sstf,kz)
+      subroutine sync162(c2,jz,mousedf,ndftol,ps,sstf,kz)
 
 C  Find WSPR sync signals, with best-fit DT and DF.  
 
@@ -74,7 +74,11 @@ C  Compute power spectrum for each step, and get average
 ! (Keep only the best one within a surrounding range of +/- 8 bins.)
 
       plimit=0.                      !### Are the plimit values OK? ###
-      do i=-NF0,NF0
+      i0=0
+      nfa=i0-nint(ndftol/df)
+      nfb=i0+nint(ndftol/df)
+!      do i=-NF0,NF0
+      do i=nfa,nfb
          keep0(i)=0
          keep(i)=0
          ia=i-4
@@ -96,7 +100,7 @@ C  Compute power spectrum for each step, and get average
       enddo
 
 ! Now mark the bins +/- 1 from each one already marked.
-      do i=-NF0+1,NF0-1
+      do i=nfa+1,nfb-1
          if(keep0(i).eq.1) then
             keep(i-1)=1
             keep(i)=1
@@ -107,7 +111,7 @@ C  Compute power spectrum for each step, and get average
 ! Now do the main search over DT, DF, and drift.  (Do CCFs in all marked
 ! frequency bins and over a range of reasonable fdot values and lags.)
       p1=0.
-      do i=-NF0,NF0
+      do i=nfa,nfb
          if(keep(i).eq.0) go to 10
          smax=0.
          do k=-NF1,NF1
@@ -142,9 +146,9 @@ C  Compute power spectrum for each step, and get average
 ! Eliminate potential duplicates and peaks smaller than plimit.
       keep=0
       plimit=10.0*plimit                             !### ??? ###
-      do i=-NF0,NF0
-         ia=max(-NF0,i-8)
-         ib=min(NF0,i+8)
+      do i=nfa,nfb
+         ia=max(nfa,i-8)
+         ib=min(nfb,i+8)
          pmax=-1.e30
          do ii=ia,ib
             if(p1(ii).gt.pmax) then
@@ -164,7 +168,7 @@ C  Compute power spectrum for each step, and get average
 ! Recalibrate sync indicator p1 on a dB scale.  
 ! (NB: p1 sould be compared with snrx!)
       k=0
-      do i=-NF0,NF0
+      do i=nfa,nfb
          if(keep(i).ne.0) then
             x=10.0*log10(p1(i)) - 22       !### ??? ###
             if(x.ge.0.5) then

@@ -97,7 +97,9 @@
            do j=1,jz
               dat2(j)=dat(j)-ave
            enddo
-           ierr=resample(dat2,dat,samratio,jz)
+C  Resample ntype: 0=best, 1=sinc_medium, 2=sinc_fast, 3=hold, 4=linear
+           ntype=2
+           ierr=resample(dat2,dat,samratio,jz,0)
            if(ierr.ne.0) print*,'Resample error.',samratio
         endif
 

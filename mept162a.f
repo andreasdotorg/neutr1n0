@@ -40,7 +40,7 @@ C  Compute pixmap.dat
 !      call spec162(c2,jz)
 
 C  Look for sync patterns, get DF and DT
-      call sync162(c2,jz,ndftol,ps,sstf,kz)
+      call sync162(c2,jz,mousedf,ndftol,ps,sstf,kz)
 
       do k=1,kz
          snrsync=sstf(1,k)
@@ -48,10 +48,10 @@ C  Look for sync patterns, get DF and DT
          dtx=sstf(3,k)
          dfx=sstf(4,k)
          drift=sstf(5,k)
-         ndf=nint(f0-1270.46+dfx)
+         ndf=nint(f0-1500.0+dfx)
 !         write(*,3001) f0,dfx,ndf,mousedf,ndf-mousedf,ndftol
 ! 3001    format(2f7.1,4i6)
-         if(abs(ndf-mousedf).gt.ndftol) go to 24
+!###         if(abs(ndf-mousedf).gt.ndftol) go to 24
          a(1)=-dfx
          a(2)=-0.5*drift
          a(3)=0.

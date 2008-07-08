@@ -12,13 +12,13 @@ subroutine getfile(fname,len)
 
 
   integer*1 d1(NDMAX)
-  integer*1 hdr(44),n1
+  integer*1 hdr(44)
   integer*2 d2(NDMAX)
   integer*2 nfmt2,nchan2,nbitsam2,nbytesam2
   character*4 ariff,awave,afmt,adata
   common/hdr/ariff,lenfile,awave,afmt,lenfmt,nfmt2,nchan2, &
      nsamrate,nbytesec,nbytesam2,nbitsam2,adata,ndata,d2
-  equivalence (ariff,hdr),(n1,n4),(d1,d2)
+  equivalence (ariff,hdr),(d1,d2)
 
 1 if(ndecoding.eq.0) go to 2
 #ifdef CVF
@@ -91,14 +91,14 @@ subroutine check_endian
   parameter (NDMAX=120*11025)
 
   integer*1 d1(NDMAX)
-  integer*1 hdr(44),n1
+  integer*1 hdr(44)
   integer*2 d2(NDMAX)
   integer*2 nfmt2,nchan2,nbitsam2,nbytesam2
   integer*2 iswap_short
   character*4 ariff,awave,afmt,adata
   common/hdr/ariff,lenfile,awave,afmt,lenfmt,nfmt2,nchan2, &
      nsamrate,nbytesec,nbytesam2,nbitsam2,adata,ndata,d2
-  equivalence (ariff,hdr),(n1,n4),(d1,d2)
+  equivalence (ariff,hdr),(d1,d2)
 
   if (nfmt2.eq.1) return             ! correct endianess for this CPU
   write(*,1000)
