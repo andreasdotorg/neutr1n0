@@ -1227,7 +1227,7 @@ def toggletxdf(event=NONE):
 def dtdf_change(event):
     if mode.get()[:4]!='JT65' and mode.get()[:3]!='JT2' and \
                mode.get()[:3]!='JT4' and mode.get()!='WSPR' \
-               and mode.get()[:4]!='JT64'
+               and mode.get()[:4]!='JT64':
         t="%.1f" % (event.x*30.0/500.0,)
         lab6.configure(text=t,bg='green')
     else:
