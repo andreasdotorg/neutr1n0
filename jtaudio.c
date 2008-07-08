@@ -242,7 +242,7 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
     return(-1);
   }
 
-  printf("Opening device %d for input, %d for output...\n",ndevice_in,ndevice_out);
+  //  printf("Opening device %d for input, %d for output...\n",ndevice_in,ndevice_out);
 
   inputParameters.device = ndevice_in;
   inputParameters.channelCount = 2;
@@ -270,7 +270,7 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
 
       err = 1;
     } else {
-      printf("Successfully opened audio input.\n");
+      //      printf("Successfully opened audio input.\n");
     }
   } else {
     printf("Error opening input audio stream.\n");
@@ -305,7 +305,7 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
 
       err += 2;
     } else {
-      printf("Successfully opened audio output.\n");
+      //      printf("Successfully opened audio output.\n");
     }
   } else {
     printf("Error opening output audio stream.\n");
