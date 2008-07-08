@@ -153,7 +153,7 @@ def fdf_change(event):
 #---------------------------------------------------- set_freezedf
 def set_freezedf(event):
     if g.mode[:4]=='JT65' or g.mode[:3]=='JT2' or \
-       g.mode[:3]=='JT4' or g.mode=="WSPR":
+       g.mode[:3]=='JT4' or g.mode=="WSPR" or g.mode[:4]=='JT64':
         n=int(df*(event.x-288.7) + fmid - 1500)
         if nfr.get()==2: n=int(2*df*(event.x-375.5) + fmid - 1270.5)
 #        if n<-600: n=-600
@@ -184,10 +184,10 @@ def df_mark():
         if(frange==2000):
             dx=288.7 + (1500-fmid)/df
             if g.mode[:4]=="JT65" or g.mode[:3]=="JT2" or \
-               g.mode[:3]=="JT4" or g.mode=="WSPR":
+               g.mode[:3]=="JT4" or g.mode=="WSPR" or g.mode[:4]=='JT64':
                 color='green'
                 n=1
-                if g.mode[:4]=="JT65":
+                if g.mode[:4]=="JT65" or g.mode[:4]=='JT64':
                     n=5
                     x1=(Audio.gcom2.mousedf + 6.6*fstep)/df + dx
                     c.create_line(x1-0.5,25,x1-0.5,12,fill=color)
@@ -204,10 +204,10 @@ def df_mark():
         if(frange==4000):
             dx=375 + (1270.5-fmid)/(2*df)
             if g.mode[:4]=="JT65" or g.mode[:3]=="JT2" or \
-               g.mode[:3]=="JT4" or g.mode=="WSPR":
+               g.mode[:3]=="JT4" or g.mode=="WSPR" or g.mode[:4]=='JT64':
                 color='green'
                 n=1
-                if g.mode[:4]=="JT65":
+                if g.mode[:4]=="JT65" or g.mode[:4]=='JT64':
                     n=5
                     x1=(Audio.gcom2.mousedf + 6.6*fstep)/(2*df) + dx
                     c.create_line(x1-0.5,25,x1-0.5,12,fill=color)
@@ -264,7 +264,7 @@ def set_frange():
 
 #---------------------------------------------------- decode_request
 def decode_request(event):
-    if g.mode[:4]!='JT65' and nspeed0.get()>5:
+    if (g.mode=='FSK441' or g.mode=='JT6M') and nspeed0.get()>5:
 # If decoder is busy or we are not monitoring, ignore request
         if Audio.gcom2.ndecoding==0 and Audio.gcom2.monitoring:
             Audio.gcom2.mousebutton=event.num       #Left=1, Right=3
@@ -277,7 +277,7 @@ def decode_request(event):
 #---------------------------------------------------- freeze_decode
 def freeze_decode(event):
     if (g.mode[:4]=='JT65' or g.mode[:3]=='JT2' or
-        g.mode[:3]=='JT4' or g.mode=="WSPR") \
+        g.mode[:3]=='JT4' or g.mode=="WSPR" or g.mode[:4]=='JT64') \
        and nspeed0.get()<6:
 # If decoder is busy or we are not monitoring, ignore request
         if Audio.gcom2.ndecoding==0 or Audio.gcom2.monitoring==0:
@@ -370,7 +370,7 @@ def update():
 
     if (Audio.gcom2.mousedf != mousedf0 or Audio.gcom2.dftolerance != tol0) \
             and (g.mode[:4]=='JT65' or g.mode[:3]=='JT2' or \
-                 g.mode[:3]=='JT4' or g.mode=="WSPR"):
+                 g.mode[:3]=='JT4' or g.mode=="WSPR" or g.mode[:4]=='JT64'):
         df_mark()
         
 # The following int() calls are to ensure that the values copied to
@@ -385,7 +385,7 @@ def update():
 
     if g.mode!=mode0:
         if (g.mode[:4]=="JT65" or g.mode[:3]=="JT2" or \
-            g.mode[:3]=="JT4" or g.mode=="WSPR") \
+            g.mode[:3]=="JT4" or g.mode=="WSPR" or g.mode[:4]=='JT64') \
            and nspeed0.get()>5: nspeed0.set(3)
         if g.mode=="FSK441" and nspeed0.get()<6: nspeed0.set(6)
         if g.mode=="JT6M" and nspeed0.get()<6: nspeed0.set(6)
@@ -448,7 +448,7 @@ def draw_axis():
                 c.create_line(i,25,i,j,fill='black')
                 
         if g.mode[:4]=="JT65" or g.mode[:3]=="JT2" or \
-           g.mode[:3]=="JT4" or g.mode=="WSPR":
+           g.mode[:3]=="JT4" or g.mode=="WSPR" or g.mode[:4]=='JT64':
             dx=288.7 + (1500-fmid)/df
             dff=df
             if frange==4000:

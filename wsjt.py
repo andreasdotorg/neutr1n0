@@ -664,8 +664,11 @@ def ModeJT65C(event=NONE):
 def ModeJT64A(event=NONE):
     if g.mode != "JT64A":
         if lauto: toggleauto()
-        ModeJT65()
-        mode.set("JT64A")
+    ModeJT65()
+    mode.set("JT64A")
+    report.configure(state=NORMAL)
+    report.delete(0,END)
+    report.insert(0,'S1')
 
 #------------------------------------------------------ ModeJT6M
 def ModeJT6M(event=NONE):
