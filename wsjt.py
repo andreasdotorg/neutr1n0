@@ -211,7 +211,8 @@ def textsize():
         textheight=21
     else:
         if mode.get()[:4]=='JT65' or mode.get()=='WSPR' or \
-               mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
+               mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4' \
+               or mode.get()[:4]=='JT64':
             textheight=7
         else:
             textheight=9
@@ -256,13 +257,14 @@ def dbl_click_text(event):
 #------------------------------------------------------ dbl_click3_text
 def dbl_click3_text(event):
     if mode.get()[:4]=='JT65' or mode.get()=='WSPR' or \
-           mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
+           mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4' \
+           or mode.get()[:4]=='JT64':
         t=text.get('1.0',END)           #Entire contents of text box
         t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
         n=t1.rfind("\n")
         rpt=t1[n+12:n+15]
         if rpt[0:1] == " ": rpt=rpt[1:]
-        if mode.get()=='WSPR':
+        if mode.get()=='WSPR' or mode.get()[:4]=='JT64':
             i=int((int(rpt)+33)/3)
             if i<1: i=1
             if i>9: i=9
@@ -1071,7 +1073,7 @@ def decclip(event):
 def inctol(event=NONE):
     global itol
     maxitol=5
-    if mode.get()[:4]=='JT65': maxitol=6
+    if mode.get()[:4]=='JT65' or mode.get()[:4]=='JT64': maxitol=6
     if mode.get()=='WSPR': maxitol=3
     if itol<maxitol: itol=itol+1
     ltol.configure(text='Tol    '+str(ntol[itol]))
@@ -1131,7 +1133,7 @@ def erase(event=NONE):
     graph1.delete(ALL)
     if mode.get()[:4]!="JT65" and mode.get()[:2]!="CW" and \
             mode.get()!="WSPR" and mode.get()[:3]!='JT2' and \
-            mode.get()[:3]!='JT4':
+            mode.get()[:3]!='JT4' and mode.get()[:4]!='JT64':
         graph2.delete(ALL)
     text.configure(state=NORMAL)
     text.delete('1.0',END)
@@ -1224,7 +1226,8 @@ def toggletxdf(event=NONE):
 # Readout of graphical cursor location
 def dtdf_change(event):
     if mode.get()[:4]!='JT65' and mode.get()[:3]!='JT2' and \
-               mode.get()[:3]!='JT4' and mode.get()!='WSPR':
+               mode.get()[:3]!='JT4' and mode.get()!='WSPR' \
+               and mode.get()[:4]!='JT64'
         t="%.1f" % (event.x*30.0/500.0,)
         lab6.configure(text=t,bg='green')
     else:
@@ -1248,7 +1251,7 @@ def mouse_click_g1(event):
     global nopen
     if not nopen:
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4':
+               mode.get()[:3]=='JT4' or mode.get()[:4]=='JT64':
             Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)
         elif mode.get()=='WSPR':
 # Fix this: ??
@@ -1267,8 +1270,8 @@ def mouse_click_g1(event):
 #------------------------------------------------------ double-click_g1
 def double_click_g1(event):
     if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-        mode.get()[:3]=='JT4' or mode.get()=='WSPR') and \
-        Audio.gcom2.ndecoding==0:
+        mode.get()[:3]=='JT4' or mode.get()=='WSPR' \
+        or mode.get()[:4]=='JT64') and Audio.gcom2.ndecoding==0:
         g.freeze_decode=1
     
 #------------------------------------------------------ mouse_up_g1
@@ -1351,7 +1354,7 @@ def GenStdMsgs(event=NONE):
         tx4.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [RRR]")
         tx5.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [73]")
         tx6.insert(0,"[CQ " + options.MyCall.get() + "]")
-    elif mode.get()=="WSPR":
+    elif mode.get()=="WSPR" or mode.get()[:4]=='JT64':
         if options.MyCall.get()!= MyCall0 or \
                options.addpfx.get()!= addpfx0 or ToRadio.get()!=ToRadio0:
             MyCall0=options.MyCall.get()
@@ -1640,7 +1643,7 @@ def update():
 
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
                mode.get()[:3]=='JT4' or mode.get()[:2]=='CW' or \
-               mode.get()=='WSPR':
+               mode.get()=='WSPR' or mode.get()[:4]=='JT64':
             graph2.delete(ALL)
             graph2.create_text(80,13,anchor=CENTER,text="Moon",font=g2font)
             graph2.create_text(13,37,anchor=W, text="Az: %6.2f" % g.AzMoon,font=g2font)
@@ -1649,7 +1652,8 @@ def update():
             graph2.create_text(13,109,anchor=W,text="Dgrd:%5.1f" % g.Dgrd,font=g2font)
 
     if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-        mode.get()[:3]=='JT4' or mode.get()=='WSPR') and g.freeze_decode:
+        mode.get()[:3]=='JT4' or mode.get()=='WSPR' \
+        or mode.get()[:4]=='JT64') and g.freeze_decode:
         itol=2
         ltol.configure(text='Tol    '+str(50))
         Audio.gcom2.dftolerance=50
@@ -1815,7 +1819,8 @@ def update():
             cmap0=g.cmap
 
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-                mode.get()[:3]=='JT4' or mode.get()=='WSPR':
+                mode.get()[:3]=='JT4' or mode.get()=='WSPR' \
+                or mode.get()[:4]=='JT64':
             if mode.get()!='WSPR':
                 plot_large()
         else:    

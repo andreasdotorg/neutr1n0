@@ -101,7 +101,6 @@ C  Good Sync takes precedence over a shorthand message:
          go to 200
       endif
 
-      print*,'A:',nsync,nsnr
       if(nsync.lt.MinSigdB .or. nsnr.lt.nsnrlim) go to 200
 
 C  If we get here, we have achieved sync!
