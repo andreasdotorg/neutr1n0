@@ -49,8 +49,7 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,msgsent)
   tsymbol=8192.d0/12000.d0
   
   dt=1.d0/(fsample*samfacout)
-!  f0=1500 + ntxdf
-  f0=1270.46 + ntxdf
+  f0=1500 + ntxdf
   dfgen=12000.d0/8192.d0                     !1.4649 Hz
   nsigs=1
   snrdb=99.
