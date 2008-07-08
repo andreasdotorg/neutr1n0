@@ -17,7 +17,7 @@ subroutine a2d(iarg)
   write(*,1000) idevin,idevout
 1000 format(/'User requested devices:   Input =',i2,'   Output =',i2)
   write(*,1002) ndefin,ndefout
-1002 format(/'Default devices:          Input =',i2,'   Output =',i2)
+1002 format( 'Default devices:          Input =',i2,'   Output =',i2)
   if(idevin.lt.0 .or. idevin.ge.numdevs) idevin=ndefin
   if(idevout.lt.0 .or. idevout.ge.numdevs) idevout=ndefout
   if(idevin.eq.0 .and. idevout.eq.0) then
