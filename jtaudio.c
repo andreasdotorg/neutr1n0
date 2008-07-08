@@ -270,10 +270,10 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
 
       err = 1;
     } else {
-      printf("Successfully opened audio input!\n");
+      printf("Successfully opened audio input.\n");
     }
   } else {
-    printf("Error opening input audio stream!\n");
+    printf("Error opening input audio stream.\n");
     printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_open_in), err_open_in);
 
     err = 1;
@@ -305,10 +305,10 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
 
       err += 2;
     } else {
-      printf("Successfully opened audio output!\n");
+      printf("Successfully opened audio output.\n");
     }
   } else {
-    printf("Error opening output audio stream:\n");
+    printf("Error opening output audio stream.\n");
     printf("\tErrortext: %s\n\tNumber: %d\n",Pa_GetErrorText(err_open_out), err_open_out);
 
     err += 2;

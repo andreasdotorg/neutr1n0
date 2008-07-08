@@ -54,6 +54,9 @@ C  already been done.
 C  Attempt to synchronize: look for sync tone, get DF and DT.
       call sync64(dat,npts,DFTolerance,NFreeze,MouseDF,
      +    mode64,dtx,dfx,snrx,snrsync,ccfblue,ccfred,flip,width)
+      write(*,3002) snrsync,dtx,dfx
+ 3002 format('Sync:',f6.1,'  DT:',f6.1,'   DF:',f6.1)
+
       csync=' '
       decoded='                      '
       deepmsg='                      '
@@ -98,6 +101,7 @@ C  Good Sync takes precedence over a shorthand message:
          go to 200
       endif
 
+      print*,'A:',nsync,nsnr
       if(nsync.lt.MinSigdB .or. nsnr.lt.nsnrlim) go to 200
 
 C  If we get here, we have achieved sync!

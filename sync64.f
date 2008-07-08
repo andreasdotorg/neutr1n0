@@ -125,9 +125,9 @@ C### with code modified for JT64.
          ccfred1(lag)=ccf64(lag)
       enddo
 
-      dtbest=dtstep*lagpk
-      write(*,3002) syncbest,dtbest,(ipk-i0)*df
- 3002 format('Sync:',f6.1,'  DT:',f6.1,'   DF:',f6.1)
+      snrsync=syncbest
+      dtx=dtstep*lagpk
+      dfx=(ipk-i0)*df
 
       return
       end

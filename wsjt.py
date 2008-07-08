@@ -662,8 +662,8 @@ def ModeJT65C(event=NONE):
 def ModeJT64A(event=NONE):
     if g.mode != "JT64A":
         if lauto: toggleauto()
-        mode.set("JT64A")
         ModeJT65()
+        mode.set("JT64A")
 
 #------------------------------------------------------ ModeJT6M
 def ModeJT6M(event=NONE):
@@ -1023,7 +1023,7 @@ def azdist():
     else:
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
                mode.get()[:3]=='JT4' or mode.get()[:2]=="CW" or \
-               mode.get()=='WSPR':
+               mode.get()=='WSPR' or mode.get()[:4]=='JT64':
             labAz.configure(text="Az: %d" % (naz,))
             labHotAB.configure(text="",bg='gray85')
         else:
@@ -1621,7 +1621,7 @@ def update():
             options.MyGrid.get().upper(),HisGrid.get().upper(),utchours)
         azdist()
         g.nfreq=nfreq.get()
-
+        
         if Audio.gcom2.ndecoding==0:
             g.AzSun,g.ElSun,g.AzMoon,g.ElMoon,g.AzMoonB,g.ElMoonB,g.ntsky, \
                 g.ndop,g.ndop00,g.dbMoon,g.RAMoon,g.DecMoon,g.HA8,g.Dgrd,  \
@@ -2495,6 +2495,8 @@ try:
                 ModeCW()
             elif value=='WSPR':
                 ModeWSPR()
+            elif value=='JT64A':
+                ModeJT64A()
             elif value=='JT2':
                 ModeJT2()
             elif value[:3]=='JT4':
