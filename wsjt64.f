@@ -33,6 +33,8 @@ C  already been done.
          ave2=' '
       endif
 
+      nspecial=0
+      nstest=0
       naggressive=0
       if(ndepth.ge.2) naggressive=1
       nq1=3
@@ -54,8 +56,12 @@ C  already been done.
 C  Attempt to synchronize: look for sync tone, get DF and DT.
       call sync64(dat,npts,DFTolerance,NFreeze,MouseDF,
      +    mode64,dtx,dfx,snrx,snrsync,ccfblue,ccfred,flip,width)
-      write(*,3002) snrsync,dtx,dfx
- 3002 format('Sync:',f6.1,'  DT:',f6.1,'   DF:',f6.1)
+      nsync=nint(snrsync-3.0)
+      nsnr=0
+      jdf=nint(dfx)
+      write(11,1010) cfile6,nsync,nsnr,dtx-1.0,jdf
+ 1010 format(a6,i3,i5,f5.1,i5,i3,1x,a1,1x,a5,a19,1x,a3,i4,i4)
+      write(21,1010) cfile6,nsync,nsnr,dtx-1.0,jdf
 
       csync=' '
       decoded='                      '
