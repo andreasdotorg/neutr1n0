@@ -91,8 +91,8 @@ C  Compute soft symbols using differential BPSK demodulation
                nhmax=nh
                idfbest=idf
             endif
-            write(42,3091) idf,nh
- 3091       format(2i8)
+!            write(42,3091) idf,nh
+! 3091       format(2i8)
          enddo
 
          c0=0

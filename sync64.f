@@ -74,13 +74,13 @@ C  Find the best frequency channel for CCF
       ib=fb/df
       i0=nint(1270.46/df)
       syncbest=-1.e30
-      call zero(ccfred,745)
+      call zero(ccfred1,449)
       nsync=18
 
-C### Code from here to (almost) end of sync65 was deleted.  Must replace
-C### with code modified for JT64.
+C### Following code probably needs work!
 
       do i=ia,ib
+         smax=-1.e30
          do lag=-20,20
             sum=0.
             do j=1,nsym
@@ -92,11 +92,13 @@ C### with code modified for JT64.
                endif
             enddo
             ccf64(lag)=sum/nsync
-            if(ccf64(lag).gt.syncbest) then
-               ipk=i
-               syncbest=ccf64(lag)
-            endif
+            if(ccf64(lag).gt.smax) smax=ccf64(lag)
          enddo
+         ccfred1(i-i0)=smax
+         if(smax.gt.syncbest) then
+            syncbest=smax
+            ipk=i
+         endif
       enddo
 
 ! Once more, at the best frequency
@@ -120,9 +122,9 @@ C### with code modified for JT64.
                lagpk=lag
                syncbest=ccf64(lag)
             endif
-         write(41,3001) lag,dtstep*lag,ccf64(lag)
- 3001    format(i5,2f10.3)
-         ccfred1(lag)=ccf64(lag)
+!         write(41,3001) lag,dtstep*lag,ccf64(lag)
+! 3001    format(i5,2f10.3)
+         ccfblue(lag)=ccf64(lag)
       enddo
 
       snrsync=syncbest
