@@ -601,6 +601,7 @@ def ModeFSK441(event=NONE):
         report.configure(state=NORMAL)
         shmsg.configure(state=NORMAL)
         graph2.configure(bg='black')
+        report.insert(0,'26')
         itol=4
         inctol()
         ntx.set(1)
