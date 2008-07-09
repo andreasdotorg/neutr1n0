@@ -92,7 +92,7 @@ C  Look for sync patterns, get DF and DT
  1012       format(a6,i4,i4,f5.1,i6,i3,2x,a22,15x,i4,i6)
             i1=index(message,' ')
          endif
- 24      continue
+ !24      continue
       enddo
 
       return
