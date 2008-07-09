@@ -15,6 +15,7 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       integer*2 nsky
       common/sky/ nsky(360,180)
       common/echo/xdop(2),techo,ElMoon,mjd
+      data ltsky/.false./
       data first/.true./
       data rad/57.2957795/
       save first
