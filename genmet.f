@@ -16,7 +16,7 @@ C Metric table (RxSymbol,TxSymbol)
          scale=10
       else
          print*,'Unsupported mode:',mode,' in genmet.'
-         stop
+         stop 'genmet'
       endif
 
       do i=0,255

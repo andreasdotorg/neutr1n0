@@ -49,9 +49,6 @@ C  Look for sync patterns, get DF and DT
          dfx=sstf(4,k)
          drift=sstf(5,k)
          ndf=nint(f0-1500.0+dfx)
-!         write(*,3001) f0,dfx,ndf,mousedf,ndf-mousedf,ndftol
-! 3001    format(2f7.1,4i6)
-!###         if(abs(ndf-mousedf).gt.ndftol) go to 24
          a(1)=-dfx
          a(2)=-0.5*drift
          a(3)=0.
@@ -78,9 +75,8 @@ C  Look for sync patterns, get DF and DT
                call decode162(c4,jz,message,ncycles,metric,nerr)
                if(message(1:6).ne.'      ') go to 23
             enddo
-!            go to 24
+
  23         width=0.
-!            call rect(c3,dtx,0.0,message,dfx2,width,pmax)
             nf1=nint(-a(2))
             if(ndiag.ne.0) then
                write(11,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message,
@@ -88,11 +84,9 @@ C  Look for sync patterns, get DF and DT
             else
                write(11,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message
             endif
-!            write(*,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message
  1012       format(a6,i4,i4,f5.1,i6,i3,2x,a22,15x,i4,i6)
             i1=index(message,' ')
          endif
- !24      continue
       enddo
 
       return

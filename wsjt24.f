@@ -85,8 +85,7 @@ C  If we get here, we have achieved sync!
          cooo='O ?'
       endif
 
-      call decode24(dat,npts,dtx,dfx,flip,ndepth,neme,
-     +   mycall,hiscall,hisgrid,mode,mode4,decoded,
+      call decode24(dat,npts,dtx,dfx,flip,mode,mode4,decoded,
      +   ncount,deepmsg,qual)
  200  kvqual=0
       if(ncount.ge.0) kvqual=1
