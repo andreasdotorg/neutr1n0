@@ -181,6 +181,7 @@ def df_mark():
         if g.mode[4:5]=='B': fstep=2*fstep
         if g.mode[4:5]=='C': fstep=4*fstep
 
+
 # Mark sync tone and top JT65 tone (green) and shorthand tones (red)
         if(frange==2000):
             dx=288.7 + (1500-fmid)/df

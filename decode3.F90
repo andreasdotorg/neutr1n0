@@ -54,8 +54,7 @@ subroutine decode3(d2,jz,istart,filename)
   if(nblank.ne.0) call blanker(d2d,jz)
 
   nseg=1
-  if(mode(1:4).eq.'JT65' .or. nmode.eq.6 .or. nmode.eq.7 .or.           &
-       nmode.eq.8) then
+  if(mode(1:4).eq.'JT65' .or. nmode.ge.6) then
      i=index(FileID,'.')-3
      if(FileID(i:i).eq.'1'.or.FileID(i:i).eq.'3'.or.FileID(i:i).eq.'5'  &
           .or.FileID(i:i).eq.'7'.or.FileID(i:i).eq.'9') nseg=2
@@ -96,7 +95,7 @@ subroutine decode3(d2,jz,istart,filename)
   
   nclearave=0
   nagain=0
-  if(mode(1:4).eq.'JT65' .or. nmode.eq.6 .or. nmode.eq.7 .or. nmode.eq.8 ) then
+  if(mode(1:4).eq.'JT65' .or. nmode.ge.6) then
      call pix2d65(d2d,jz)
   else if(mode.eq.'FSK441') then
      nz=s2(1,1)

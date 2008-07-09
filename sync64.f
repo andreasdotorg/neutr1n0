@@ -37,7 +37,7 @@ C  already downsampled the data by factor of 2.
          if(n.eq.2) i0=28
          if(n.eq.3) i0=46
          do i=1,6
-            isync(i0+i)=ic6(i) + 6*(n-1)
+            isync(i0+i)=ic6(i)
          enddo
       enddo
 
