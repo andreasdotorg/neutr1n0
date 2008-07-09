@@ -4,12 +4,11 @@
 C  Decodes JT65 data, assuming that DT and DF have already been determined.
 
       real dat(npts)                        !Raw data
-!      real s3(64,63)
       character decoded*22,deepmsg*22
       character*72 c72
       real*8 dt,df,phi,f0,dphi,twopi,phi1,dphi1
       complex*16 cz,cz1,c0,c1
-      integer*1 i1,symbol(207)
+      integer*1 symbol(207)
       integer*1 data1(13)                   !Decoded data (8-bit bytes)
       integer   data4a(9)                   !Decoded data (8-bit bytes)
       integer   data4(12)                   !Decoded data (6-bit bytes)
@@ -19,9 +18,6 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       integer npr2(207)
       logical first
       include 'avecom.h'
-      integer*1 sym0
-      common/tst99/ sym0(216)
-      equivalence (i1,i4)
       data first/.true./
       data npr2/
      +  0,0,0,0,1,1,0,0,0,1,1,0,1,1,0,0,1,0,1,0,0,0,0,0,0,0,1,1,0,0,
@@ -133,11 +129,8 @@ C  average phase and then use:
             if(r.gt.255.0) r=255.0
             if(r.lt.0.0) r=0.0
             i4=nint(r)
-            if(j.ge.1) symbol(j)=i1
-            i4a=i4
-            i1=sym0(j)
-            write(41,3090) j,rsym,i4a,i4,ang,ndang
- 3090       format(i3,f9.1,2i6,f8.3,i6)
+            if(i4.gt.127) i4=i4-256
+            if(j.ge.1) symbol(j)=i4
             ang0=ang
          enddo
 !###
@@ -187,10 +180,8 @@ C  average phase and then use:
             if(r.gt.255.0) r=255.0
             if(r.lt.0.0) r=0.0
             i4=nint(r)
-            if(j.ge.1) symbol(j)=i1
-            i4a=i4
-            i1=sym0(j)
-            write(41,3090) j,rsym,i4a,i4
+            if(i4.gt.127) i4=i4-256
+            if(j.ge.1) symbol(j)=i4
          enddo
       endif
 
@@ -207,9 +198,11 @@ C  This is a kludge:
       do iter=1,iters
          if(iter.eq.2) then
             do i=2,207
-               i1=symbol(i)
+               i4=symbol(i)
+               if(i4.lt.0) i4=i4+256
                i4=255-i4
-               symbol(i)=i1
+               if(i4.gt.127) i4=i4-256
+               symbol(i)=i4
             enddo
          endif
          ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
@@ -218,7 +211,8 @@ C  This is a kludge:
       enddo
 
  100     do i=1,9
-         i1=data1(i)
+         i4=data1(i)
+         if(i4.lt.0) i4=i4+256
          data4a(i)=i4
       enddo
       write(c72,1100) (data4a(i),i=1,9)
@@ -233,12 +227,8 @@ C  This is a kludge:
          ncount=-1
       endif
 
-!      call extract(s3,nadd,ncount,decoded)     !Extract the message
       qual=0.
       deepmsg='                      '
-!      if(ndepth.ge.1) call deep65(s3,mode65,neme,nchallenge,
-!     +    flip,mycall,hiscall,hisgrid,deepmsg,qual)
-
 
 C  Save symbol spectra for possible decoding of average.
 

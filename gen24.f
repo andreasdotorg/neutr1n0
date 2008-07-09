@@ -15,7 +15,6 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       integer*1 data0(13),symbol(216)
       logical first
       include 'prcom2.f'
-      common/tst99/ symbol
       data first/.true./
       save
 

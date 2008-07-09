@@ -7,12 +7,11 @@ C  Decode MEPT_JT data, assuming that DT and DF have already been determined.
       real*8 dt,df,twopi,f0,f1,dphi0,dphi1
       complex*16 c0,c1
       complex*16 w0,w1,ws0,ws1
-      integer*1 i1,symbol(162)
+      integer*1 symbol(162)
       integer*1 data1(11)
       integer amp
       integer mettab(0:255,0:1)
       logical first
-      equivalence (i1,i4)
       data first/.true./
       integer npr3(162)
       common/ccom/rr(162)
@@ -129,7 +128,8 @@ C  Compute soft symbols
          if(r.gt.255.0) r=255.0
          if(r.lt.0.0) r=0.0
          i4=nint(r)
-         symbol(j)=i1
+         if(i4.gt.127) i4=i4-256
+         symbol(j)=i4
       enddo
 
       call inter_mept(symbol,-1)                      !Remove interleaving

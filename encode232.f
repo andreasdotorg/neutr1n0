@@ -6,13 +6,14 @@ C  Convolutional encoder for a K=32, r=1/2 code.
       integer*1 symbol(maxsym)          !Channel symbols, one bit per byte
       integer*1 i1
       include 'conv232.f'
-      equivalence (i1,i4)
 
       nstate=0
       k=0
       do j=1,nbytes
          do i=7,0,-1
             i1=dat(j)
+            i4=i1
+            if (i4.lt.0) i4=i4+256
             nstate=ior(ishft(nstate,1),iand(ishft(i4,-i),1))
             n=iand(nstate,npoly1)
             n=ieor(n,ishft(n,-16))

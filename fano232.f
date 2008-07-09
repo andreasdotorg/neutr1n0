@@ -18,9 +18,7 @@ C  These were the "node" structure in Karn's C code:
       integer tm(0:1,0:MAXBITS-1)      !Sorted metrics for current hypotheses
       integer ii(0:MAXBITS-1)          !Current branch being tested
 
-      integer*1 i1a,i1b
       logical noback
-      equivalence (i1a,i4a),(i1b,i4b)
       include 'conv232.f'
 
       ntail=nbits-31
@@ -31,8 +29,10 @@ C  This is the only place we actually look at the raw input symbols
       i4b=0
       do np=0,nbits-1
          j=2*np
-         i1a=symbol(j)
-         i1b=symbol(j+1)
+         i4a=symbol(j)
+         i4b=symbol(j+1)
+         if (i4a.lt.0) i4a=i4a+256
+         if (i4b.lt.0) i4b=i4b+256
          metrics(0,np) = mettab(i4a,0) + mettab(i4b,0)
          metrics(1,np) = mettab(i4a,0) + mettab(i4b,1)
          metrics(2,np) = mettab(i4a,1) + mettab(i4b,0)
@@ -146,7 +146,7 @@ C  Copy decoded data to user's buffer
       np=7
       do j=1,nbytes-1
          i4a=nstate(np)
-         dat(j)=i1a
+         dat(j)=i4a
          np=np+8
       enddo
       dat(nbytes)=0

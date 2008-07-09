@@ -2,8 +2,7 @@
 
 C  Move 72-bit packed data from 6-bit to 8-bit symbols and add a zero tail.
       integer dgen(12)
-      integer*1 data0(13),i1
-      equivalence (i1,i4)
+      integer*1 data0(13)
 
       i4=0
       k=0
@@ -15,7 +14,8 @@ C  Move 72-bit packed data from 6-bit to 8-bit symbols and add a zero tail.
             i4=i4+i4+iand(1,ishft(n,j-6))
             if(k.eq.8) then
                m=m+1
-               data0(m)=i1
+               if(i4.gt.127) i4=i4-256
+               data0(m)=i4
                k=0
             endif
          enddo

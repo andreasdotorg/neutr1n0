@@ -8,13 +8,12 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,msgsent)
   integer*2 iwave(NMAX)          !Generated wave file
   real*8 samfacout,fsample
   integer*1 symbol(MAXSYM)
-  integer*1 data0(11),i1
+  integer*1 data0(11)
   integer npr3(162)
   real pr3(162)
   logical first
   real*8 t,dt,phi,f,f0,dfgen,dphi,pi,twopi,tsymbol
   character*22 msgsent           !Message sent
-  equivalence(i1,i4)
   data npr3/                                    &
        1,1,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0, &
        0,1,0,1,1,1,1,0,0,0,0,0,0,0,1,0,0,1,0,1, &
