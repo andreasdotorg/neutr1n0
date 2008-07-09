@@ -1,4 +1,4 @@
-      subroutine deep65(s3,mode65,neme,nchallenge,flip,mycall,hiscall,
+      subroutine deep65(s3,mode65,neme,flip,mycall,hiscall,
      +  hisgrid,decoded,qual)
 
       parameter (MAXCALLS=7000,MAXRPT=63)
@@ -138,63 +138,7 @@ C  Insert CQ message unless sync=OOO (flip=-1).
          endif
       enddo
 
-      if(nchallenge.eq.0) go to 30
-!  Accept the DJ5HG challenge, and decode all four-character alphanumeric
-!  messages using deep search.
-      p2a=p2
-      ip1a=ip1
-      ip2a=ip2
-      ntot2=36**4
-
-      if(dgen(1).eq.999) then
-         do i1=1,36
-            message=cc(i1:i1)//'                     '
-            do i2=1,36
-               message(2:2)=cc(i2:i2)
-               do i3=1,36
-                  message(3:3)=cc(i3:i3)
-                  do i4=1,36
-                     message(4:4)=cc(i4:i4)
-                     call packmsg(message,dgen)
-                     call rs_encode(dgen,sent)
-                     call interleave63(sent,1)
-                     call graycode(sent,63,1)
-                     do i=1,63
-                        sent1(i)=sent(i)
-                     enddo
-                     write(49) sent1
-                  enddo
-               enddo
-            enddo
-         enddo
-      endif
-      rewind 49
-      do k=1,ntot2
-         read(49) sent1
-         sum=0.
-         ref=ref0
-         do j=1,63
-            i=sent1(j)+1
-            sum=sum + s3(i,j)
-            if(i.eq.mrs(j)) then
-               ref=ref - s3(i,j) + s3(mrs2(j),j)
-            endif
-         enddo
-         p=sum/ref
-         if(p.gt.p2) then
-            if(p.gt.p1) then
-               p2=p1
-               ip2=ip1
-               p1=p
-               ip1=k+ntot
-            else
-               p2=p
-               ip2=k+ntot
-            endif
-         endif
-      enddo
-
- 30   if(mode65.eq.1) bias=max(1.12*p2,0.335)
+      if(mode65.eq.1) bias=max(1.12*p2,0.335)
       if(mode65.eq.2) bias=max(1.08*p2,0.405)
       if(mode65.ge.4) bias=max(1.04*p2,0.505)
       qual=100.0*(p1-bias)

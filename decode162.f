@@ -1,4 +1,4 @@
-      subroutine decode162(c4,npts,message,ncycles,metric,nerr)
+      subroutine decode162(c4,npts,ndwspr,message,ncycles,metric,nerr)
 
 C  Decode MEPT_JT data, assuming that DT and DF have already been determined.
 
@@ -88,10 +88,11 @@ C  Decode MEPT_JT data, assuming that DT and DF have already been determined.
          nbits=50+31
          amp=20                                !### 32 ??? ###
          ndelta=50
-         limit=20000
          first=.false.
       endif
 
+      limit=20000
+      if(ndwspr.eq.0) limit=10000
 C  Should amp be adjusted according to signal strength?
 C  Compute soft symbols
       k=0

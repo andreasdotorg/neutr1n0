@@ -1,6 +1,6 @@
       subroutine wsjt65(dat,npts,cfile6,NClearAve,MinSigdB,
      +  DFTolerance,NFreeze,NAFC,mode65,Nseg,MouseDF,NAgain,
-     +  ndepth,nchallenge,neme,idf,idfsh,mycall,hiscall,hisgrid,
+     +  ndepth,neme,idf,idfsh,mycall,hiscall,hisgrid,
      +  lumsg,lcum,nspecial,ndf,nstest,dfsh,
      +  snrsh,NSyncOK,ccfblue,ccfred,ndiag,nwsh)
 
@@ -110,7 +110,7 @@ C  If we get here, we have achieved sync!
          cooo='O ?'
       endif
 
-      call decode65(dat,npts,dtx,dfx,flip,ndepth,nchallenge,neme,
+      call decode65(dat,npts,dtx,dfx,flip,ndepth,neme,
      +   mycall,hiscall,hisgrid,mode65,nafc,decoded,
      +   ncount,deepmsg,qual)
       if(ncount.eq.-999) qual=0                 !Bad data

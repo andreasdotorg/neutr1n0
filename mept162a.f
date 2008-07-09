@@ -1,4 +1,5 @@
-      subroutine mept162a(c2,jz,f0,cfile6,ndiag,minsync,mousedf,ndftol)
+      subroutine mept162a(c2,jz,f0,cfile6,ndiag,minsync,mousedf,ndftol,
+     +    ndwspr)
 
 C  Orchestrates the process of finding, synchronizing, and decoding 
 C  WSPR signals.
@@ -42,6 +43,11 @@ C  Compute pixmap.dat
 C  Look for sync patterns, get DF and DT
       call sync162(c2,jz,mousedf,ndftol,ps,sstf,kz)
 
+      idtmax=64
+      idtstep=1
+      if(ndwspr.eq.0) then
+         idtstep=8
+      endif
       do k=1,kz
          snrsync=sstf(1,k)
          snrx=sstf(2,k)
@@ -61,28 +67,33 @@ C  Look for sync patterns, get DF and DT
          message='                      '
          if(nsync.ge.minsync .and. nsnrx.ge.-30) then      !### -31 dB limit?
             dt=1.0/375
-            do idt=0,128
-               ii=(idt+1)/2
-               if(mod(idt,2).eq.1) ii=-ii
-               i1=nint((dtx+2.0)/dt) + ii !Start index for synced symbols
-               if(i1.ge.1) then
-                  c4(1:45000-i1+1)=c3(i1:45000)
-                  c4(jz-i1+2:)=0.
-               else
-                  c4(1:-i1+1)=0.
-                  c4(-i1+2:45000)=c3(1:45000+i1-1)
-               endif
-               call decode162(c4,jz,message,ncycles,metric,nerr)
-               if(message(1:6).ne.'      ') go to 23
+            do idt=0,idtmax,idtstep
+               do isign=-1,1,2
+                  ii=idt*isign
+                  i1=nint((dtx+2.0)/dt) + ii !Start index for synced symbols
+                  if(i1.ge.1) then
+                     c4(1:45000-i1+1)=c3(i1:45000)
+                     c4(jz-i1+2:)=0.
+                  else
+                     c4(1:-i1+1)=0.
+                     c4(-i1+2:45000)=c3(1:45000+i1-1)
+                  endif
+                  call decode162(c4,jz,ndwspr,message,ncycles,metric,
+     +                           nerr)
+                  if(message(1:6).ne.'      ') go to 23
+               enddo
             enddo
 
  23         width=0.
             nf1=nint(-a(2))
             if(ndiag.ne.0) then
                write(11,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message,
-     +           ii,ncycles/81
+     +              ii,ncycles/81
+               write(21,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message,
+     +              ii,ncycles/81
             else
                write(11,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message
+               write(21,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message
             endif
  1012       format(a6,i4,i4,f5.1,i6,i3,2x,a22,15x,i4,i6)
             i1=index(message,' ')

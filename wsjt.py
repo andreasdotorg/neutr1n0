@@ -81,10 +81,10 @@ MyCall0=""
 nafc=IntVar()
 naz=0
 ndepth=IntVar()
+ndwspr=IntVar()
 nel=0
 nblank=IntVar()
 ncall=0
-nchallenge=IntVar()
 ncwtrperiod=120
 ndmiles=0
 ndkm=0
@@ -601,6 +601,7 @@ def ModeFSK441(event=NONE):
         report.configure(state=NORMAL)
         shmsg.configure(state=NORMAL)
         graph2.configure(bg='black')
+        report.delete(0,END)
         report.insert(0,'26')
         itol=4
         inctol()
@@ -1876,7 +1877,7 @@ def update():
     Audio.gcom2.dftolerance=ntol[itol]
     Audio.gcom2.neme=neme.get()
     Audio.gcom2.ndepth=ndepth.get()
-    Audio.gcom2.nchallenge=nchallenge.get()
+    Audio.gcom2.ndwspr=ndwspr.get()
     if mode.get()=='CW':
         Audio.gcom2.ntdecode=56
     elif mode.get()=='WSPR':
@@ -2056,10 +2057,14 @@ decodemenu.JT65.add_radiobutton(label = 'Aggressive Deep Search',
                                 variable=ndepth, value=2)
 decodemenu.JT65.add_radiobutton(label ='Include Average in Aggressive Deep Search',
                                 variable=ndepth, value=3)
-decodemenu.JT65.add_separator()
-#decodemenu.JT65.add_checkbutton(label='DJ5HG Challenge',variable=nchallenge)
+
+decodemenu.WSPR=Menu(decodemenu,tearoff=0)
+decodemenu.WSPR.add_radiobutton(label='Quick decode',variable=ndwspr, value=0)
+decodemenu.WSPR.add_radiobutton(label='Deepest decode',variable=ndwspr, value=1)
+
 decodemenu.add_cascade(label = 'FSK441',menu=decodemenu.FSK441)
 decodemenu.add_cascade(label = 'JT65',menu=decodemenu.JT65)
+decodemenu.add_cascade(label = 'WSPR',menu=decodemenu.WSPR)
 
 if (sys.platform == 'darwin'):
     mbar.add_cascade(label="Decode", menu=decodemenu)
@@ -2462,6 +2467,7 @@ lauto=0
 isync=1
 ntx.set(1)
 ndepth.set(0)
+ndwspr.set(0)
 from WsjtMod import options
 options.defaults()
 ModeFSK441()
@@ -2600,6 +2606,7 @@ try:
         elif key == 'QDecode': qdecode.set(value)
         elif key == 'NEME': neme.set(value)
         elif key == 'NDepth': ndepth.set(value)
+        elif key == 'Ndwspr': ndwspr.set(value)
         elif key == 'Debug': ndebug.set(value)
         elif key == 'HisCall':
             Audio.gcom2.hiscall=(value+'            ')[:12]
@@ -2634,6 +2641,7 @@ lclip.configure(text='Clip   '+str(iclip))
 Audio.gcom2.appdir=(appdir+'                                                                                          ')[:80]
 Audio.gcom2.azeldir=(options.azeldir.get()+'                                                                                          ')[:80]
 Audio.gcom2.ndepth=ndepth.get()
+Audio.gcom2.ndwspr=ndwspr.get()
 Audio.ftn_init()
 Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+'        ')[:8]
 stopmon()
@@ -2703,6 +2711,7 @@ f.write("NoShJT65 " + str(noshjt65.get()) + "\n")
 f.write("QDecode " + str(qdecode.get()) + "\n")
 f.write("NEME " + str(neme.get()) + "\n")
 f.write("NDepth " + str(ndepth.get()) + "\n")
+f.write("Ndwspr " + str(ndwspr.get()) + "\n")
 f.write("Debug " + str(ndebug.get()) + "\n")
 #f.write("TRPeriod " + str(Audio.gcom1.trperiod) + "\n")
 mrudir2=mrudir.replace(" ","#")

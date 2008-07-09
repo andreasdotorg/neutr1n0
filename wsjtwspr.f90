@@ -9,7 +9,7 @@ subroutine wsjtwspr(dat,jz,cfile6,ndiag)
   newdat=1
   if(nagain.eq.1) newdat=0
   call filbig2(dat,jz,f0,newdat,c2,n4)
-  call mept162a(c2,n4,f0,cfile6,ndiag,MinSyncdB,mousedf,DFTolerance)
+  call mept162a(c2,n4,f0,cfile6,ndiag,MinSyncdB,mousedf,DFTolerance,ndwspr)
 
   return
 end subroutine wsjtwspr

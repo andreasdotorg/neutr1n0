@@ -1,4 +1,4 @@
-        subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,nchallenge,
+        subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,
      +    MinSigdB,NQRN,DFTolerance,MouseButton,NClearAve,nforce,
      +    Mode,NFreeze,NAFC,NZap,mode65,mode4,idf,ntdecode0,
      +    MyCall,HisCall,HisGrid,neme,ntx2,s2,
@@ -195,7 +195,7 @@ C  Intentionally degrade SNR by -nclip dB.
            jztest=11025*ntdecode/2 - 2755
            if(jz.ge.jztest) call wsjt65(dat(4097),jz-4096,cfile6,
      +        NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode65,Nseg,
-     +        MouseDF2,NAgain,ndepth,nchallenge,neme,idf,idfsh,
+     +        MouseDF2,NAgain,ndepth,neme,idf,idfsh,
      +        mycall,hiscall,hisgrid,lumsg,lcum,nspecial,ndf,
      +        nstest,dfsh,snrsh,
      +        NSyncOK,ccf,psavg,ndiag,nwsh)
