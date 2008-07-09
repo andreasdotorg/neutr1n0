@@ -12,43 +12,41 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       real LST
       real lat,lon
       real ldeg
-      integer*1 n1sky(129600)
       integer*2 nsky
       common/sky/ nsky(360,180)
       common/echo/xdop(2),techo,ElMoon,mjd
-      equivalence (n1sky,nsky)
-      data first/.true./,ltsky/.false./
+      data first/.true./
       data rad/57.2957795/
       save first
 
       if(first) then
-        do i=80,1,-1
-           if(ichar(AppDir(i:i)).ne.0 .and. 
-     +            ichar(AppDir(i:i)).ne.32) goto 1
-        enddo
- 1      lenappdir=i
-        call zero(nsky,180*180)
-        fname=Appdir(1:lenappdir)//'/TSKY.DAT'
+         do i=80,1,-1
+            if(ichar(AppDir(i:i)).ne.0 .and. 
+     +           ichar(AppDir(i:i)).ne.32) goto 1
+         enddo
+ 1       lenappdir=i
+         call zero(nsky,180*180)
+         fname=Appdir(1:lenappdir)//'/TSKY.DAT'
 #ifdef CVF
-        open(13,file=fname,status='old',form='binary',err=10)
-        read(13) nsky
-        close(13)
+         open(13,file=fname,status='old',form='binary',err=10)
+         read(13) nsky
+         close(13)
 #else
-        call rfile2(fname,nsky,129600,nr)
-        if(nr.ne.129600) go to 10
-        nsky4=nsky(1,1)
-        if (iabs(nsky4).gt.500) then
-          write(*,1000)
- 1000     format('Converting TSKY.DAT')
-          do i=1,360
-            do j=1,180
-              nsky(i,j) = iswap_short(nsky(i,j))
+         call rfile2(fname,nsky,129600,nr)
+         if(nr.ne.129600) go to 10
+         nsky4=nsky(1,1)
+         if (iabs(nsky4).gt.500) then
+            write(*,1000)
+ 1000       format('Converting TSKY.DAT')
+            do i=1,360
+               do j=1,180
+                  nsky(i,j) = iswap_short(nsky(i,j))
+               enddo
             enddo
-          enddo
-        endif 
+         endif 
 #endif
-        ltsky=.true.
-        first=.false.
+         ltsky=.true.
+         first=.false.
       endif
       go to 20
  10   ltsky=.false.
@@ -73,6 +71,7 @@ C  Compute spatial polarization offset
       poloffset2=0
       if(NStation.eq.1) poloffset1=rad*atan2(yy,xx)
       if(NStation.eq.2) poloffset2=rad*atan2(yy,xx)
+
       techo=2.0 * dist/2.99792458e5                 !Echo delay time
       doppler=-freq*vr/2.99792458e5                 !One-way Doppler
       t408=ftsky(ldeg,bdeg)                         !Read sky map
@@ -107,7 +106,6 @@ C  Compute spatial polarization offset
       tsysmin=tskymin+tr
       tsys=tsky+tr
       dgrd=-10.0*log10(tsys/tsysmin) + dbMoon
-
  900  ElMoon0=Elmoon
       ntsky=nint(tsky)
 
