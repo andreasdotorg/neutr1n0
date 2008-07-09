@@ -2437,7 +2437,7 @@ b6=Button(f5c, text='Tx6',underline=2,command=btx6,padx=1,pady=1)
 tx6.grid(column=1,row=5)
 rb6.grid(column=2,row=5)
 b6.grid(column=3,row=5)
-Widget.bind(tx6,'<Double-Button-3>',msg6list)
+Widget.bind(tx6,'<Button-3>',msg6list)
 
 f5c.pack(side=LEFT,fill=BOTH)
 iframe5.pack(expand=1, fill=X, padx=4)
