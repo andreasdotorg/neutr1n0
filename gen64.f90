@@ -20,9 +20,9 @@ subroutine gen64(message,mode64,samfac,ntxdf,iwave,nwave,  &
 ! Insert the 6x6 Costas array 3 times at low-frequency edge.
   isync=-1
   do n=1,3
-     i0=11
+     i0=0
      if(n.eq.2) i0=28
-     if(n.eq.3) i0=46
+     if(n.eq.3) i0=57
      do i=1,6
         isync(i0+i)=ic6(i)
      enddo
