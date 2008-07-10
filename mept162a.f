@@ -22,10 +22,8 @@ C  Mix 1500 Hz +/- 100 Hz to baseband, and downsample by 1/32
       c2a(0:jz-1)=c2
       c2a(jz:)=0.
       nfft0=65536
-      nh0=nfft0/2
       df0=375.0/nfft0
       call fourt(c2a,65536,1,-1,1,0.0)
-      df2=128.0*df0
       do k=-256,256
          i=128*k
          sq=0.
@@ -84,8 +82,7 @@ C  Look for sync patterns, get DF and DT
                enddo
             enddo
 
- 23         width=0.
-            nf1=nint(-a(2))
+ 23         nf1=nint(-a(2))
             if(ndiag.ne.0) then
                write(11,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message,
      +              ii,ncycles/81

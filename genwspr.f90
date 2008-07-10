@@ -10,7 +10,6 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,nbad,msgsent)
   integer*1 symbol(MAXSYM)
   integer*1 data0(11)
   integer npr3(162)
-  real pr3(162)
   logical first
   real*8 t,dt,phi,f,f0,dfgen,dphi,pi,twopi,tsymbol
   character*22 msgsent           !Message sent
@@ -30,9 +29,6 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,nbad,msgsent)
 
   nsym=162                               !Symbols per transmission
   if(first) then
-     do i=1,nsym
-        pr3(i)=2*npr3(i)-1
-     enddo
      pi=4.d0*atan(1.d0)
      twopi=2.d0*pi
      fsample=11025.d0

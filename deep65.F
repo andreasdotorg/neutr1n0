@@ -13,8 +13,7 @@
       integer ncode(63,2*MAXCALLS + 2 + MAXRPT)
 !      character*1 cflag
       character*36 cc
-      integer dgen(12),sent(63)
-      integer*1 sent1(63)
+      integer dgen(12)
       common/tmp9/ mrs(63),mrs2(63)
       data cc/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
 #ifdef CVF
@@ -128,12 +127,12 @@ C  Insert CQ message unless sync=OOO (flip=-1).
          if(p.gt.p2) then
             if(p.gt.p1) then
                p2=p1
-               ip2=ip1
+!               ip2=ip1
                p1=p
                ip1=k
             else
                p2=p
-               ip2=k
+!               ip2=k
             endif
          endif
       enddo

@@ -99,7 +99,7 @@
            enddo
 C  Resample ntype: 0=best, 1=sinc_medium, 2=sinc_fast, 3=hold, 4=linear
            ntype=2
-           ierr=resample(dat2,dat,samratio,jz,0)
+           ierr=resample(dat2,dat,samratio,jz,ntype)
            if(ierr.ne.0) print*,'Resample error.',samratio
         endif
 

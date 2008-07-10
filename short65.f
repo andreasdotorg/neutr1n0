@@ -84,7 +84,6 @@ C  Find strongest line in each of the 4 phases, repeating for each drift rate.
                   if(sig.ge.sbest) then
                      sbest=sig
                      nbest=n
-                     fdotsh=drift
                   endif
                endif
             enddo

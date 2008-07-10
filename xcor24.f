@@ -35,15 +35,12 @@ C  the "OOO" message.
       endif
 
       df=0.5*11025.0/2520.0
-      dtstep=0.5/df
       do j=1,nsteps
          if(mode.eq.6) then
             a(j)=s2(ipk+2,j) - s2(ipk,j)             !JT2
          else                                        !JT4
             n=2*mode4
             if(mode4.eq.1) then
-!            a(j)=0.5*(s2(ipk+n,j) + s2(ipk+3*n,j) - 
-!     +                s2(ipk  ,j) - s2(ipk+2*n,j))
                a(j)=max(s2(ipk+n,j),s2(ipk+3*n,j)) - 
      +              max(s2(ipk  ,j),s2(ipk+2*n,j))
             else

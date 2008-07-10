@@ -152,6 +152,7 @@ subroutine fivehz
      sendingsh=0
   endif
 
+  nbufs=i1+i2+i3                             !Silence g95 warning
   nbufs=ibuf-ibuf0
   if(nbufs.lt.0) nbufs=nbufs+1024
   tdata=nbufs*2048.0/11025.0

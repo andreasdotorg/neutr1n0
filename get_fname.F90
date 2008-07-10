@@ -12,7 +12,7 @@ subroutine get_fname(hiscall,ntime,trperiod,lauto,fname)
 
   n1=ntime
   n2=(n1+2)/trperiod
-  n3=n2*trperiod
+!  n3=n2*trperiod
 #ifdef CVF
   call gmtime(n3,it)
   it(5)=it(5)+1

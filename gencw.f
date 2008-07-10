@@ -19,7 +19,7 @@ C  to an EME CW message.
 
       b4=58.0*wpm0/1.2
       b3=0.75*b4
-      b1=0.25*b4
+!      b1=0.25*b4
 
       nr1=1
       nr2=0
