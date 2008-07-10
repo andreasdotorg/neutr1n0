@@ -32,8 +32,7 @@ FCV=""
 FFLAGS_GFORTRAN="${FFLAGS} -fno-range-check -ffixed-line-length-none\
 			-Wall -fbounds-check -fno-second-underscore -fPIC"
 
-FFLAGS_G95="${FFLAGS} -ffixed-line-length-none\
-	-Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC"
+FFLAGS_G95="${FFLAGS} -Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC"
 #-Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC
 
 AC_MSG_CHECKING([uname -s])
