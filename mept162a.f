@@ -1,11 +1,13 @@
       subroutine mept162a(c2,jz,f0,cfile6,ndiag,minsync,mousedf,ndftol,
-     +    ndwspr)
+     +    ndwspr,ccfblue,ccfred)
 
 C  Orchestrates the process of finding, synchronizing, and decoding 
 C  WSPR signals.
 
       character*22 message
       character*8 cfile6
+      real ccfblue(-5:540)
+      real ccfred(-224:224)
       logical first
       real ps(-256:256)
       real sstf(5,275)
@@ -18,7 +20,6 @@ C  WSPR signals.
 
 C  Mix 1500 Hz +/- 100 Hz to baseband, and downsample by 1/32
 !      call mix162(id,npts,c2,jz,ps)
-
       c2a(0:jz-1)=c2
       c2a(jz:)=0.
       nfft0=65536
@@ -39,7 +40,7 @@ C  Compute pixmap.dat
 !      call spec162(c2,jz)
 
 C  Look for sync patterns, get DF and DT
-      call sync162(c2,jz,mousedf,ndftol,ps,sstf,kz)
+      call sync162(c2,jz,mousedf,ndftol,ccfblue,ccfred,ps,sstf,kz)
 
       idtmax=64
       idtstep=1

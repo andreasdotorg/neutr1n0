@@ -1,4 +1,4 @@
-      subroutine sync162(c2,jz,mousedf,ndftol,ps,sstf,kz)
+      subroutine sync162(c2,jz,mousedf,ndftol,ccfblue,ccfred,ps,sstf,kz)
 
 C  Find WSPR sync signals, with best-fit DT and DF.  
 
@@ -8,6 +8,8 @@ C  Find WSPR sync signals, with best-fit DT and DF.
       parameter (NSMAX=351)            !Number of half-symbol steps
       parameter (NF0=136,NF1=10)
       parameter (LAGMAX=26)
+      real ccfblue(-5:540)
+      real ccfred(-224:224)
       real psavg(-NH:NH)               !Average spectrum of whole record
       real s2(-NH:NH,NSMAX)            !2d spectrum, stepped by half-symbols
       real ps(-NH:NH)
@@ -35,6 +37,8 @@ C  Find WSPR sync signals, with best-fit DT and DF.
      +  0,0/
       save
 
+      call zero(ccfblue,546)
+      call zero(ccfred,449)
       nsym=162
       do i=1,nsym
          pr3(i)=2*npr3(i)-1
@@ -44,7 +48,7 @@ C  Find WSPR sync signals, with best-fit DT and DF.
 C  Do FFTs of twice symbol length, stepped by half symbols.  
       nq=NFFT/4
       nsteps=jz/nq - 1
-      df=375.0/nfft
+      df=375.0/NFFT
       dt=1.0/375.0
       call zero(psavg,NFFT+1)
 
@@ -140,6 +144,7 @@ C  Compute power spectrum for each step, and get average
          freq(i)=df*i
          drift(i)=df*kpk
          dtx(i)=128.0*dt*lagpk
+         ccfred(i)=smax
  10      continue
       enddo
 

@@ -1,6 +1,8 @@
-subroutine wsjtwspr(dat,jz,cfile6,ndiag)
+subroutine wsjtwspr(dat,jz,cfile6,ccfblue,ccfred,ndiag)
 
   real dat(jz)
+  real ccfblue(-5:540)
+  real ccfred(-224:224)
   character cfile6*6
   complex c2(45000)
   include 'gcom2.f90'
@@ -9,8 +11,7 @@ subroutine wsjtwspr(dat,jz,cfile6,ndiag)
   newdat=1
   if(nagain.eq.1) newdat=0
   call filbig2(dat,jz,f0,newdat,c2,n4)
-  minsync=0
-  call mept162a(c2,n4,f0,cfile6,ndiag,minsync,mousedf,DFTolerance,ndwspr)
-
+  call mept162a(c2,n4,f0,cfile6,ndiag,minsigdb,mousedf,DFTolerance,ndwspr, &
+       ccfblue,ccfred)
   return
 end subroutine wsjtwspr

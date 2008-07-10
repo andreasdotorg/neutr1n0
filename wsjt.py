@@ -1244,11 +1244,17 @@ def dtdf_change(event):
                  (event.y<95 and Audio.gcom2.nspecial>0):
             lab1.configure(text='DF (Hz)',bg='red')
             idf=Audio.gcom2.idf
-            t="%d" % int(idf+1200.0*event.x/500.0-600.0,)
+            if mode.get()=='WSPR':
+                t="%d" % int(0.7324*(event.x-250.0))
+            else:
+                t="%d" % int(idf+1200.0*event.x/500.0-600.0,)
             lab6.configure(text=t,bg="red")
         else:
             lab1.configure(text='Time (s)',bg='green')
-            t="%.1f" % (53.0*event.x/500.0,)
+            if mode.get()=='WSPR':
+                t="%.1f" % (114.0*event.x/500.0,)
+            else:
+                t="%.1f" % (53.0*event.x/500.0,)
             lab6.configure(text=t,bg="green")
 
 #---------------------------------------------------- mouse_click_g1
@@ -1446,7 +1452,7 @@ def setmsg(template,r):
     
 #------------------------------------------------------ plot_large
 def plot_large():
-    "Plot the green, red, and blue curves in JT65, JT2, and JT4 modes."
+    "Plot the green, red, and blue curves."
     graph1.delete(ALL)
     y=[]
     ngreen=Audio.gcom2.ngreen
@@ -1481,6 +1487,8 @@ def plot_large():
                 x=i*fac
                 if mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
                     x=i*500.0/548.571 + 47                      #empirical
+                if mode.get()[:4]=='WSPR':
+                    x=(i-224) + 250                #empirical
                 psavg=Audio.gcom2.psavg[i+1]
                 n=int(90.0-yfac*psavg)
                 xy.append(x)
@@ -1826,8 +1834,7 @@ def update():
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
                 mode.get()[:3]=='JT4' or mode.get()=='WSPR' \
                 or mode.get()[:4]=='JT64':
-            if mode.get()!='WSPR':
-                plot_large()
+            plot_large()
         else:    
             im.putdata(Audio.gcom2.b)
             pim=ImageTk.PhotoImage(im)          #Convert Image to PhotoImage
