@@ -1231,7 +1231,7 @@ def toggletxdf(event=NONE):
 # Readout of graphical cursor location
 def dtdf_change(event):
     if mode.get()[:4]!='JT65' and mode.get()[:3]!='JT2' and \
-               mode.get()[:3]!='JT4' and mode.get()!='WSPR' \
+               mode.get()[:3]!='JT4' and mode.get()[:4]!='WSPR' \
                and mode.get()[:4]!='JT64':
         t="%.1f" % (event.x*30.0/500.0,)
         lab6.configure(text=t,bg='green')
@@ -1244,7 +1244,7 @@ def dtdf_change(event):
                  (event.y<95 and Audio.gcom2.nspecial>0):
             lab1.configure(text='DF (Hz)',bg='red')
             idf=Audio.gcom2.idf
-            if mode.get()=='WSPR':
+            if mode.get()[:4]=='WSPR':
                 t="%d" % int(0.7324*(event.x-250.0))
             else:
                 t="%d" % int(idf+1200.0*event.x/500.0-600.0,)

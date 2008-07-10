@@ -114,6 +114,7 @@ C  Compute power spectrum for each step, and get average
 
 ! Now do the main search over DT, DF, and drift.  (Do CCFs in all marked
 ! frequency bins and over a range of reasonable fdot values and lags.)
+      i00=nint(mousedf/df)
       p1=0.
       do i=nfa,nfb
          if(keep(i).eq.0) go to 10
@@ -144,7 +145,8 @@ C  Compute power spectrum for each step, and get average
          freq(i)=df*i
          drift(i)=df*kpk
          dtx(i)=128.0*dt*lagpk
-         ccfred(i)=smax
+         spk=db(smax)-22.0
+         if(spk.gt.0.0) ccfred(i+i00)=0.25*spk
  10      continue
       enddo
 
@@ -175,7 +177,7 @@ C  Compute power spectrum for each step, and get average
       k=0
       do i=nfa,nfb
          if(keep(i).ne.0) then
-            x=10.0*log10(p1(i)) - 22       !### ??? ###
+            x=db(p1(i)) - 22       !### ??? ###
             if(x.ge.0.5) then
                k=k+1
                p1(k)=x
