@@ -98,7 +98,7 @@ wsjt6:	WsjtMod/Audio.so
 
 WsjtMod/Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	 ${F2PY} -c --quiet --opt="-O ${CFLAGS} \
-	-fno-second-underscore"	$(OBJS2C) $(OBJS2F77) -m Audio \
+	${FFLAGS}"	$(OBJS2C) $(OBJS2F77) -m Audio \
 	--fcompiler=${FCV} --f77exec=${FC} --f90exec=${FC} \
 	${CPPFLAGS} ${LDFLAGS} ${LIBS} \
 	only: $(F2PYONLY) \

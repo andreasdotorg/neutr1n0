@@ -217,6 +217,7 @@ subroutine wsjtgen
 ! Generate iwave
   k=0
   df=11025.0/NSPD
+  pha=0.
   do m=1,ndits
      freq=(LTone-1+itone(m))*df
      dpha=twopi*freq*dt
