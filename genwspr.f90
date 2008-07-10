@@ -50,7 +50,6 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,nbad,msgsent)
      nbad=0
      msgsent=message
   endif
-  print*,ntype,ntype2,nbad,message,msgsent
 
   tsymbol=8192.d0/12000.d0
   
