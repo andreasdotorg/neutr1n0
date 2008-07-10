@@ -30,7 +30,7 @@ LDFLAGS="-L/usr/local/lib ${LDFLAGS}"
 LIBS=" -lpthread ${LIBS}"
 FCV=""
 
-AC_MSG_CHECKING([uname -s for Cygwin, Solaris or HPUX])
+AC_MSG_CHECKING([uname -s])
 case `uname -s` in
 	CYGWIN*)
 		AC_MSG_RESULT(Cygwin)
@@ -40,7 +40,12 @@ case `uname -s` in
 		AC_MSG_RESULT(SunOS or Solaris)
 		AC_DEFINE(__EXTENSIONS__, 1, [This is needed to use strtok_r on Solaris.])
 	;;
+        FreeBSD*)
+		AC_MSG_RESULT(FreeBSD)
+		FCV_G95="g95"
+	;;
 	*)
+		FCV_G95="gnu95"
 		AC_MSG_RESULT(no)
 	;;
 esac
@@ -213,7 +218,7 @@ if test ! -z $G95 ; then
 		FC=`basename ${G95}`
 		gfortran=no
 		FFLAGS="${FFLAGS} -ftrace=full -cpp"
-		FCV="g95"
+		FCV=${FCV_G95}
 	fi
 else
 	echo "*** No g95 compiler found"
@@ -242,7 +247,7 @@ if test -z $FC ; then
 		g95=yes
 		gfortran=no
 		FFLAGS="${FFLAGS} -ftrace=full -cpp"
-		FCV="g95"
+		FCV=${FCV_G95}
 	fi
 fi
 
