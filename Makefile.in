@@ -12,7 +12,7 @@ CFLAGS += ${DEFS}
 CPPFLAGS += ${DEFS} -I.
 
 # WSJT specific Fortran flags
-FFLAGS += -Wall -fbounds-check -fno-second-underscore -fPIC
+#FFLAGS += -Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC
 
 wsjt:	wsjt6
 

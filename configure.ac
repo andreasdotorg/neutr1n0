@@ -29,6 +29,12 @@ CPPFLAGS="-I/usr/local/include ${CPPFLAGS}"
 LDFLAGS="-L/usr/local/lib ${LDFLAGS}"
 LIBS=" -lpthread ${LIBS}"
 FCV=""
+FFLAGS_GFORTRAN="${FFLAGS} -fno-range-check -ffixed-line-length-none\
+			-Wall -fbounds-check -fno-second-underscore -fPIC"
+
+FFLAGS_G95="${FFLAGS} -ffixed-line-length-none\
+	-Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC"
+#-Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC
 
 AC_MSG_CHECKING([uname -s])
 case `uname -s` in
@@ -204,7 +210,7 @@ if test ! -z $GFORTRAN ; then
        		FC_LIB_PATH=${GFORTRAN_LIB_PATH}
 		FC=`basename ${GFORTRAN}`
 		g95=no
-		FFLAGS="$FFLAGS -fno-range-check -ffixed-line-length-none"
+		FFLAGS="${FFLAGS_GFORTRAN}"
 		FCV="gnu95"
 	fi
 else
@@ -217,7 +223,7 @@ if test ! -z $G95 ; then
 		FC_LIB_PATH=${G95_LIB_PATH}
 		FC=`basename ${G95}`
 		gfortran=no
-		FFLAGS="${FFLAGS} -ftrace=full -cpp"
+		FFLAGS="${FFLAGS_G95}"
 		FCV=${FCV_G95}
 	fi
 else
@@ -236,7 +242,7 @@ if test -z $FC ; then
 	        FC=`basename ${GFORTRAN}`
 		g95=no
 		gfortran=yes
-		FFLAGS="${FFLAGS} -fno-range-check -ffixed-line-length-none"
+		FFLAGS="${FFLAGS_GFORTRAN}"
 		FCV="gnu95"
 	elif test ! -z $G95 ; then
 		if test "$gfortran" = yes; then
@@ -246,7 +252,7 @@ if test -z $FC ; then
 	        FC=`basename ${G95}`
 		g95=yes
 		gfortran=no
-		FFLAGS="${FFLAGS} -ftrace=full -cpp"
+		FFLAGS="${FFLAGS_G95}"
 		FCV=${FCV_G95}
 	fi
 fi
