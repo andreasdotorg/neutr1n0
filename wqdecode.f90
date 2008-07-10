@@ -15,7 +15,7 @@ subroutine wqdecode(data0,message,ntype)
   logical first
   character*12 dcall(0:N15-1)
   data first/.true./
-  data cwx/'SUNNY','CLOUDY','RAIN','SNOW'/
+  data cwx/'CLEAR','CLOUDY','RAIN','SNOW'/
   data cwind/'CALM','BREEZES','WINDY','DRY','HUMID'/
   save first,dcall
 

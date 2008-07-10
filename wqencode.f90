@@ -130,7 +130,7 @@ subroutine wqencode(msg,ntype,data0)
      i2=index(msg,' ')
      i3=index(msg,' R ')
      if(i3.gt.0) i2=i2+2                            !-28 to -36
-     read(msg(i2+2:i2+2),*) nrpt
+     read(msg(i2+2:i2+2),*,end=800,err=800) nrpt
      ntype=ntype - (nrpt-1)
      if(i3.gt.0) ntype=ntype-27
      n2=128*ng + ntype + 64
@@ -257,7 +257,7 @@ subroutine wqencode(msg,ntype,data0)
   ntype=25
   if(index(msg,' DBD 73 GL').gt.0) ntype=24
   i1=index(msg,' ')
-  read(msg(:i1-1),*,err=800) watts
+  read(msg(:i1-1),*,end=800,err=800) watts
   if(watts.ge.1.0) nwatts=watts
   if(watts.lt.1.0) nwatts=3000 + nint(1000.*watts)
   if(index(msg,'DIPOLE').gt.0) then
@@ -266,7 +266,7 @@ subroutine wqencode(msg,ntype,data0)
      ndbd=30001
   else
      i2=index(msg(i1+3:),' ')
-     read(msg(i1+3:i1+i2+1),*) ndbd
+     read(msg(i1+3:i1+i2+1),*,end=800,err=800) ndbd
   endif
   n1=nwatts
   ng=ndbd + 32
@@ -285,14 +285,14 @@ subroutine wqencode(msg,ntype,data0)
 
 ! PSE QSY [nnn] KHZ (msg #6; type 28)
 110 ntype=28
-  read(msg(9:),*) n1
+  read(msg(9:),*,end=800,err=800) n1
   n2=ntype+64
   call pack50(n1,n2,data0)
   go to 900
 
 ! WX wx temp C|F wind (msg #6; type 29)
 120 ntype=29
-  if(index(msg,' SUNNY ').gt.0) then
+  if(index(msg,' CLEAR ').gt.0) then
      i1=10
      n1=10000
   else if(index(msg,' CLOUDY ').gt.0) then
@@ -305,7 +305,7 @@ subroutine wqencode(msg,ntype,data0)
      i1=9
      n1=40000
   endif
-  read(msg(i1:),*) ntemp
+  read(msg(i1:),*,err=800,end=800) ntemp
   ntemp=ntemp+100
   i1=index(msg,' C ')
   if(i1.gt.0) ntemp=ntemp+1000
@@ -318,6 +318,7 @@ subroutine wqencode(msg,ntype,data0)
 
   n2=128*ng + (ntype+64)
   call pack50(n1,n2,data0)
+
   go to 900
 
 ! Solar/geomagnetic/ionospheric data
@@ -328,15 +329,14 @@ subroutine wqencode(msg,ntype,data0)
   call pack50(n1,n2,data0)
   go to 900
 
+140 continue
+
 ! Plain text
-140  ntype=-57
+800 ntype=-57
   call packtext2(msg(:8),n1,ng)
   n2=128*ng + ntype + 64
   call pack50(n1,n2,data0)
   go to 900
-
-800 continue
-! print*,'Error in structure of Tx message'
 
 900 continue
   return

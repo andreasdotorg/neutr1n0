@@ -130,6 +130,8 @@ subroutine wsjtgen
              msgsent,nmsg0)
      else if(mode(1:4).eq.'WSPR') then
         call genwspr(msg,samfacout,ntxdf,iwave,nwave,msgsent)
+        sendingsh=0
+        if(msgsent.ne.msg) sendingsh=-1
      else if(mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4' ) then
         call gen24(msg,mode,mode4,samfacout,ntxdf,iwave,nwave,sendingsh,     &
              msgsent,nmsg0)
@@ -229,8 +231,13 @@ subroutine wsjtgen
   nwave=k
   
 900 sending=txmsg
-  if(mode(1:4).eq.'JT65' .and. sendingsh.ne.1) sending=msgsent
-  nmsg=nmsg0
+  if((mode(1:4).eq.'JT65' .or. mode(1:4).eq.'JT64' .or. &
+       mode(1:4).eq.'WSPR') .and. sendingsh.ne.1) sending=msgsent
+  do i=NMSGMAX,1,-1
+     if(msg(i:i).ne.' ') go to 910
+  enddo
+  i=1
+910 nmsg=i
 
   if(lcwid .and. (mode.eq.'FSK441' .or. mode(1:4).eq.'JT6M')) then
 !  Generate and insert the CW ID.
