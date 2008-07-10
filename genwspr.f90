@@ -1,4 +1,4 @@
-subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,msgsent)
+subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,nbad,msgsent)
 
 !  Encode a WSPR message and generate the corresponding wavefile.
 
@@ -44,6 +44,13 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,msgsent)
   call encode232(data0,nbytes,symbol,MAXSYM)  !Convolutional encoding
   call inter_mept(symbol,1)                   !Apply interleaving
   call wqdecode(data0,msgsent,ntype2)
+  nbad=0
+  if(ntype2.ne.ntype .or. msgsent.ne.message) nbad=-1
+  if(ntype2.eq.ntype .and. index(msgsent,'<...>').gt.0) then
+     nbad=0
+     msgsent=message
+  endif
+  print*,ntype,ntype2,nbad,message,msgsent
 
   tsymbol=8192.d0/12000.d0
   

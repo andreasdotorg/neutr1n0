@@ -7,7 +7,7 @@ subroutine wsjtgen
 
 ! Output:   iwave        waveform data, i*2 format
 !           nwave        number of samples
-!           sendingsh    0=normal; 1=shorthand (FSK441) or plain text (JT65)
+!           sendingsh    0=normal; 1=shorthand; -1=plain text; 2=test file
 
   parameter (NMSGMAX=28)             !Max characters per message
   parameter (NSPD=25)                !Samples per dit
@@ -129,9 +129,7 @@ subroutine wsjtgen
         call gen65(msg,mode65,samfacout,ntxdf,iwave,nwave,sendingsh,   &
              msgsent,nmsg0)
      else if(mode(1:4).eq.'WSPR') then
-        call genwspr(msg,samfacout,ntxdf,iwave,nwave,msgsent)
-        sendingsh=0
-        if(msgsent.ne.msg) sendingsh=-1
+        call genwspr(msg,samfacout,ntxdf,iwave,nwave,sendingsh,msgsent)
      else if(mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4' ) then
         call gen24(msg,mode,mode4,samfacout,ntxdf,iwave,nwave,sendingsh,     &
              msgsent,nmsg0)
@@ -234,7 +232,7 @@ subroutine wsjtgen
   if((mode(1:4).eq.'JT65' .or. mode(1:4).eq.'JT64' .or. &
        mode(1:4).eq.'WSPR') .and. sendingsh.ne.1) sending=msgsent
   do i=NMSGMAX,1,-1
-     if(msg(i:i).ne.' ') go to 910
+     if(sending(i:i).ne.' '.and. ichar(sending(i:i)).ne.0) go to 910
   enddo
   i=1
 910 nmsg=i
