@@ -94,7 +94,8 @@ C### Following code probably needs work!
             ccf64(lag)=sum/nsync
             if(ccf64(lag).gt.smax) smax=ccf64(lag)
          enddo
-         ccfred1(i-i0)=smax
+         j=i-i0
+         if(abs(j).le.224) ccfred1(i-i0)=smax
          if(smax.gt.syncbest) then
             syncbest=smax
             ipk=i
@@ -124,7 +125,7 @@ C### Following code probably needs work!
             endif
 !         write(41,3001) lag,dtstep*lag,ccf64(lag)
 ! 3001    format(i5,2f10.3)
-         ccfblue(lag)=ccf64(lag)
+         ccfblue(lag+15)=ccf64(lag)
       enddo
 
       snrsync=syncbest
