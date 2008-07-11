@@ -42,6 +42,14 @@ addpfx=StringVar()
 auxra=StringVar()
 auxdec=StringVar()
 azeldir=StringVar()
+myname=StringVar()
+hisname=StringVar()
+wx=StringVar()
+temp=StringVar()
+wind=StringVar()
+pwr=StringVar()
+ant=StringVar()
+wxlist=("CLEAR","CLOUDY")
 
 def defaults():
 #    if g.mode=="FSK441" or g.mode=="JT6M":
@@ -99,6 +107,23 @@ def defaults():
         tx5.insert(0,'73 %M')
         tx6.delete(0,END)
         tx6.insert(0,'CQ %M')
+
+#------------------------------------------------------ set_wx
+def set_wx(event=NONE):
+    print 'hello'
+    wxdialog=Pmw.ComboBoxDialog(root, title="Wx options",
+        buttons=('OK','cancel'),defaultbutton='OK',
+        scrolledlist_items=tx6list,listbox_width=9)
+    wxdialog.geometry(msgpos())
+    if g.Win32: wxdialog.iconbitmap("wsjt.ico")
+    wxdialog.tkraise()
+    t=wxdialog.activate()
+    if t=='OK':
+        t=wxdialog.get()
+        wx_entry.delete(0,END)
+        wx_entry.insert(0,t)
+
+
 
 mycall=Pmw.EntryField(g1.interior(),labelpos=W,label_text='My Call:',
         value='K1JT',entry_textvariable=MyCall,entry_width=12)
@@ -186,10 +211,26 @@ aux_dec=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Source DEC:',
     entry_width=9,entry_textvariable=auxdec)
 azeldir_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='AzElDir:',
     entry_width=9,value=g.appdir,entry_textvariable=azeldir)
-widgets = (temp_prefix,aux_ra,aux_dec,azeldir_entry)
+myname_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='MyName:',
+    entry_width=9,entry_textvariable=myname)
+##hisname_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='HisName:',
+##    entry_width=9,entry_textvariable=hisname)
+##wx_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Wx:',
+##    entry_width=9,entry_textvariable=wx)
+##temp_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Temp:',
+##    entry_width=9,entry_textvariable=temp)
+##wind_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Wind:',
+##    entry_width=9,entry_textvariable=wind)
+##pwr_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Power:',
+##    entry_width=9,entry_textvariable=pwr)
+##ant_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Antenna:',
+##    entry_width=9,entry_textvariable=ant)
+
+widgets = (temp_prefix,aux_ra,aux_dec,azeldir_entry,myname_entry)
 for widget in widgets:
     widget.pack(padx=10,pady=2)
 Pmw.alignlabels(widgets)
+
 
 g1.pack(side=LEFT,fill=BOTH,expand=1,padx=6,pady=6)
 g2.pack(side=LEFT,fill=BOTH,expand=1,padx=6,pady=6)

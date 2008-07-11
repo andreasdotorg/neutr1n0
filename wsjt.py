@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#---------------------------------------------------------------------- WSJT
+#--------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -103,10 +103,6 @@ slabel="Sync   "
 textheight=7
 ToRadio0=""
 tx6alt=""
-tx6list=("73 DE call grid", "73 DE p/call", "TNX name 73 GL",
-         "OP name 73 GL", "pwr W gain dbd", "pwr W gain dbd 73 GL",
-         "pwr W DIPOLE", "pwr W VERTICAL", "PSE QSY freq KHZ",
-         "WX wx temp F wind", "WX wx temp C wind")
 txsnrdb=99.
 TxFirst=IntVar()
 green=zeros(500,'f')
@@ -192,6 +188,14 @@ def testmsgs():
 
 #------------------------------------------------------ msg6list
 def msg6list(event=NONE):
+    t="OP name 73 GL"
+    if options.myname.get()!="":
+        t="OP " + options.myname.get().upper().strip() + " 73 GL"
+
+    tx6list=("73 DE call grid", "73 DE p/call", "TNX name 73 GL",
+         t, "pwr W gain dbd", "pwr W gain dbd 73 GL",
+         "pwr W DIPOLE", "pwr W VERTICAL", "PSE QSY freq KHZ",
+         "WX wx temp F wind", "WX wx temp C wind")
     tx6dialog=Pmw.ComboBoxDialog(root, title="Message Tx6",
         buttons=('OK','cancel'),defaultbutton='OK',
         scrolledlist_items=tx6list,listbox_width=22)
@@ -863,6 +867,7 @@ F1	List keyboard shortcuts
 Shift+F1	List special mouse commands
 Ctrl+F1	About WSJT
 F2	Options
+Shift+F2   WSPR structured messages
 F3	Tx Mute
 F4	Clear "To Radio"
 F5	What message to send?
@@ -898,6 +903,21 @@ Alt+S	Stop Monitoring or Decoding
 Alt+V	Save Last
 Alt+X	Exclude
 Alt+Z	Toggle Zap
+"""
+    Label(scwid,text=t,justify=LEFT).pack(padx=20)
+    scwid.focus_set()
+
+#------------------------------------------------------ wspr_msgs
+def wspr_msgs(event=NONE):
+    scwid=Toplevel(root)
+    scwid.geometry(msgpos())
+    if g.Win32: scwid.iconbitmap("wsjt.ico")
+    t="""
+Examples of "partially canned" message parameters
+
+wx:    CLEAR CLOUDY RAIN SNOW
+temp:  76 F    -5 C
+wind:  CALM BREEZES WINDY
 """
     Label(scwid,text=t,justify=LEFT).pack(padx=20)
     scwid.focus_set()
@@ -2124,6 +2144,9 @@ bandmenu.add_radiobutton(label = '222', variable=nfreq,value=222)
 bandmenu.add_radiobutton(label = '432', variable=nfreq,value=432)
 bandmenu.add_radiobutton(label = '1296', variable=nfreq,value=1296)
 bandmenu.add_radiobutton(label = '2304', variable=nfreq,value=2304)
+bandmenu.add_radiobutton(label = '3456', variable=nfreq,value=2304)
+bandmenu.add_radiobutton(label = '5760', variable=nfreq,value=5760)
+bandmenu.add_radiobutton(label = '10368', variable=nfreq,value=10368)
 nfreq.set(144)
 
 if (sys.platform == 'darwin'):
@@ -2201,6 +2224,7 @@ root.bind_all('<F1>', shortcuts)
 root.bind_all('<Shift-F1>', mouse_commands)
 root.bind_all('<Control-F1>', about)
 root.bind_all('<F2>', options1)
+root.bind_all('<Shift-F2>',wspr_msgs)
 root.bind_all('<F3>', txmute)
 root.bind_all('<F4>', clrToRadio)
 root.bind_all('<F5>', what2send)
@@ -2597,6 +2621,7 @@ try:
 		os.stat(options.azeldir.get())
 	    except:
 		options.azeldir.set(os.getcwd())
+        elif key == 'MyName': options.myname.set(value)
         elif key == 'TxFirst': TxFirst.set(value)
         elif key == 'KB8RQ': kb8rq.set(value)
         elif key == 'K2TXB': k2txb.set(value)
@@ -2704,6 +2729,7 @@ if options.auxdec.get()=="": options.auxdec.set("0")
 f.write("AuxRA " + options.auxra.get() + "\n")
 f.write("AuxDEC " + options.auxdec.get() + "\n")
 f.write("AzElDir " + str(options.azeldir.get()).replace(" ","#") + "\n")
+f.write("MyName " + options.myname.get() + "\n")
 f.write("TxFirst " + str(TxFirst.get()) + "\n")
 f.write("KB8RQ " + str(kb8rq.get()) + "\n")
 f.write("K2TXB " + str(k2txb.get()) + "\n")
