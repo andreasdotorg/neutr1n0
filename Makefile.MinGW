@@ -56,11 +56,11 @@ SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c start_portaudio.c cutil.c
-WSJT7.EXE: Audio.pyd wsjt.spec
+WSJT7.EXE: WsjtMod/Audio.pyd wsjt.spec
 	c:/python25/python c:/python25/pyinstaller-1.3/Build.py wsjt.spec
 	mv wsjt.exe WSJT7.EXE
 
-Audio.pyd: $(OBJS2C) $(SRCS2F90) $(SRCS2F77) $(SRCS2C) 
+WsjtMod/Audio.pyd: $(OBJS2C) $(SRCS2F90) $(SRCS2F77) $(SRCS2C) 
 	c:/python25/python c:/python25/scripts/f2py.py -c -I. \
 	--quiet --fcompiler=g95 \
 	--opt="-fbounds-check -ftrace=full -O2 -cpp -DUSE_PORTAUDIO" \

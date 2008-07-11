@@ -10,10 +10,10 @@ subroutine get_fname(hiscall,ntime,trperiod,lauto,fname)
   integer trperiod
   integer it(9),itt(8)
 
+#ifdef CVF
   n1=ntime
   n2=(n1+2)/trperiod
-!  n3=n2*trperiod
-#ifdef CVF
+  n3=n2*trperiod
   call gmtime(n3,it)
   it(5)=it(5)+1
 #else
@@ -29,6 +29,7 @@ subroutine get_fname(hiscall,ntime,trperiod,lauto,fname)
   it(1)=0
 #endif
   it(6)=mod(it(6),100)
+  if(trperiod.eq.120) it(2)=it(2)-1
   write(fname,1000) (it(j),j=6,1,-1)
 1000 format('_',3i2.2,'_',3i2.2,'.WAV')
   tag=hiscall(1:7) !XXX explicitly truncate this -db
