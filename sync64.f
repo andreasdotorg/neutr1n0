@@ -40,6 +40,7 @@ C  already downsampled the data by factor of 2.
             isync(i0+i)=ic6(i)
          enddo
       enddo
+      nsync=18
 
 C  Compute power spectrum for each step and get average
       call zero(psavg,nh)
@@ -75,10 +76,10 @@ C  Find the best frequency channel for CCF
       i0=nint(1270.46/df)
       syncbest=-1.e30
       call zero(ccfred1,449)
-      nsync=18
 
 C### Following code probably needs work!
-
+      ss=0.
+      nss=0
       do i=ia,ib
          smax=-1.e30
          do lag=-20,20
@@ -95,11 +96,20 @@ C### Following code probably needs work!
             if(ccf64(lag).gt.smax) smax=ccf64(lag)
          enddo
          j=i-i0
-         if(abs(j).le.224) ccfred1(i-i0)=smax
+         if(abs(j).le.224) then
+            ccfred1(i-i0)=smax
+            ss=ss+smax
+            nss=nss+1
+         endif
          if(smax.gt.syncbest) then
             syncbest=smax
             ipk=i
          endif
+      enddo
+      ave=ss/nss
+      syncbest=syncbest-ave
+      do j=-224,224
+         if(ccfred1(j).ne.0.0) ccfred1(j)=0.2*(ccfred1(j)-ave)
       enddo
 
 ! Once more, at the best frequency
@@ -129,6 +139,8 @@ C### Following code probably needs work!
       enddo
 
       snrsync=syncbest
+      snrx=-30
+      if(syncbest.gt.2.0) snrx=db(syncbest) - 34.0
       dtx=dtstep*lagpk
       dfx=(ipk-i0)*df
 

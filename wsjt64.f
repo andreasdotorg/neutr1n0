@@ -56,8 +56,9 @@ C  already been done.
 C  Attempt to synchronize: look for sync tone, get DF and DT.
       call sync64(dat,npts,DFTolerance,NFreeze,MouseDF,
      +    mode64,dtx,dfx,snrx,snrsync,ccfblue,ccfred,flip,width)
-      nsync=nint(snrsync-3.0)
-      nsnr=0
+      nsync=nint(snrsync-2.0)
+      if(nsync.lt.0) nsync=0
+      nsnr=nint(snrx)
       jdf=nint(dfx)
       write(11,1010) cfile6,nsync,nsnr,dtx-1.0,jdf
  1010 format(a6,i3,i5,f5.1,i5,i3,1x,a1,1x,a5,a19,1x,a3,i4,i4)
