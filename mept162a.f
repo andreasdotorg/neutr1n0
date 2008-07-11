@@ -59,7 +59,7 @@ C  Look for sync patterns, get DF and DT
          a(3)=0.
          call twkfreq(c2,c3,jz,a)                    !Remove drift
 
-         nsync=nint(snrsync)
+         nsync=nint(snrsync-4.0)
          nsnrx=nint(snrx)
          if(nsnrx.lt.-33) nsnrx=-33
          if(nsync.lt.0) nsync=0
