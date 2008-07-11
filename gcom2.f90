@@ -8,6 +8,9 @@ real green             !Data for green line                     GUI
 integer ngreen         !Length of green                         GUI
 real dgain             !Digital audio gain setting              GUI
 integer iter           !(why is this here??)
+integer iyr            !UTC from python                         GUI
+integer imo            !UTC from python                         GUI
+integer ida            !UTC from python                         GUI
 integer ndecoding      !Decoder status (see decode2.f90)     GUI,Decoder
 integer ndecoding0     !Status on previous decode            GUI,Decoder
 integer mousebutton    !Which button was clicked?               GUI
@@ -95,7 +98,8 @@ character*22 t0msg
 
 parameter (ND2MAX=120*12000)
 common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
-     green(500),ngreen,dgain,iter,ndecoding,ndecoding0,mousebutton,   &
+     green(500),ngreen,dgain,iter,iyr,imo,ida,                        &
+     ndecoding,ndecoding0,mousebutton,                                &
      ndecdone,npingtime,ierr,lauto,mantx,nrestart,ntr,nmsg,nsave,nadd5, &
      dftolerance,LDecoded,rxdone,monitoring,nzap,nsavecum,minsigdb,   &
      nclearave,nfreeze,nafc,nmode,mode65,mode4,nclip,ndebug,nblank,nport,   &

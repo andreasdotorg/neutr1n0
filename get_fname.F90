@@ -1,8 +1,4 @@
-subroutine get_fname(hiscall,ntime,trperiod,lauto,fname)
-
-#ifdef CVF
-  use dfport
-#endif
+subroutine get_fname(hiscall,iyr,imo,ida,ntime,trperiod,lauto,fname)
 
   character cdate*8,ctime2*10,czone*5
   character hiscall*12,fname*24,tag*7
@@ -10,29 +6,13 @@ subroutine get_fname(hiscall,ntime,trperiod,lauto,fname)
   integer trperiod
   integer it(9),itt(8)
 
-#ifdef CVF
-  n1=ntime
-  n2=(n1+2)/trperiod
-  n3=n2*trperiod
-  call gmtime(n3,it)
-  it(5)=it(5)+1
-#else
-  call date_and_time(cdate,ctime2,czone,itt)
-  it(6)=itt(1)
-  it(5)=itt(2)
-  it(4)=itt(3)
-  it(3)=itt(5)-itt(4)/60
-  if(it(3).lt.0) it(3)=it(3)+24
-  if(it(3).ge.24) it(3)=it(3)-24
-  it(2)=itt(6)
-!  it(1)=itt(7)
-  it(1)=0
-#endif
-  it(6)=mod(it(6),100)
-  if(trperiod.eq.120) it(2)=it(2)-1
-  write(fname,1000) (it(j),j=6,1,-1)
+  nsec=mod(ntime,86400)
+  ihr=nsec/3600
+  imin=mod(nsec/60,60)
+  isec=mod(nsec,60)
+  write(fname,1000) iyr-2000,imo,ida,ihr,imin,isec
 1000 format('_',3i2.2,'_',3i2.2,'.WAV')
-  tag=hiscall(1:7) !XXX explicitly truncate this -db
+  tag=hiscall(1:7)
   i=index(hiscall,'/')
   if(i.ge.5) tag=hiscall(1:i-1)
   if(i.ge.2.and.i.le.4) tag=hiscall(i+1:)

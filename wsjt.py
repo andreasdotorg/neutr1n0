@@ -1630,6 +1630,12 @@ def update():
         isec0=isec
         t=time.strftime('%Y %b %d\n%H:%M:%S',utc)
         Audio.gcom2.utcdate=t[:12]
+        Audio.gcom2.iyr=utc[0]
+        Audio.gcom2.imo=utc[1]
+        Audio.gcom2.ida=utc[2]
+        Audio.gcom2.ihr=utc[3]
+        Audio.gcom2.imi=utc[4]
+        Audio.gcom2.isc=utc[5]
         ldate.configure(text=t)
         root_geom=root.geometry()
         utchours=utc[3]+utc[4]/60.0 + utc[5]/3600.0

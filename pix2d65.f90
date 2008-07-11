@@ -22,7 +22,7 @@ subroutine pix2d65(d2,jz)
         x=d2(k)
         sq=sq + x*x
      enddo
-     green(i)=db(sq/nadd)-70.0
+     green(i)=db(sq/nadd)-64.0
   enddo
 
   return

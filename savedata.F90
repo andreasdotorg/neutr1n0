@@ -14,12 +14,12 @@ subroutine savedata
   if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4'   &
        .or. mode(1:2).eq.'CW' .or. mode(1:4).eq.'WSPR' .or.                &
        mode(1:4).eq.'JT64') then
-     call get_fname(hiscall,ntime,trperiod,lauto,fname0)
+     call get_fname(hiscall,iyr,imo,ida,ntime,trperiod,lauto,fname0)
      ibuf1=ibuf0
      ibuf2=ibuf
      go to 1
   else
-     call get_fname(hiscall,ntime-trperiod,trperiod,lauto,fname0)
+     call get_fname(hiscall,iyr,imo,ida,ntime-trperiod,trperiod,lauto,fname0)
   endif
 
   if(ibuf0.eq.ibuf0z) go to 999         !Startup condition, do not save
@@ -133,7 +133,7 @@ subroutine savedata
          .and. mode(1:3).ne.'JT4' .and. mode(1:2).ne.'CW' .and.              &
          mode(1:4).ne.'JT64') then
      ibuf0z=ibuf0
-     call get_fname(hiscall,ntime,trperiod,lauto,fname0)
+     call get_fname(hiscall,iyr,imo,ida,ntime,trperiod,lauto,fname0)
   endif
 
   return
