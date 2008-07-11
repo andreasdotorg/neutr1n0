@@ -140,7 +140,7 @@ C### Following code probably needs work!
 
       snrsync=syncbest
       snrx=-30
-      if(syncbest.gt.2.0) snrx=db(syncbest) - 35.0
+      if(syncbest.gt.2.0) snrx=db(syncbest) - 34.0
       dtx=dtstep*lagpk
       dfx=(ipk-i0)*df
 
