@@ -93,7 +93,7 @@ character*80 AppDir      !WSJT installation directory           GUI
 character*80 AzElDir     !Directory for azel.dat                GUI
 character*80 filetokilla !Filenames (full path)                 Decoder
 character*80 filetokillb
-character*12 pttport
+character*80 pttport
 character*22 t0msg
 
 parameter (ND2MAX=120*12000)

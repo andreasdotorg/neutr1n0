@@ -1934,9 +1934,7 @@ def update():
     except:
         Audio.gcom2.nport=0
 
-#    print 'About to init Audio.gcom2.PttPort in save some parameters'
-    Audio.gcom2.pttport=(options.PttPort.get() + '            ')[:12]
-#    print Audio.gcom2.pttport
+    Audio.gcom2.pttport=(options.PttPort.get() + (' '*80))[:80]
 
     if altmsg: tx6alt=tx6.get()    
 # Queue up the next update
@@ -2582,7 +2580,7 @@ try:
                 else:
                     options.PttPort.set("/dev/ttyS0")
                 Audio.gcom2.nport=0
-            Audio.gcom2.pttport=(options.PttPort.get()+'            ')[:12]
+            Audio.gcom2.pttport=(options.PttPort.get()+(' '*80))[:80]
         elif key == 'Mileskm': options.mileskm.set(value)
         elif key == 'MsgStyle': options.ireport.set(value)
         elif key == 'Region': options.iregion.set(value)
