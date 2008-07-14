@@ -27,7 +27,6 @@ subroutine genwspr(message,samfacout,ntxdf,iwave,nwave,nbad,msgsent)
   data first/.true./,idum/0/
   save
 
-  nsym=162                               !Symbols per transmission
   if(first) then
      pi=4.d0*atan(1.d0)
      twopi=2.d0*pi
