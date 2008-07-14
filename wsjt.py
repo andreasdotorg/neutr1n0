@@ -188,25 +188,25 @@ def testmsgs():
 
 #------------------------------------------------------ msg6list
 def msg6list(event=NONE):
-    t="OP name 73 GL"
-    if options.myname.get()!="":
-        t="OP " + options.myname.get().upper().strip() + " 73 GL"
-
-    tx6list=("73 DE call grid", "73 DE p/call", "TNX name 73 GL",
-         t, "pwr W gain dbd", "pwr W gain dbd 73 GL",
-         "pwr W DIPOLE", "pwr W VERTICAL", "PSE QSY freq KHZ",
-         "WX wx temp F wind", "WX wx temp C wind")
-    tx6dialog=Pmw.ComboBoxDialog(root, title="Message Tx6",
-        buttons=('OK','cancel'),defaultbutton='OK',
-        scrolledlist_items=tx6list,listbox_width=22)
-    tx6dialog.geometry(msgpos())
-    if g.Win32: tx6dialog.iconbitmap("wsjt.ico")
-    tx6dialog.tkraise()
-    t=tx6dialog.activate()
-    if t=='OK':
-        t=tx6dialog.get()
-        tx6.delete(0,99)
-        tx6.insert(0,t)
+    if mode.get()=='WSPR':
+        t="OP name 73 GL"
+        if options.myname.get()!="":
+            t="OP " + options.myname.get().upper().strip() + " 73 GL"
+        tx6list=("73 DE call grid", "73 DE p/call", "TNX name 73 GL",
+             t, "pwr W gain dbd", "pwr W gain dbd 73 GL",
+             "pwr W DIPOLE", "pwr W VERTICAL", "PSE QSY freq KHZ",
+             "WX wx temp F wind", "WX wx temp C wind")
+        tx6dialog=Pmw.ComboBoxDialog(root, title="Message Tx6",
+            buttons=('OK','cancel'),defaultbutton='OK',
+            scrolledlist_items=tx6list,listbox_width=22)
+        tx6dialog.geometry(msgpos())
+        if g.Win32: tx6dialog.iconbitmap("wsjt.ico")
+        tx6dialog.tkraise()
+        t=tx6dialog.activate()
+        if t=='OK':
+            t=tx6dialog.get()
+            tx6.delete(0,99)
+            tx6.insert(0,t)
 
 #------------------------------------------------------ textsize
 def textsize():
@@ -2727,6 +2727,8 @@ if options.auxdec.get()=="": options.auxdec.set("0")
 f.write("AuxRA " + options.auxra.get() + "\n")
 f.write("AuxDEC " + options.auxdec.get() + "\n")
 f.write("AzElDir " + str(options.azeldir.get()).replace(" ","#") + "\n")
+if options.myname.get()=="":
+    options.myname.set("name")
 f.write("MyName " + options.myname.get() + "\n")
 f.write("TxFirst " + str(TxFirst.get()) + "\n")
 f.write("KB8RQ " + str(kb8rq.get()) + "\n")
