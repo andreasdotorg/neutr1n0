@@ -282,7 +282,9 @@ subroutine wqdecode(data0,message,ntype)
      call unpacktext2(n1,ng,message)
   else 
 !     message='<Unknown message type>'
-     message='BadMsg: '//callsign
+     i1=index(callsign,' ')
+     if(i1.lt.1) i1=12
+     message=callsign(:i1)//' (BadMsg)'
   endif
 
   do i=1,22
