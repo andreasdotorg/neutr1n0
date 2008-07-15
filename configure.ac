@@ -45,12 +45,12 @@ case `uname -s` in
 		AC_MSG_RESULT(SunOS or Solaris)
 		AC_DEFINE(__EXTENSIONS__, 1, [This is needed to use strtok_r on Solaris.])
 	;;
-        FreeBSD*)
-		AC_MSG_RESULT(FreeBSD)
-		FCV_G95="g95"
-	;;
+dnl        FreeBSD*)
+dnl		AC_MSG_RESULT(FreeBSD)
+dnl		FCV_G95="g95"
+dnl	;;
 	*)
-		FCV_G95="gnu95"
+		FCV_G95="g95"
 		AC_MSG_RESULT(no)
 	;;
 esac

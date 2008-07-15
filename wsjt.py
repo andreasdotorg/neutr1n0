@@ -142,32 +142,32 @@ def toggle_zap(event=NONE):
 #------------------------------------------------------ btx (1-6)
 def btx1(event=NONE):
     ntx.set(1)
-    Audio.gcom2.txmsg=(tx1.get()+'                            ')[:28]
+    Audio.gcom2.txmsg=(tx1.get()+(' '*28))[:28]
     Audio.gcom2.ntxreq=1
     restart()
 def btx2(event=NONE):
     ntx.set(2)
-    Audio.gcom2.txmsg=(tx2.get()+'                            ')[:28]
+    Audio.gcom2.txmsg=(tx2.get()+(' '*28))[:28]
     Audio.gcom2.ntxreq=2
     restart()
 def btx3(event=NONE):
     ntx.set(3)
-    Audio.gcom2.txmsg=(tx3.get()+'                            ')[:28]
+    Audio.gcom2.txmsg=(tx3.get()+(' '*28))[:28]
     Audio.gcom2.ntxreq=3
     restart()
 def btx4(event=NONE):
     ntx.set(4)
-    Audio.gcom2.txmsg=(tx4.get()+'                            ')[:28]
+    Audio.gcom2.txmsg=(tx4.get()+(' '*28))[:28]
     Audio.gcom2.ntxreq=4
     restart()
 def btx5(event=NONE):
     ntx.set(5)
-    Audio.gcom2.txmsg=(tx5.get()+'                            ')[:28]
+    Audio.gcom2.txmsg=(tx5.get()+(' '*28))[:28]
     Audio.gcom2.ntxreq=5
     restart()
 def btx6(event=NONE):
     ntx.set(6)
-    Audio.gcom2.txmsg=(tx6.get()+'                            ')[:28]
+    Audio.gcom2.txmsg=(tx6.get()+(' '*28))[:28]
     Audio.gcom2.ntxreq=6
     restart()
 
@@ -2674,8 +2674,8 @@ elif mode.get()[:3]=='JT4':
 
 lsync.configure(text=slabel+str(isync))
 lclip.configure(text='Clip   '+str(iclip))
-Audio.gcom2.appdir=(appdir+'                                                                                          ')[:80]
-Audio.gcom2.azeldir=(options.azeldir.get()+'                                                                                          ')[:80]
+Audio.gcom2.appdir=(appdir+(' '*80))[:80]
+Audio.gcom2.azeldir=(options.azeldir.get()+' '*80)[:80]
 Audio.gcom2.ndepth=ndepth.get()
 Audio.gcom2.ndwspr=ndwspr.get()
 Audio.ftn_init()
