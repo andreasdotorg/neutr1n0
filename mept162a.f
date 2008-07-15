@@ -71,13 +71,14 @@ C  Look for sync patterns, get DF and DT
                   ii=idt*isign
                   i1=nint((dtx+2.0)/dt) + ii !Start index for synced symbols
                   if(i1.ge.1) then
-                     c4(1:45000-i1+1)=c3(i1:45000)
+                     c4(1:jz-i1+1)=c3(i1:)
                      c4(jz-i1+2:)=0.
                   else
-                     c4(1:-i1+1)=0.
-                     c4(-i1+2:45000)=c3(1:45000+i1-1)
+                     c4(:-i1+1)=0.
+                     c4(-i1+2:jz)=c3(:i1+jz-1)
+                     if(jz.lt.45000) c4(jz:)=0.
                   endif
-                  call decode162(c4,jz,ndwspr,message,ncycles,metric,
+                  call decode162(c4,45000,ndwspr,message,ncycles,metric,
      +                           nerr)
                   if(message(1:6).ne.'      ') go to 23
                enddo
