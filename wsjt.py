@@ -1285,8 +1285,8 @@ def mouse_click_g1(event):
                mode.get()[:3]=='JT4' or mode.get()[:4]=='JT64':
             Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)
         elif mode.get()=='WSPR':
-# Fix this: ??
-            Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)            
+# Fix this: ??  (idf dependence?)
+            Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*0.7324)
         else:
             if Audio.gcom2.ndecoding==0:              #If decoder is busy, ignore
                 Audio.gcom2.nagain=1

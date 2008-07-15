@@ -32,6 +32,7 @@ integer nzap           !Is Zap checked?                         GUI
 integer nsavecum       !(why is this here?)
 integer minsigdb       !Decoder threshold setting               GUI
 integer nclearave      !Set to 1 to clear JT65 avg         GUI,Decoder
+integer newdat2        !Set to 1 when new WSPR data           Decoder
 integer nfreeze        !Is Freeze checked?                      GUI
 integer nafc           !Is AFC checked?                         GUI
 integer nmode          !Which WSJT mode?                   GUI,Decoder
@@ -102,7 +103,8 @@ common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      ndecoding,ndecoding0,mousebutton,                                &
      ndecdone,npingtime,ierr,lauto,mantx,nrestart,ntr,nmsg,nsave,nadd5, &
      dftolerance,LDecoded,rxdone,monitoring,nzap,nsavecum,minsigdb,   &
-     nclearave,nfreeze,nafc,nmode,mode65,mode4,nclip,ndebug,nblank,nport,   &
+     nclearave,newdat2,nfreeze,nafc,nmode,mode65,mode4,nclip,ndebug,  &
+     nblank,nport,   &
      mousedf,neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,ntxdf, &
      shok,sendingsh,d2a(ND2MAX),d2b(ND2MAX),b(60000),jza,jzb,ntime,   &
      idinterval,msmax,lenappdir,idf,ndiskdat,nfsam,nlines,nflat,      &

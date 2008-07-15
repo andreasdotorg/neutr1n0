@@ -9,9 +9,9 @@ subroutine wsjtwspr(dat,jz,cfile6,ndiag,ccfblue,ccfred)
   include 'gcom2.f90'
 
   f0=1500 + mousedf
-  if(nagain.eq.1) newdat=0
-  if(nforce.eq.1) newdat=1
-  call filbig2(dat,jz,f0,newdat,c2,n4)
+  if(nagain.eq.1) newdat2=0
+  if(nforce.eq.1) newdat2=1
+  call filbig2(dat,jz,f0,newdat2,c2,n4)
   call mept162a(c2,n4,f0,cfile6,ndiag,minsigdb,mousedf,DFTolerance,ndwspr, &
        ccfblue,ccfred)
   return

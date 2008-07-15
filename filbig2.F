@@ -1,4 +1,4 @@
-      subroutine filbig2(dat,nmax,f0,newdat,c4a,n4)
+      subroutine filbig2(dat,nmax,f0,newdat2,c4a,n4)
 
 C  Filter and downsample real data for one polarization, stored
 C  in array dat(nmax).  Output is downsampled from 11025 (or 12000?) Hz
@@ -74,7 +74,7 @@ C  Convert impulse response to filter function
 C  When new data comes along, we need to compute a new "big FFT"
 C  If we just have a new f0, continue with the existing ca.
 
-      if(newdat.ne.0) then
+      if(newdat2.ne.0) then
          nz=min(nmax,NFFT1)
          do i=1,nz
             ca(i)=dat(i)
@@ -89,7 +89,7 @@ C  If we just have a new f0, continue with the existing ca.
 #else
          call sfftw_execute(plan1)
 #endif
-         newdat=0
+         newdat2=0
       endif
 
 C  NB: f0 is the frequency at which we want our filter centered.

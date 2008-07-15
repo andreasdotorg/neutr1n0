@@ -28,6 +28,7 @@ subroutine decode1(iarg)
        mode(1:4).eq.'JT64') then
      if(rxdone) then
         call savedata
+        newdat2=1
         rxdone=.false.
      endif
   else
