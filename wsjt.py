@@ -2510,7 +2510,7 @@ lookup()
 balloon.unbind(ToRadio)
 g.astro_geom0="+0+0"
 Audio.gcom1.mute=0
-Audio.gcom2.nforce=1
+Audio.gcom2.nforce=0
 Audio.gcom2.mode4=1
 
 #---------------------------------------------------------- Process INI file
