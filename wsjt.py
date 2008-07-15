@@ -1330,7 +1330,7 @@ def GenStdMsgs(event=NONE):
     ToRadio.delete(0,99)
     ToRadio.insert(0,t)
     if k2txb.get()!=0: ntx.set(1)
-    Audio.gcom2.hiscall=(ToRadio.get()+'            ')[:12]
+    Audio.gcom2.hiscall=(ToRadio.get()+(' '*12))[:12]
     for m in (tx1, tx2, tx3, tx4, tx5, tx6):
         m.delete(0,99)
     if mode.get()=="FSK441" or mode.get()=="JT6M":
@@ -1349,19 +1349,19 @@ def GenStdMsgs(event=NONE):
             addpfx0=options.addpfx.get()
             ToRadio0=ToRadio.get()
             t0=("SM5BSZ "+options.MyCall.get()).upper()
-            Audio.gcom2.t0msg=(t0+'                      ')[:22]
+            Audio.gcom2.t0msg=(t0+' '*22)[:22]
             nplain,naddon,ndiff=Audio.chkt0()
             if nplain==1:
                 MsgBox("Bad 'MyCall' or bad prefix/suffix?\nPlease check on Setup | Options screen.")
                 options1()
             t0=("SM5BSZ "+ToRadio0).upper()
-            Audio.gcom2.t0msg=(t0+'                      ')[:22]
+            Audio.gcom2.t0msg=(t0+' '*22)[:22]
             nplain,naddon,ndiff=Audio.chkt0()
             if nplain==1:
                 MsgBox("Bad call in To Radio?\nPlease check.")
             
         t0=(ToRadio.get() + " "+options.MyCall.get()).upper()
-        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        Audio.gcom2.t0msg=(t0+' '*22)[:22]
         nplain,naddon,ndiff=Audio.chkt0()
         if nplain==0 and naddon==0 and ndiff==0:
             t0=t0 + " "+options.MyGrid.get()[:4]
@@ -1372,7 +1372,7 @@ def GenStdMsgs(event=NONE):
         tx5.insert(0,"73")
 
         t0="CQ " + options.MyCall.get().upper()
-        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        Audio.gcom2.t0msg=(t0+' '*22)[:22]
         nplain,naddon,ndiff=Audio.chkt0()
         if nplain==0 and naddon==0 and ndiff==0:
             t0=t0 + " "+options.MyGrid.get()[:4]
@@ -1392,26 +1392,26 @@ def GenStdMsgs(event=NONE):
             addpfx0=options.addpfx.get()
             ToRadio0=ToRadio.get()
             t0=("SM5BSZ "+options.MyCall.get()).upper()
-            Audio.gcom2.t0msg=(t0+'                      ')[:22]
+            Audio.gcom2.t0msg=(t0+' '*22)[:22]
             nplain,naddon,ndiff=Audio.chkt0()
             if nplain==1:
                 MsgBox("Bad 'MyCall' or bad prefix/suffix?\nPlease check on Setup | Options screen.")
                 options1()
             t0=("SM5BSZ "+ToRadio0).upper()
-            Audio.gcom2.t0msg=(t0+'                      ')[:22]
+            Audio.gcom2.t0msg=(t0+' '*22)[:22]
             nplain,naddon,ndiff=Audio.chkt0()
             if nplain==1:
                 MsgBox("Bad call in To Radio?\nPlease check.")
             
         t0=("<" + ToRadio.get() + "> "+options.MyCall.get()).upper()
-        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        Audio.gcom2.t0msg=(t0+' '*22)[:22]
 ##        nplain,naddon,ndiff=Audio.chkt0()
 ##        if nplain==0 and naddon==0 and ndiff==0:
 ##            t0=t0 + " "+options.MyGrid.get()[:4]
         tx1.insert(0,t0.upper())
         r=report.get()
         t2=(ToRadio.get() + " <"+options.MyCall.get() + "> " + r).upper()
-        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        Audio.gcom2.t0msg=(t0+' '*22)[:22]
         tx2.insert(0,t2)
         t3=(ToRadio.get() + " <"+options.MyCall.get() + "> R " + r).upper()
         tx3.insert(0,t3)
@@ -1421,7 +1421,7 @@ def GenStdMsgs(event=NONE):
         tx5.insert(0,t5)
 
         t0="CQ " + options.MyCall.get().upper()
-        Audio.gcom2.t0msg=(t0+'                      ')[:22]
+        Audio.gcom2.t0msg=(t0+' '*22)[:22]
         nplain,naddon,ndiff=Audio.chkt0()
         if nplain==0 and naddon==0 and ndiff==0:
             t0=t0 + " "+options.MyGrid.get()[:4]
@@ -1435,7 +1435,7 @@ def GenAltMsgs(event=NONE):
     ToRadio.delete(0,99)
     ToRadio.insert(0,t)
     if k2txb.get()!=0: ntx.set(1)
-    Audio.gcom2.hiscall=(ToRadio.get()+'            ')[:12]
+    Audio.gcom2.hiscall=(ToRadio.get()+(' '*12))[:12]
     if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
         mode.get()[:3]=='JT4') and ToRadio.get().find("/") == -1 and \
                options.MyCall.get().find("/") == -1:
@@ -1670,8 +1670,8 @@ def update():
                 g.sd,g.poloffset,g.MaxNR,g.dfdt,g.dfdt0,g.RaAux,g.DecAux, \
                 g.AzAux,g.ElAux = Audio.astro0(utc[0],utc[1],utc[2],  \
                 utchours,nfreq.get(),options.MyGrid.get().upper(), \
-                    options.auxra.get()+'         '[:9],     \
-                    options.auxdec.get()+'         '[:9])
+                    options.auxra.get()+(' '*9)[:9],     \
+                    options.auxdec.get()+(' '*9)[:9])
 
             if len(HisGrid.get().strip())<4:
                 g.ndop=g.ndop00
@@ -1890,14 +1890,14 @@ def update():
         Audio.gcom1.samfacout=1.0
 #    if Audio.gcom1.samfacin>1.01: Audio.gcom1.samfacin=1.01
 # ... etc.
-    Audio.gcom2.mycall=(options.MyCall.get()+'            ')[:12]
-    Audio.gcom2.hiscall=(ToRadio.get()+'            ')[:12]
-    Audio.gcom2.hisgrid=(HisGrid.get()+'      ')[:6]
-    Audio.gcom4.addpfx=(options.addpfx.get().lstrip().upper()+'        ')[:8]
+    Audio.gcom2.mycall=(options.MyCall.get()+(' '*12))[:12]
+    Audio.gcom2.hiscall=(ToRadio.get()+(' '*12))[:12]
+    Audio.gcom2.hisgrid=(HisGrid.get()+(' '*6))[:6]
+    Audio.gcom4.addpfx=(options.addpfx.get().lstrip().upper()+(' '*8))[:8]
     Audio.gcom2.ntxreq=ntx.get()
     tx=(tx1,tx2,tx3,tx4,tx5,tx6)
-    Audio.gcom2.txmsg=(tx[ntx.get()-1].get()+'                            ')[:28]
-    Audio.gcom2.mode=(mode.get()+'      ')[:6]
+    Audio.gcom2.txmsg=(tx[ntx.get()-1].get()+(' '*28))[:28]
+    Audio.gcom2.mode=(mode.get()+(' '*6))[:6]
     Audio.gcom2.shok=ShOK.get()
     Audio.gcom2.nsave=nsave.get()
     Audio.gcom2.nzap=nzap.get()
@@ -2591,7 +2591,7 @@ try:
                 g.ndevin.set(0)
             g.DevinName.set(value)
             options.DevinName.set(value)
-            Audio.gcom1.devin_name=(options.DevinName.get()+'            ')[:12]
+            Audio.gcom1.devin_name=(options.DevinName.get()+(' '*12))[:12]
         elif key == 'AudioOut':
             try:
                 g.ndevout.set(value)
@@ -2599,7 +2599,7 @@ try:
                 g.ndevout.set(0)
             g.DevoutName.set(value)
             options.DevoutName.set(value)
-            Audio.gcom1.devout_name=(options.DevoutName.get()+'            ')[:12]
+            Audio.gcom1.devout_name=(options.DevoutName.get()+(' '*12))[:12]
         elif key == 'SamFacIn': options.samfacin.set(value)
         elif key == 'SamFacOut': options.samfacout.set(value)
         elif key == 'Template1': options.Template1.set(value.replace("_"," "))
@@ -2645,7 +2645,7 @@ try:
         elif key == 'Ndwspr': ndwspr.set(value)
         elif key == 'Debug': ndebug.set(value)
         elif key == 'HisCall':
-            Audio.gcom2.hiscall=(value+'            ')[:12]
+            Audio.gcom2.hiscall=(value+' '*12)[:12]
             ToRadio.delete(0,99)
             ToRadio.insert(0,value)
             lookup()                       #Maybe should save HisGrid, instead?
@@ -2679,7 +2679,7 @@ Audio.gcom2.azeldir=(options.azeldir.get()+' '*80)[:80]
 Audio.gcom2.ndepth=ndepth.get()
 Audio.gcom2.ndwspr=ndwspr.get()
 Audio.ftn_init()
-Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+'        ')[:8]
+Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+(' '*8))[:8]
 stopmon()
 if g.Win32: root.iconbitmap("wsjt.ico")
 root.title('  WSJT 7     by K1JT')
