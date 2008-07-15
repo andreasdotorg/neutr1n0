@@ -146,7 +146,7 @@ C  Compute power spectrum for each step, and get average
          drift(i)=df*kpk
          dtx(i)=128.0*dt*lagpk
          spk=db(smax)-22.0
-         if(spk.gt.0.0) ccfred(i+i00)=0.25*spk
+         if(spk.gt.0.0 .and. abs(i+i00).le.224) ccfred(i+i00)=0.25*spk
  10      continue
       enddo
 
