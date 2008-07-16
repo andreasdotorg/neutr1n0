@@ -231,6 +231,7 @@ subroutine wqdecode(data0,message,ntype)
            if(ng.eq.30001) fmt=fmt(1:15)//"VERTICAL')"
            write(message,fmt) n1
         endif
+        if(index(message,'***').gt.0) go to 700
      endif
 
 ! QRZ call (msg #3; type 26)
@@ -280,14 +281,17 @@ subroutine wqdecode(data0,message,ntype)
   else if(ntype.eq.-57) then
      ng=n2/128
      call unpacktext2(n1,ng,message)
-  else 
-!     message='<Unknown message type>'
-     i1=index(callsign,' ')
-     if(i1.lt.1) i1=12
-     message=callsign(:i1)//' (BadMsg)'
+  else
+     go to 700
   endif
+  go to 750
 
-  do i=1,22
+!     message='<Unknown message type>'
+700 i1=index(callsign,' ')
+  if(i1.lt.1) i1=12
+  message=callsign(:i1)//' (BadMsg)'
+
+750 do i=1,22
      if(ichar(message(i:i)).eq.0) message(i:i)=' '
   enddo
 
