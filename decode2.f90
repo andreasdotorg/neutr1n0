@@ -86,6 +86,7 @@ subroutine decode2
         if(istart.lt.2) istart=2
         if(istart+jzz.gt.jzc) istart=jzc-jzz
      endif
+     if(mode(1:4).eq.'WSPR') newdat2=1
      call decode3(d2c(istart),jzz,istart,filename)
 
   else if(ndecoding.eq.5) then

@@ -191,7 +191,9 @@ def msg6list(event=NONE):
     if mode.get()=='WSPR':
         t="OP name 73 GL"
         if options.myname.get()!="":
-            t="OP " + options.myname.get().upper().strip() + " 73 GL"
+            t1=options.myname.get().strip()
+            if t1!="name": t1=t1.upper()
+            t="OP " + t1 + " 73 GL"
         tx6list=("73 DE call grid", "73 DE p/call", "TNX name 73 GL",
              t, "pwr W gain dbd", "pwr W gain dbd 73 GL",
              "pwr W DIPOLE", "pwr W VERTICAL", "PSE QSY freq KHZ",
