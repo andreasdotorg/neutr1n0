@@ -172,7 +172,7 @@ def btx6(event=NONE):
     restart()
 
 #------------------------------------------------------ quit
-def quit():
+def quit(event=NONE):
     root.destroy()
 
 #------------------------------------------------------ testmsgs
@@ -872,6 +872,7 @@ F2	Options
 Shift+F2   WSPR structured messages
 F3	Tx Mute
 F4	Clear "To Radio"
+Alt+F4      Exit program
 F5	What message to send?
 Shift+F5	Examples of minimal JT65 QSOs
 F6	Open next file in directory
@@ -1976,7 +1977,7 @@ filemenu.add('command', label = 'Delete all *.WAV files in RxWav', \
 filemenu.add_separator()
 filemenu.add('command', label = 'Erase ALL.TXT', command = del_all)
 filemenu.add_separator()
-filemenu.add('command', label = 'Exit', command = quit)
+filemenu.add('command', label = 'Exit', command = quit, accelerator='Alt+F4')
 
 if (sys.platform == 'darwin'):
     mbar.add_cascade(label="File", menu=filemenu)
@@ -2227,6 +2228,7 @@ root.bind_all('<F2>', options1)
 root.bind_all('<Shift-F2>',wspr_msgs)
 root.bind_all('<F3>', txmute)
 root.bind_all('<F4>', clrToRadio)
+root.bind_all('<Alt-F4>', quit)
 root.bind_all('<F5>', what2send)
 root.bind_all('<Shift-F5>', minimal_qso)
 root.bind_all('<F6>', opennext)
