@@ -54,6 +54,7 @@ subroutine decode1(iarg)
   if(n.lt.ns0 .and. utcdate(1:1).eq.'2') then
      write(21,1001) utcdate(:11)
 1001 format(/'UTC Date: ',a11/'---------------------')
+     call flushqqq(21)
      ns0=n
   endif
 
@@ -66,6 +67,7 @@ subroutine decode1(iarg)
      if(sendingsh.eq.1) cshort='(Shorthand)'
      write(21,1010) ih,im,is,mode,sending,cshort
 1010 format(3i2.2,'  Transmitting: ',a6,2x,a28,2x,a11)
+     call flushqqq(21)
      sending0=sending
      sendingsh0=sendingsh
      mode0=mode
@@ -77,7 +79,6 @@ subroutine decode1(iarg)
   call usleep(100*1000)
 #endif
 
-  call flushqqq(21)
   go to 10
 
 end subroutine decode1
