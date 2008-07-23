@@ -2512,7 +2512,7 @@ options.defaults()
 ModeFSK441()
 lookup()
 balloon.unbind(ToRadio)
-g.astro_geom0="+0+0"
+g.astro_geom0="+25+25"
 Audio.gcom1.mute=0
 Audio.gcom2.nforce=1
 Audio.gcom2.mode4=1
