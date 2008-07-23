@@ -487,9 +487,14 @@ frame.pack()
 if (sys.platform != 'darwin'):
    mbar = Frame(frame)
    mbar.pack(fill = X)
+   sbar = mbar
+   button_width=1
 else:
    mbar = Menu(root)
    root.config(menu=mbar)
+   sbar = Frame(frame)
+   sbar.pack(fill = X)
+   button_width=5
 
 # Tearoff menus make less sense under darwin
 use_tearoff = (sys.platform != 'darwin')
@@ -502,6 +507,7 @@ if (sys.platform != 'darwin'):
     setupbutton['menu'] = setupmenu
 else:
     setupmenu = Menu(mbar, tearoff=use_tearoff)
+    
 setupmenu.add_checkbutton(label = 'Mark T/R boundaries',variable=minsep)
 setupmenu.add_checkbutton(label='Flatten spectra',variable=nflat)
 setupmenu.add_checkbutton(label='Mark JT65 tones only if Freeze is checked',
@@ -534,24 +540,23 @@ if (sys.platform == 'darwin'):
    mbar.add_cascade(label="Options", menu=setupmenu)
 
 #------------------------------------------------- Freq and DF labels
-
-lab1=Label(mbar,padx=20,bd=0)
+lab1=Label(sbar,padx=20,bd=0)
 lab1.pack(side=LEFT)
-fdf=Label(mbar,width=25,bd=0)
+fdf=Label(sbar,width=25,bd=0)
 fdf.pack(side=LEFT)
 
 #------------------------------------------------- BW button
 
-lab3=Label(mbar,padx=13,bd=0)
+lab3=Label(sbar,padx=13,bd=0)
 lab3.pack(side=LEFT)
-bbw=Button(mbar,text='BW',command=set_frange,padx=1,pady=1)
+bbw=Button(sbar,text='BW',command=set_frange,padx=1,pady=1,width=button_width)
 bbw.pack(side=LEFT)
 
-lab0=Label(mbar,padx=10,bd=0)
+lab0=Label(sbar,padx=10,bd=0)
 lab0.pack(side=LEFT)
-bfmid1=Button(mbar,text='<',command=change_fmid1,padx=1,pady=1)
-bfmid2=Button(mbar,text='>',command=change_fmid2,padx=1,pady=1)
-bfmid3=Button(mbar,text='|',command=set_fmid,padx=3,pady=1)
+bfmid1=Button(sbar,text='<',command=change_fmid1,padx=1,pady=1,width=button_width)
+bfmid2=Button(sbar,text='>',command=change_fmid2,padx=1,pady=1,width=button_width)
+bfmid3=Button(sbar,text='|',command=set_fmid,padx=3,pady=1,width=button_width)
 bfmid1.pack(side=LEFT)
 bfmid3.pack(side=LEFT)
 bfmid2.pack(side=LEFT)
@@ -561,9 +566,9 @@ for i in (7, 6, 5, 4, 3, 2, 1):
     t=str(i)
     if i==6: t="H1"
     if i==7: t="H2"
-    Radiobutton(mbar,text=t,value=i,variable=nspeed0).pack(side=RIGHT)
+    Radiobutton(sbar,text=t,value=i,variable=nspeed0).pack(side=RIGHT)
 nspeed0.set(6)
-lab2=Label(mbar,text='Speed: ',bd=0)
+lab2=Label(sbar,text='Speed: ',bd=0)
 lab2.pack(side=RIGHT)
 #------------------------------------------------- Graphics frame
 iframe1 = Frame(frame, bd=1, relief=SUNKEN)
