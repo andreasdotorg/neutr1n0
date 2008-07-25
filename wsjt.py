@@ -600,6 +600,8 @@ def ModeFSK441(event=NONE):
         bclravg.configure(state=DISABLED)
         binclude.configure(state=DISABLED)
         bexclude.configure(state=DISABLED)
+        cbnb.configure(state=NORMAL)
+        cbzap.configure(state=NORMAL)
         cbfreeze.configure(state=DISABLED)
         cbafc.configure(state=DISABLED)
         if ltxdf: toggletxdf()
@@ -632,6 +634,8 @@ def ModeJT65():
     bclravg.configure(state=NORMAL)
     binclude.configure(state=NORMAL)
     bexclude.configure(state=NORMAL)
+    cbnb.configure(state=NORMAL)
+    cbzap.configure(state=NORMAL)
     cbfreeze.configure(state=NORMAL)
     cbafc.configure(state=NORMAL)
     if ltxdf: toggletxdf()
@@ -690,6 +694,8 @@ def ModeJT6M(event=NONE):
         isync=isync6m
         lsync.configure(text=slabel+str(isync))
         shmsg.configure(state=DISABLED)
+        cbnb.configure(state=NORMAL)
+        cbzap.configure(state=NORMAL)
         cbfreeze.configure(state=NORMAL)
         itol=3
         ltol.configure(text='Tol    '+str(ntol[itol]))
