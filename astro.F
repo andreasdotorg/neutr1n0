@@ -12,13 +12,14 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       real LST
       real lat,lon
       real ldeg
+      real poloffset2
       integer*2 nsky
       common/sky/ nsky(360,180)
       common/echo/xdop(2),techo,ElMoon,mjd
       data ltsky/.false./
       data first/.true./
       data rad/57.2957795/
-      save first
+      save first,poloffset2
 
       if(first) then
          do i=80,1,-1
@@ -68,8 +69,6 @@ C  Compute spatial polarization offset
       xx=sin(lat/rad)*cos(ElMoon/rad) - cos(lat/rad)*
      +     cos(AzMoon/rad)*sin(ElMoon/rad)
       yy=cos(lat/rad)*sin(AzMoon/rad)
-      poloffset1=0                                  !Silence compiler warning
-      poloffset2=0
       if(NStation.eq.1) poloffset1=rad*atan2(yy,xx)
       if(NStation.eq.2) poloffset2=rad*atan2(yy,xx)
 
