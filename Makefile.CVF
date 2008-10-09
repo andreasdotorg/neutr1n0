@@ -7,20 +7,12 @@ FC = df
 #FFLAGS = /traceback /check:all
 FFLAGS = /traceback /fast /nologo /warn
 
-#all:    JT65code.exe WSJT7.EXE
-all:    WSJT7.EXE
+all:    JT65code.exe WSJT7.EXE
 
-OBJS1 = JT65code.obj nchar.obj grid2deg.obj packmsg.obj packtext.obj \
-	packcall.obj packgrid.obj unpackmsg.obj unpacktext.obj \
-	unpackcall.obj unpackgrid.obj deg2grid.obj packdxcc.obj \
-	chkmsg.obj getpfx1.obj getpfx2.obj k2grid.obj grid2k.obj \
-	interleave63.obj graycode.obj set.obj igray.obj \
-	init_rs.obj encode_rs.obj decode_rs.obj \
-	wrapkarn.obj
+OBJS1 = igray.obj init_rs.obj encode_rs.obj decode_rs.obj wrapkarn.obj
 
 JT65code.exe: $(OBJS1)
-	$(FC) $(FFLAGS) /exe:JT65code.exe $(OBJS1)
-
+	$(FC) /traceback /fast /nologo /exe:JT65code.exe JT65code_all.f $(OBJS1)
 
 OBJS2C   = init_rs.o encode_rs.o decode_rs.o jtaudio.o fano.o tab.o \
 	nhash.o
