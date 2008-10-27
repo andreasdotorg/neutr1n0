@@ -1,6 +1,6 @@
 subroutine wqdecode(data0,message,ntype)
 
-  parameter (N15=32758)
+  parameter (N15=32768)
   integer*1 data0(11)
   character*22 message
   character*12 callsign
