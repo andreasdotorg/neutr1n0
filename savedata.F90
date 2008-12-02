@@ -4,11 +4,14 @@ subroutine savedata
   use dfport
 #endif
 
+  integer*1 n4
+  integer*2 iswap_short
   character fname*24,longname*80
   data ibuf0z/1/
   include 'gcom1.f90'
   include 'gcom2.f90'
   include 'gcom3.f90'
+  equivalence (nfmt2,n4)
   save
 
   if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4'   &
@@ -117,8 +120,22 @@ subroutine savedata
 #else
      open(17,file=longname,status='unknown',form='unformatted',      &
           access='direct',recl=nbytes,err=20)
-     write(17,rec=1) ariff,nchunk,awave,afmt,lenfmt,nfmt2,nchan2,nsamrate, &
-          nbytesec,nbytesam2,nbitsam2,adata,ndata,(d2a(j),j=1,jza)
+     if (n4.ne.nfmt2) then
+       nchunk = iswap_int(nchunk)
+       lenfmt = iswap_int(lenfmt)
+       nfmt2 = iswap_short(nfmt2)
+       nchan2 = iswap_short(nchan2)
+       nsamrate = iswap_int(nsamrate)
+       nbytesec = iswap_int(nbytesec)
+       nbytesam2 = iswap_short(nbytesam2)
+       nbitsam2 = iswap_short(nbitsam2)
+       ndata = iswap_int(ndata)
+       write(17,rec=1) ariff,nchunk,awave,afmt,lenfmt,nfmt2,nchan2,nsamrate, &
+            nbytesec,nbytesam2,nbitsam2,adata,ndata,(iswap_short(d2a(j)),j=1,jza)
+     else
+       write(17,rec=1) ariff,nchunk,awave,afmt,lenfmt,nfmt2,nchan2,nsamrate, &
+            nbytesec,nbytesam2,nbitsam2,adata,ndata,(d2a(j),j=1,jza)
+     endif
      close(17)     
 #endif
      filetokillb=filetokilla
