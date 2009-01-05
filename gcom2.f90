@@ -14,6 +14,7 @@ integer ida            !UTC from python                         GUI
 integer ndecoding      !Decoder status (see decode2.f90)     GUI,Decoder
 integer ndecoding0     !Status on previous decode            GUI,Decoder
 integer mousebutton    !Which button was clicked?               GUI
+integer nhighpri       !Run at "Above Normal" priority?         GUI
 integer ndecdone       !Is decoder finished?                 GUI,Decoder
 integer npingtime      !Time in file of mouse-selected ping  GUI,Decoder
 integer ierr           !(why is this here?)
@@ -100,7 +101,7 @@ character*22 t0msg
 parameter (ND2MAX=120*12000)
 common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      green(500),ngreen,dgain,iter,iyr,imo,ida,                        &
-     ndecoding,ndecoding0,mousebutton,                                &
+     ndecoding,ndecoding0,mousebutton,nhighpri,                       &
      ndecdone,npingtime,ierr,lauto,mantx,nrestart,ntr,nmsg,nsave,nadd5, &
      dftolerance,LDecoded,rxdone,monitoring,nzap,nsavecum,minsigdb,   &
      nclearave,newdat2,nfreeze,nafc,nmode,mode65,mode4,nclip,ndebug,  &

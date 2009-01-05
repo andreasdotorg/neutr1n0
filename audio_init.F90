@@ -2,7 +2,8 @@ subroutine audio_init(ndin,ndout)
 
 #ifdef CVF
   use dfmt
-  integer Thread1,Thread2
+  integer Thread1,Thread2,ABOVE_NORMAL_PRIORITY_CLASS
+  parameter (ABOVE_NORMAL_PRIORITY_CLASS=32768)
   external a2d,decode1
 #endif
 
@@ -53,8 +54,10 @@ subroutine audio_init(ndin,ndout)
 !     THREAD_PRIORITY_ABOVE_NORMAL       1
 !     THREAD_PRIORITY_HIGHEST            2
 !     THREAD_PRIORITY_TIME_CRITICAL     15
-    
-  m0=SetPriorityClass(GetCurrentProcess(),NORMAL_PRIORITY_CLASS)
+
+  npri=NORMAL_PRIORITY_CLASS
+  if(nhighpri.ne.0) npri=ABOVE_NORMAL_PRIORITY_CLASS
+  m0=SetPriorityClass(GetCurrentProcess(),npri)
 
 ! Start a thread for doing A/D and D/A with sound card.
   Thread1=CreateThread(0,0,a2d,0,CREATE_SUSPENDED,id1)

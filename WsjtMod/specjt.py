@@ -704,7 +704,7 @@ f.write("LogMap " + str(logmap.get()) + "\n")
 f.write("Palette " + g.cmap + "\n")
 f.write("Frange " + str(nfr.get()) + "\n")
 f.write("Fmid " + str(fmid) + "\n")
-root_geom=root_geom[root_geom.index("+"):]
+#root_geom=root_geom[root_geom.index("+"):]
 f.write("SpecJTGeometry " + root_geom + "\n")
 f.close()
 

@@ -23,6 +23,7 @@ MyCall=StringVar()
 MyGrid=StringVar()
 #RxDelay=StringVar()
 #TxDelay=StringVar()
+HighPri=IntVar()
 IDinterval=IntVar()
 ComPort=IntVar()
 PttPort=StringVar()
@@ -213,22 +214,13 @@ azeldir_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='AzElDir:',
     entry_width=9,value=g.appdir,entry_textvariable=azeldir)
 myname_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='MyName:',
     entry_width=9,entry_textvariable=myname)
-##hisname_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='HisName:',
-##    entry_width=9,entry_textvariable=hisname)
-##wx_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Wx:',
-##    entry_width=9,entry_textvariable=wx)
-##temp_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Temp:',
-##    entry_width=9,entry_textvariable=temp)
-##wind_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Wind:',
-##    entry_width=9,entry_textvariable=wind)
-##pwr_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Power:',
-##    entry_width=9,entry_textvariable=pwr)
-##ant_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Antenna:',
-##    entry_width=9,entry_textvariable=ant)
 
 widgets = (temp_prefix,aux_ra,aux_dec,azeldir_entry,myname_entry)
 for widget in widgets:
     widget.pack(padx=10,pady=2)
+hipriority=Checkbutton(g3.interior(),text='High Priority',justify=RIGHT,
+                       variable=HighPri)
+hipriority.pack(padx=10,pady=2,side=BOTTOM)
 Pmw.alignlabels(widgets)
 
 

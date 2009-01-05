@@ -2630,6 +2630,7 @@ try:
 	    except:
 		options.azeldir.set(os.getcwd())
         elif key == 'MyName': options.myname.set(value)
+        elif key == 'HighPri': options.HighPri.set(value)
         elif key == 'TxFirst': TxFirst.set(value)
         elif key == 'KB8RQ': kb8rq.set(value)
         elif key == 'K2TXB': k2txb.set(value)
@@ -2688,6 +2689,7 @@ Audio.gcom2.appdir=(appdir+(' '*80))[:80]
 Audio.gcom2.azeldir=(options.azeldir.get()+' '*80)[:80]
 Audio.gcom2.ndepth=ndepth.get()
 Audio.gcom2.ndwspr=ndwspr.get()
+Audio.gcom2.nhighpri=options.HighPri.get()
 Audio.ftn_init()
 Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+(' '*8))[:8]
 stopmon()
@@ -2740,6 +2742,7 @@ f.write("AzElDir " + str(options.azeldir.get()).replace(" ","#") + "\n")
 if options.myname.get()=="":
     options.myname.set("name")
 f.write("MyName " + options.myname.get() + "\n")
+f.write("HighPri " + str(options.HighPri.get()) + "\n")
 f.write("TxFirst " + str(TxFirst.get()) + "\n")
 f.write("KB8RQ " + str(kb8rq.get()) + "\n")
 f.write("K2TXB " + str(k2txb.get()) + "\n")
