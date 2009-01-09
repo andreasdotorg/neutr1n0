@@ -10,8 +10,8 @@ C  reference spectrum (with birdies removed) to flatten the passband.
       real birdie(nbins)              !Spec (with birdies) for plot, in dB
       real variance(nbins)
       real ref2(750)                  !Work array
-      real power(750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750750
-      
+      real power(750)
+ 
 C  Find power in each time block, then get median
       do j=1,jz
          s=0.
