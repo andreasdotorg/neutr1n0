@@ -543,6 +543,11 @@ def addtodb():
             os.rename("CALL3.TXT","CALL3.OLD")
             os.rename("CALL3.TMP","CALL3.TXT")
 
+#------------------------------------------------------ clrrpt
+def clrrpt(event):
+    report.delete(0,END)
+    report.focus_set()
+
 #-------------------------------------------------------- clrToRadio
 def clrToRadio(event):
     ToRadio.delete(0,END)
@@ -2287,6 +2292,8 @@ root.bind_all('<Control-o>',openfile)
 root.bind_all('<Control-O>',openfile)
 root.bind_all('<Alt-q>',logqso)
 root.bind_all('<Alt-Q>',logqso)
+root.bind_all('<Alt-r>',clrrpt)
+root.bind_all('<Alt-R>',clrrpt)
 root.bind_all('<Alt-s>',stopmon)
 root.bind_all('<Alt-S>',stopmon)
 root.bind_all('<Alt-v>',savelast)
