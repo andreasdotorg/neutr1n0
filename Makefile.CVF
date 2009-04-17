@@ -12,7 +12,8 @@ all:    JT65code.exe WSJT7.EXE
 OBJS1 = igray.obj init_rs.obj encode_rs.obj decode_rs.obj wrapkarn.obj
 
 JT65code.exe: $(OBJS1)
-	$(FC) /traceback /fast /nologo /exe:JT65code.exe JT65code_all.f $(OBJS1)
+	$(FC) /traceback /fast /nologo /check:all /exe:JT65code.exe \
+	JT65code_all.f $(OBJS1)
 
 OBJS2C   = init_rs.o encode_rs.o decode_rs.o jtaudio.o fano.o tab.o \
 	nhash.o
@@ -77,6 +78,9 @@ wsjt.spec: wsjt.py WsjtMod/astro.py WsjtMod/g.py WsjtMod/options.py \
 
 jtaudio.o: jtaudio.c
 	$(CC) /nologo /c /DWin32 /Fojtaudio.o jtaudio.c
+
+nhash.o: nhash.c
+	$(CC) /nologo /c /DWin32 /Fonhash.o nhash.c
 
 init_rs.obj: init_rs.c
 	$(CC) /nologo /c /DBIGSYM=1 init_rs.c
