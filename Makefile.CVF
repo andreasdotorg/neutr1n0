@@ -109,8 +109,6 @@ igray.obj: igray.c
 fano.o: fano.c
 	$(CC) /nologo /c /Fofano.o fano.c
 
-nhash.o: nhash.c
-	$(CC) /nologo /c /Fonhash.o nhash.c
 tab.o: tab.c
 	$(CC) /nologo /c /Fotab.o tab.c
 
