@@ -124,9 +124,6 @@ decode_rs_int.o: decode_rs.c
 cutil.o: cutil.c
 	$(CC) $(CFLAGS) -c -DSTARNIX=1 cutil.c
 
-fourt.o: fourt.f
-	$(FC) -c -O fourt.f
-
 .PHONY : clean
 install:	WsjtMod/Audio.so
 	${PYTHON} setup.py install
