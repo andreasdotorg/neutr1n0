@@ -102,7 +102,7 @@ AC_MSG_CHECKING([g95 lib path])
 G95_LIB_PATH=`${G95} -print-file-name=`
 AC_MSG_RESULT(${G95_LIB_PATH})
 AC_MSG_CHECKING([g95 lib path])
-AC_PATH_PROG(GFORTRAN, gfortran42)
+AC_PATH_PROG(GFORTRAN, gfortran43)
 AC_PATH_PROG(GFORTRAN, gfortran)
 AC_MSG_CHECKING([gfortran lib path])
 GFORTRAN_LIB_PATH=`${GFORTRAN} -print-file-name=`
@@ -418,9 +418,9 @@ echo
 echo "***************"
 
 
-if test $g95 == "yes"; then
+if test $g95 = "yes"; then
 	echo "Using g95 as fortran compiler.";
-elif test $gfortran == "yes"; then
+elif test $gfortran = "yes"; then
 	echo "Using gfortran as fortran compiler.";
 fi
 
