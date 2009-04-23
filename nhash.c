@@ -38,7 +38,7 @@ on 1 byte), but shoehorning those bytes into integers efficiently is messy.
 #include <stdio.h>      /* defines printf for tests */
 #include <time.h>       /* defines time_t for timings in the test */
 #ifdef Win32
-#include "stdint.h"     /* defines uint32_t etc */
+#include "win_stdint.h"     /* defines uint32_t etc */
 #else
 #include <stdint.h>     /* defines uint32_t etc */
 #endif
