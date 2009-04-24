@@ -1,10 +1,13 @@
 MV ?= mv
 CC ?= @CC@
+MKDIR ?= mkdir
+INSTALL=	install
 FFLAGS	= @FFLAGS@
 LDFLAGS	= @LDFLAGS@
 LIBS	+= @LIBS@
 CPPFLAGS = @CPPFLAGS@
 CFLAGS	= @CFLAGS@
+PREFIX	= @PREFIX@
 # WSJT specific C flags
 CFLAGS	+= -DBIGSYM=1 -fPIC
 DEFS = @DEFS@
@@ -29,9 +32,9 @@ Audio:	WsjtMod/Audio.so
 OS=@OS@
 FC=@FC@
 FCV=@FCV@
-COMPILER += @FC_LIB_PATH@
+FC_LIB_PATH	+= @FC_LIB_PATH@
 
-LDFLAGS	+= -L${COMPILER}
+LDFLAGS	+= -L${FC_LIB_PATH}
 
 PYTHON	?= @PYTHON@
 RM	?= @RM@
@@ -126,11 +129,17 @@ cutil.o: cutil.c
 
 .PHONY : clean
 install:	WsjtMod/Audio.so
+	${RM} -rf build
 	${PYTHON} setup.py install
-
+	${MKDIR} -p ${PREFIX}/share/wsjt
+	${INSTALL} -m 0644 CALL3.TXT ${PREFIX}/share/wsjt/
+	${INSTALL} -m 0644 wsjtrc ${PREFIX}/share/wsjt/
+	${INSTALL} -m 0644 dmet_*.dat ${PREFIX}/share/wsjt/
+	${INSTALL} wsjt ${PREFIX}/bin
 clean:
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt7 WsjtMod/*.pyc WsjtMod/*.pyc \
 		WsjtMod/*.so wsjt7.py
+	${RM} -rf build
 
 distclean: clean
 	${RM} -f config.log config.status Makefile

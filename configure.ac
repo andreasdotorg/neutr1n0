@@ -6,14 +6,18 @@ dnl AC_PREREQ(2.61)
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([$Id$])
 
-AC_INIT([wsjt],[5.9.6])
+AC_INIT([wsjt],[7.03])
 
+dnl This should be a svn hook instead.
 dnl Sneakier way to get a Version into setup.py
-rev=`echo "$Rev: 848 $"|awk '{print $2}'`
-version="7.0 r${rev}"
+if test -e .svn ;then
+	rev=`svn info|grep Revision|awk '{print $2}'`
+	echo ${rev}>rev
+fi
+version="7.03 r`cat rev`"
 fail=0
 
-AC_PREFIX_DEFAULT("/usr/local/")
+AC_PREFIX_DEFAULT("/usr/local")
 
 OLD_CFLAGS="$CFLAGS"
 dnl Checks for programs.
@@ -35,6 +39,15 @@ FFLAGS_GFORTRAN="${FFLAGS} -fno-range-check -ffixed-line-length-none\
 FFLAGS_G95="${FFLAGS} -Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC"
 #-Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC
 
+dnl
+dnl Pick up FC from the environment if present
+dnl I'll add a test to confirm this is a gfortran later -db
+dnl
+
+if test -n ${FC} ; then
+	gfortran=${FC}
+fi
+
 AC_MSG_CHECKING([uname -s])
 case `uname -s` in
 	CYGWIN*)
@@ -45,15 +58,27 @@ case `uname -s` in
 		AC_MSG_RESULT(SunOS or Solaris)
 		AC_DEFINE(__EXTENSIONS__, 1, [This is needed to use strtok_r on Solaris.])
 	;;
-dnl        FreeBSD*)
-dnl		AC_MSG_RESULT(FreeBSD)
-dnl		FCV_G95="g95"
-dnl	;;
+dnl
+dnl Pick up current gfortran from ports infrastructure for fbsd
+dnl
+        FreeBSD*)
+		if test -z ${gfortran} ; then
+			gfortran=`grep FC: /usr/ports/Mk/bsd.gcc.mk | head -1 |awk '{print $2}'`
+		fi
+	;;
 	*)
 		FCV_G95="g95"
 		AC_MSG_RESULT(no)
 	;;
 esac
+
+dnl
+dnl look for gfortran if nothing else was given
+dnl
+
+if test -z $gfortran ; then
+	gfortran="gfortran"
+fi
 
 if test "$ac_cv_c_compiler_gnu" = yes; then
 	AC_MSG_CHECKING(if $CC is Apple GCC)
@@ -98,19 +123,11 @@ AC_PATH_PROG(TEST, [test], [test])
 AC_PATH_PROG(PYTHON, python)
 AC_PATH_PROG(F2PY, f2py)
 AC_PATH_PROG(G95, g95)
-AC_MSG_CHECKING([g95 lib path])
-G95_LIB_PATH=`${G95} -print-file-name=`
-AC_MSG_RESULT(${G95_LIB_PATH})
-AC_MSG_CHECKING([g95 lib path])
-AC_PATH_PROG(GFORTRAN, gfortran43)
-AC_PATH_PROG(GFORTRAN, gfortran)
-AC_MSG_CHECKING([gfortran lib path])
-GFORTRAN_LIB_PATH=`${GFORTRAN} -print-file-name=`
-AC_MSG_RESULT(${GFORTRAN_LIB_PATH})
+AC_PATH_PROG(GFORTRAN, ${gfortran})
+AC_SUBST(VERSION, "${version}")
 AC_MSG_CHECKING([OS])
 OS=`uname`
 AC_SUBST(OS, "${OS}")
-AC_SUBST(VERSION, "${version}")
 
 dnl Checks for header files.
 
@@ -125,6 +142,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADER([fftw3.h], [HAS_FFTW3_H=1], [HAS_FFTW3_H=0])
 
 AC_CHECK_HEADER([samplerate.h], [HAS_SAMPLERATE_H=1], [HAS_SAMPLERATE_H=0])
+
 HAS_PORTAUDIO_H=0
 HAS_PORTAUDIO_LIB=0
 HAS_PORTAUDIO=0
@@ -171,10 +189,12 @@ if test "$assert" = no; then
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
 fi
 
+echo prefix = ${prefix}
+echo ac_default_prefix = ${ac_default_prefix}
 
 if test "$prefix" = "NONE"; then 
-	AC_DEFINE_UNQUOTED(PREFIX, "$ac_default_prefix", [Prefix where wsjt is installed.])
-
+	echo "prefix is NONE so set it !"
+	prefix=${ac_default_prefix}
 else
 
 dnl Don't get bitten by Cygwin's stupidity if the user specified
@@ -185,8 +205,10 @@ dnl a custom prefix with a trailing slash
 	
 fi
 
+echo PREFIX ${PREFIX}
+echo prefix ${prefix}
 AC_CONFIG_FILES(		\
-	Makefile setup.py
+	Makefile setup.py wsjt.py
 )
 
 dnl =========================================
@@ -203,10 +225,10 @@ AC_HELP_STRING([--enable-gfortran],[Use gfortran compiler if available.]),
 dnl now set conf.h,, CPPFLAGS and CFLAGS flags as needed
 dnl ====================================================
  
-if test ! -z $GFORTRAN ; then
-	echo "*** gfortran compiler found"
+if test ! -z ${GFORTRAN} ; then
+	echo "*** gfortran compiler found at ${GFORTRAN}"
 	if test "$gfortran" = yes; then
-       		FC_LIB_PATH=${GFORTRAN_LIB_PATH}
+       		FC_LIB_PATH=`${GFORTRAN} -print-file-name=`
 		FC=`basename ${GFORTRAN}`
 		g95=no
 		FFLAGS="${FFLAGS_GFORTRAN}"
@@ -217,9 +239,9 @@ else
 fi
 
 if test ! -z $G95 ; then
-	echo "*** g95 compiler found"
+	echo "*** g95 compiler found at ${G95}"
 	if test "$g95" = yes; then
-		FC_LIB_PATH=${G95_LIB_PATH}
+       		FC_LIB_PATH=`${G95} -print-file-name=`
 		FC=`basename ${G95}`
 		gfortran=no
 		FFLAGS="${FFLAGS_G95}"
@@ -237,7 +259,7 @@ if test -z $FC ; then
 		if test "$g95" = yes; then
 			echo "You enabled g95, but no g95 compiler found, defaulting to gfortran instead"
 		fi
-       		FC_LIB_PATH=${GFORTRAN_LIB_PATH}
+       		FC_LIB_PATH=`${GFORTRAN} -print-file-name=`
 	        FC=`basename ${GFORTRAN}`
 		g95=no
 		gfortran=yes
@@ -247,7 +269,7 @@ if test -z $FC ; then
 		if test "$gfortran" = yes; then
 			echo "You enabled gfortran, but no gfortran compiler found, defaulting to g95 instead"
 		fi
-       		FC_LIB_PATH=${G95_LIB_PATH}
+       		FC_LIB_PATH=`${G95} -print-file-name=`
 	        FC=`basename ${G95}`
 		g95=yes
 		gfortran=no
