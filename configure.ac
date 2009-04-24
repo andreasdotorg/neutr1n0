@@ -193,7 +193,6 @@ echo prefix = ${prefix}
 echo ac_default_prefix = ${ac_default_prefix}
 
 if test "$prefix" = "NONE"; then 
-	echo "prefix is NONE so set it !"
 	prefix=${ac_default_prefix}
 else
 
