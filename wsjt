@@ -9,7 +9,11 @@ if [ ! -e ~/.wsjt ] ; then
 	mkdir ~/.wsjt/RxWav
 fi
 if [ ! -e ~/.wsjt/CALL3.TXT ] ; then
+#KVASD_g95 should be in ${LOCALBASE}/bin already; unix will pick this up
 	cp -f ${LOCALBASE}/share/wsjt/CALL3.TXT ~/.wsjt
+	cp -f ${LOCALBASE}/share/wsjt/wsjtrc ~/.wsjt
+	cp -f ${LOCALBASE}/share/wsjt/dmet_*.dat ~/.wsjt
+	cp -f ${LOCALBASE}/share/wsjt/dmet_10_-1_3.dat ~/.wsjt
 fi
 cd ~/.wsjt
 python ${LOCALBASE}/bin/wsjt.py
