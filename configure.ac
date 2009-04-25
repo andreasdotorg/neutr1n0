@@ -8,13 +8,6 @@ AC_COPYRIGHT([$Id$])
 
 AC_INIT([wsjt],[7.03])
 
-dnl This should be a svn hook instead.
-dnl Sneakier way to get a Version into setup.py
-if test -e .svn ;then
-	rev=`svn info|grep Revision|awk '{print $2}'`
-	echo ${rev}>rev
-fi
-version="7.03 r`cat rev`"
 fail=0
 
 AC_PREFIX_DEFAULT("/usr/local")
@@ -203,12 +196,6 @@ dnl a custom prefix with a trailing slash
 	AC_DEFINE_UNQUOTED(PREFIX, "$prefix", [Prefix where wsjt is installed.])
 	
 fi
-
-echo PREFIX ${PREFIX}
-echo prefix ${prefix}
-AC_CONFIG_FILES(		\
-	Makefile setup.py wsjt.py
-)
 
 dnl =========================================
 dnl pick gfortran or g95
@@ -432,7 +419,7 @@ AC_SUBST(FFLAGS)
 AC_SUBST(F2PY, "${F2PY}")
 AC_OUTPUT
 
-dnl AC_CONFIG_FILES(Makefile setup.py)
+dnl AC_CONFIG_FILES(Makefile)
 
 dnl do summary
 echo
