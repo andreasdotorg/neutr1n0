@@ -58,6 +58,7 @@ dnl
 		if test -z ${gfortran} ; then
 			gfortran=`grep FC: /usr/ports/Mk/bsd.gcc.mk | head -1 |awk '{print $2}'`
 		fi
+		FCV_G95="g95"
 	;;
 	*)
 		FCV_G95="g95"
