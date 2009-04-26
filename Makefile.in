@@ -94,6 +94,9 @@ AUDIOSRCS =	a2d.f90 jtaudio.c start_portaudio.c resample.c
 
 all:	WsjtMod/Audio.so wsjt7 JT65code
 
+release:	all
+	sh rev.sh
+
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
 
@@ -106,7 +109,6 @@ WsjtMod/Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	: $(SRCS2F90) \
 	${SRCS3C} ${AUDIOSRCS}
 	${MV} Audio.so WsjtMod
-	sh rev.sh
 
 wsjt7:  WsjtMod/Audio.so wsjt7.spec
 	python /home/joe/temp/pyinstaller-1.3/Build.py wsjt7.spec
@@ -130,7 +132,7 @@ cutil.o: cutil.c
 
 .PHONY : clean
 install:	WsjtMod/Audio.so
-	${RM} -rf build
+	${RM} -rf build/
 	${PYTHON} setup.py install
 	${MKDIR} -p ${PREFIX}/share/wsjt
 	${INSTALL} -m 0644 CALL3.TXT ${PREFIX}/share/wsjt/
@@ -140,7 +142,7 @@ install:	WsjtMod/Audio.so
 clean:
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt7 WsjtMod/*.pyc WsjtMod/*.pyc \
 		WsjtMod/*.so wsjt7.py
-	${RM} -rf build
+	${RM} -rf build/
 
 distclean: clean
 	${RM} -f config.log config.status Makefile
