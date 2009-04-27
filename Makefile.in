@@ -97,6 +97,7 @@ all:	WsjtMod/Audio.so wsjt7 JT65code
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
 
+build:
 WsjtMod/Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	 ${F2PY} -c --quiet --opt="-O ${CFLAGS} \
 	${FFLAGS}"	$(OBJS2C) $(OBJS2F77) -m Audio \
