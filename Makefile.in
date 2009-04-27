@@ -94,9 +94,6 @@ AUDIOSRCS =	a2d.f90 jtaudio.c start_portaudio.c resample.c
 
 all:	WsjtMod/Audio.so wsjt7 JT65code
 
-release:	all
-	sh rev.sh
-
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
 
