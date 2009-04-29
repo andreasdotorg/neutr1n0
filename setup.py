@@ -31,7 +31,6 @@ for the very challenging EME (Earth-Moon-Earth) path.
 	url='http://physics.princeton.edu/pulsar/K1JT',
 	scripts=['wsjt','wsjt.py'],
 	packages=['WsjtMod'],
-	data_files=[('NONE',['CALL3.TXT'])]
 	)
 
 if __name__ == '__main__':
