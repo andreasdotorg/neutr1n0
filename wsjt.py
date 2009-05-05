@@ -24,8 +24,7 @@ from types import *
 import array
 
 root = Tk()
-#Version="7.03 r1154"
-Version="7.0 r" + "$Rev$"[6:-1]
+Version="7.04 r" + "$Rev$"[6:-1]
 print "******************************************************************"
 print "WSJT Version " + Version + ", by K1JT"
 print "Revision date: " + \
