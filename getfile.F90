@@ -55,7 +55,7 @@ subroutine getfile(fname,len)
      do i=1,ndata
         n4=d1(i)
         if (n4.lt.0) n4=256+n4
-        d2c(i)=250*n4
+        d2c(i)=250*(n4-128)
      enddo
      jzc=ndata
 
