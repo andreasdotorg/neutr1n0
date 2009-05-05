@@ -5,7 +5,7 @@
 from Tkinter import *
 from tkFileDialog import *
 from WsjtMod import Pmw
-from tkMessageBox import showwarning
+import tkMessageBox
 from WsjtMod import g
 import os,time
 from WsjtMod import Audio
@@ -232,12 +232,8 @@ def logqso(event=NONE):
     if g.nfreq==4: tf="3.5"
     t=t+","+ToRadio.get()+","+HisGrid.get()+","+tf+","+g.mode+"\n"
     t2="Please confirm making the following entry in WSJT.LOG:\n\n" + t
-    msg=Pmw.MessageDialog(root,buttons=('Yes','No'),message_text=t2)
-    msg.geometry(msgpos())
-    if g.Win32: msg.iconbitmap("wsjt.ico")
-    msg.focus_set()
-    result=msg.activate()
-    if result == 'Yes':
+    result=tkMessageBox.askyesno(message=t2)
+    if result:
         f=open(appdir+'/WSJT.LOG','a')
         f.write(t)
         f.close()
@@ -405,10 +401,7 @@ def opennext(event=NONE):
             fileopened=os.path.basename(fname)
         else:
             t="No more *.wav files in this directory."
-            msg=Pmw.MessageDialog(root,buttons=('OK',),message_text=t)
-            msg.geometry(msgpos())
-            if g.Win32: msg.iconbitmap("wsjt.ico")
-            msg.focus_set()
+	    tkMessageBox.showwarning(message=t)
             ncall=0
             loopall=0
 
@@ -444,9 +437,7 @@ def stub(event=NONE):
 
 #------------------------------------------------------ MsgBox
 def MsgBox(t):
-    msg=Pmw.MessageDialog(root,buttons=('OK',),message_text=t)
-    result=msg.activate()
-    msg.focus_set()
+    tkMessageBox(message=t)
 
 #------------------------------------------------------ txstop
 def txstop(event=NONE):
@@ -488,11 +479,8 @@ def addtodb():
         hisgrid=HisGrid.get().strip()
         hc=hiscall
         NewEntry=hc + "," + hisgrid
-        msg=Pmw.MessageDialog(root,buttons=('Yes','No'),
-            message_text="Is this station known to be active on EME?")
-        result=msg.activate()
-        msg.focus_set()
-        if result=="Yes":
+	result=tkMessageBox.askyesno(message="Is this station known to be active on EME?")
+        if result:
             NewEntry=NewEntry + ",EME,,"
         else:
             NewEntry=NewEntry + ",,,"
@@ -517,11 +505,8 @@ def addtodb():
                     modified=1
                 elif hc==hc2:
                     t=s[i] + "\n\n is already in CALL3.TXT\nDo you wish to replace this entry?"
-                    msg=Pmw.MessageDialog(root,buttons=('Yes','No'),
-                        message_text=t)
-                    result=msg.activate()
-                    msg.focus_set()
-                    if result=="Yes":
+		    result=tkMessageBox.askyesno(message=t)
+                    if result:
                         i1=s[i].find(",")
                         i2=s[i].find(",",i1+1)
                         i3=s[i].find(",",i2+1)
@@ -1213,12 +1198,8 @@ def defaults():
 #------------------------------------------------------ delwav
 def delwav():
     t="Are you sure you want to delete\nall *.WAV files in the RxWav directory?"
-    msg=Pmw.MessageDialog(root,buttons=('Yes','No'),message_text=t)
-    msg.geometry(msgpos())
-    if g.Win32: msg.iconbitmap("wsjt.ico")
-    msg.focus_set()
-    result=msg.activate()
-    if result == 'Yes':
+    result=tkMessageBox.askyesno(message=t)
+    if result:
 # Make a list of *.wav files in RxWav
         la=dircache.listdir(appdir+'/RxWav')
         lb=[]
