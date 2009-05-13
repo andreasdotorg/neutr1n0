@@ -181,9 +181,6 @@ if test "$assert" = no; then
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
 fi
 
-echo prefix = ${prefix}
-echo ac_default_prefix = ${ac_default_prefix}
-
 if test "$prefix" = "NONE"; then 
 	prefix=${ac_default_prefix}
 else
@@ -192,8 +189,6 @@ dnl Don't get bitten by Cygwin's stupidity if the user specified
 dnl a custom prefix with a trailing slash
 
 	prefix=`echo $prefix | sed 's/\/$//'`
-	AC_DEFINE_UNQUOTED(PREFIX, "$prefix", [Prefix where wsjt is installed.])
-	
 fi
 
 dnl =========================================
