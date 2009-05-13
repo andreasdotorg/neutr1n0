@@ -28,7 +28,6 @@ LIBS=" -lpthread ${LIBS}"
 FCV=""
 FFLAGS_GFORTRAN="${FFLAGS} -fno-range-check -ffixed-line-length-none\
 			-Wall -fbounds-check -fno-second-underscore -fPIC"
-
 FFLAGS_G95="${FFLAGS} -Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC"
 #-Wall -Wno-precision-loss -fbounds-check -fno-second-underscore -fPIC
 
@@ -134,7 +133,6 @@ sys/resource.h linux/ppdev.h dev/ppbus/ppi.h sys/stat.h fcntl.h sys/ioctl.h ])
 AC_HEADER_TIME
 
 AC_CHECK_HEADER([fftw3.h], [HAS_FFTW3_H=1], [HAS_FFTW3_H=0])
-
 AC_CHECK_HEADER([samplerate.h], [HAS_SAMPLERATE_H=1], [HAS_SAMPLERATE_H=0])
 
 HAS_PORTAUDIO_H=0
@@ -349,8 +347,7 @@ dnl
 fi
 
 dnl sanity tests.
-dnl
-echo
+dnl =============
 
 if test -z $FC ; then
 	fail=1
@@ -365,6 +362,9 @@ fi
 if test $HAS_SAMPLERATE_H -eq 0; then
 	fail=1
 	echo "You need to install the samplerate library"
+else
+	AC_DEFINE(HAS_SAMPLERATE_H, 1, )
+	LIBS="${LIBS} -lsamplerate"
 fi
 
 if test $HAS_PORTAUDIO -eq 1; then
@@ -378,11 +378,6 @@ else
 	echo " --with-portaudio-lib-dir= to set the paths."
 fi
 
-if test $HAS_SAMPLERATE_H -eq 1; then
-        AC_DEFINE(HAS_SAMPLERATE_H, 1, )
-	LIBS="${LIBS} -lsamplerate"
-fi
-
 if test $HAS_FFTW3_H -eq 1; then
 	AC_DEFINE(HAS_FFTW3_H, 1, )
 else
@@ -390,18 +385,17 @@ else
 	echo "You are missing the fftw3.h include file"
 fi
 
-if test "$F2PY" = ""; then
-	echo "You are missing f2py, trying local copy."
-	F2PY="python f2py.py";	
-fi
-
 if test $HAS_FFTW3FLIBS -eq 1; then
 	LIBS="${LIBS} -lfftw3f"
 	AC_DEFINE(HAS_FFTW3FLIBS, 1, )
 else
 	fail =1
-	echo "You are missing the fortran shim lib for fftw3 you need libfftw3f."
-	echo "It is also possible your libfftw3f is missing the fortran shim entry points."
+	echo "You are missing the fortran shim libs in libfftw3."
+fi
+
+if test "$F2PY" = ""; then
+	echo "You are missing f2py, trying local copy."
+	F2PY="python f2py.py";	
 fi
 
 dnl
