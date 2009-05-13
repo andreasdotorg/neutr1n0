@@ -188,7 +188,7 @@ else
 dnl Don't get bitten by Cygwin's stupidity if the user specified
 dnl a custom prefix with a trailing slash
 
-	prefix=`echo $prefix | sed 's/\/$//'`
+	prefix=`echo ${ac_default_prefix} | sed 's/\/$//'`
 fi
 
 dnl =========================================
