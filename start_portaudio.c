@@ -24,12 +24,9 @@ start_threads_(int *ndevin, int *ndevout, short y1[], short y2[],
   int iret1,iret2;
   int iarg1 = 1,iarg2 = 2;
 
- /* snd_pcm_start */
-  //  printf("start_threads: creating thread for a2d\n");
   iret1 = pthread_create(&thread1,NULL,
 			 (void *)a2d_,&iarg1);
-  //  printf("start_threads: creating thread for decode1_\n");
   iret2 = pthread_create(&thread2,NULL,
 			 (void *)decode1_,&iarg2);
-  return (0);
+  return (iret1 | iret2);
 }
