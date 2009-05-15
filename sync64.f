@@ -15,7 +15,6 @@ C  NB: at this stage, submodes ABC are processed in the same way.
       real ccfblue(-5:540)             !CCF with pseudorandom sequence
 
 C  The value 450 is empirical:
-      real ccfred(-450:450)            !Peak of ccfblue, as function of freq
       real ccfred1(-224:224)           !Peak of ccfblue, as function of freq
       real ccf64(-224:224)
       integer ic6(6)
