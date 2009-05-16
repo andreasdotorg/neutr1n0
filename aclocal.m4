@@ -18,6 +18,8 @@ if test -n $[{FC}] ; then
 	gfortran=$[{FC}]
 fi
 
+FCV=""
+
 dnl
 dnl Note regarding the apparent silliness with FCV.
 dnl The FCV value for g95 might be system dependent, this is
@@ -61,8 +63,6 @@ fi
 AC_PATH_PROG(G95, g95)
 AC_PATH_PROG(GFORTRAN, $[{gfortran}])
 
-FCV=""
- 
 if test ! -z $[{GFORTRAN}] ; then
 	echo "*** gfortran compiler found at $[{GFORTRAN}]"
 	if test "$[{gfortran}]" = yes; then
