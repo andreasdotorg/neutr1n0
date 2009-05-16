@@ -3070,8 +3070,20 @@ fi
 
 
 
+FCV=""
+
 if test -n ${FC} ; then
-	gfortran=${FC}
+	gfortran_name_part=`echo ${FC} | cut -c 1-8`
+	if test ${gfortran_name_part} = "gfortran" ; then
+		gfortran_name=${FC}
+       		FC_LIB_PATH=`${FC} -print-file-name=`
+		g95=no
+		gfortran=yes
+		FFLAGS="${FFLAGS_GFORTRAN}"
+		FCV="gnu95"
+	else
+		unset ${FC}
+	fi
 fi
 
 
@@ -3093,8 +3105,8 @@ _ACEOF
 
 	;;
         FreeBSD*)
-		if test -z ${gfortran} ; then
-			gfortran=`grep FC: /usr/ports/Mk/bsd.gcc.mk | head -1 |awk '{print $2}'`
+		if test -z ${gfortran_name} ; then
+			gfortran_name=`grep FC: /usr/ports/Mk/bsd.gcc.mk | head -1 |awk '{print $2}'`
 		fi
 		FCV_G95="g95"
 	;;
@@ -3106,8 +3118,8 @@ $as_echo "no" >&6; }
 esac
 
 
-if test -z $gfortran ; then
-	gfortran="gfortran"
+if test -z $gfortran_name ; then
+	gfortran_name="gfortran"
 fi
 
 # Extract the first word of "g95", so it can be a program name with args.
@@ -3150,8 +3162,8 @@ $as_echo "no" >&6; }
 fi
 
 
-# Extract the first word of "${gfortran}", so it can be a program name with args.
-set dummy ${gfortran}; ac_word=$2
+# Extract the first word of "${gfortran_name}", so it can be a program name with args.
+set dummy ${gfortran_name}; ac_word=$2
 { $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if test "${ac_cv_path_GFORTRAN+set}" = set; then
@@ -3190,8 +3202,6 @@ $as_echo "no" >&6; }
 fi
 
 
-
-FCV=""
 
 if test ! -z ${GFORTRAN} ; then
 	echo "*** gfortran compiler found at ${GFORTRAN}"

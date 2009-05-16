@@ -14,11 +14,21 @@ dnl Pick up FC from the environment if present
 dnl I'll add a test to confirm this is a gfortran later -db
 dnl
 
-if test -n $[{FC}] ; then
-	gfortran=$[{FC}]
-fi
-
 FCV=""
+
+if test -n $[{FC}] ; then
+	gfortran_name_part=`echo $[{FC}] | cut -c 1-8`
+	if test $[{gfortran_name_part}] = "gfortran" ; then
+		gfortran_name=$[{FC}]
+       		FC_LIB_PATH=`$[{FC}] -print-file-name=`
+		g95=no
+		gfortran=yes
+		FFLAGS="$[{FFLAGS_GFORTRAN}]"
+		FCV="gnu95"
+	else
+		unset $[{FC}]
+	fi
+fi
 
 dnl
 dnl Note regarding the apparent silliness with FCV.
@@ -41,8 +51,8 @@ dnl
 dnl Pick up current gfortran from ports infrastructure for fbsd
 dnl
         FreeBSD*)
-		if test -z $[{gfortran}] ; then
-			gfortran=`grep FC: /usr/ports/Mk/bsd.gcc.mk | head -1 |awk '{print $[2]}'`
+		if test -z $[{gfortran_name}] ; then
+			gfortran_name=`grep FC: /usr/ports/Mk/bsd.gcc.mk | head -1 |awk '{print $[2]}'`
 		fi
 		FCV_G95="g95"
 	;;
@@ -56,12 +66,12 @@ dnl
 dnl look for gfortran if nothing else was given
 dnl
 
-if test -z $[gfortran] ; then
-	gfortran="gfortran"
+if test -z $[gfortran_name] ; then
+	gfortran_name="gfortran"
 fi
 
 AC_PATH_PROG(G95, g95)
-AC_PATH_PROG(GFORTRAN, $[{gfortran}])
+AC_PATH_PROG(GFORTRAN, $[{gfortran_name}])
 
 if test ! -z $[{GFORTRAN}] ; then
 	echo "*** gfortran compiler found at $[{GFORTRAN}]"
