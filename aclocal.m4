@@ -11,7 +11,6 @@ AC_HELP_STRING([--enable-gfortran],[Use gfortran compiler if available.]),
 
 dnl
 dnl Pick up FC from the environment if present
-dnl I'll add a test to confirm this is a gfortran later -db
 dnl
 
 FCV=""
@@ -131,13 +130,8 @@ AC_SUBST(FC_LIB_PATH, "${FC_LIB_PATH}")
 AC_DEFINE_UNQUOTED(FC, "${FC}", [Fortran compiler.])
 AC_SUBST(FC, "${FC}")
 AC_SUBST(FCV, "${FCV}")
-AC_SUBST(PREFIX, "${prefix}")
-
-dnl =========================================
-dnl pick gfortran or g95
 
 ])dnl }}}
-
 
 dnl {{{ ax_check_portaudio
 AC_DEFUN([AX_CHECK_PORTAUDIO],[

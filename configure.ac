@@ -207,6 +207,7 @@ if test $fail -eq 1; then
 fi
 
 dnl 
+AC_SUBST(PREFIX, "${prefix}")
 AC_SUBST(CPPFLAGS, "${CPPFLAGS}")
 AC_SUBST(LDFLAGS, "${LDFLAGS}")
 AC_SUBST(LIBS, "${LIBS}")
