@@ -1,6 +1,6 @@
 // #include <stdio.h>
 // #include <math.h>
-#include "portaudio.h"
+#include <portaudio.h>
 
 int __stdcall PADEVSUB(int *numdev, int *ndefin, int *ndefout,
 		       int nchin[], int nchout[])
