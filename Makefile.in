@@ -85,7 +85,8 @@ SRCS2F77 = wsjt1.f astro.f azdist.f coord.f dcoord.f deg2grid.f \
 
 OBJS2F77 = ${SRCS2F77:.f=.o} deep65.o
 
-SRCS2C	= init_rs.c encode_rs.c decode_rs.c fano.o tab.c nhash.c cutil.c
+SRCS2C	= init_rs.c encode_rs.c decode_rs.c fano.c azelout.c w21.c \
+	tab.c nhash.c cutil.c
 OBJS2C  = ${SRCS2C:.c=.o}
 
 SRCS3C	= ptt_unix.c igray.c wrapkarn.c
@@ -139,7 +140,7 @@ install:	WsjtMod/Audio.so
 	${INSTALL} wsjt ${PREFIX}/bin
 clean:
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt7 WsjtMod/*.pyc WsjtMod/*.pyc \
-		WsjtMod/*.so wsjt7.py
+		WsjtMod/*.so wsjt7.py wsjt7.spec
 	${RM} -rf build/
 
 distclean: clean

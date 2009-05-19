@@ -6,6 +6,7 @@ subroutine audio_init(ndin,ndout)
   parameter (ABOVE_NORMAL_PRIORITY_CLASS=32768)
   external a2d,decode1
 #endif
+  integer start_threads
 
   include 'gcom1.f90'
   include 'gcom2.f90'
@@ -69,11 +70,7 @@ subroutine audio_init(ndin,ndout)
   m3=SetThreadPriority(Thread2,THREAD_PRIORITY_BELOW_NORMAL)
   m4=ResumeThread(Thread2)
 #else
-!  print*,'Audio INIT called.'
-  ierr=start_threads(ndevin,ndevout,y1,y2,nmax,iwrite,iwave,nwave,    &
-       11025,NSPB,TRPeriod,TxOK,ndebug,Transmitting,            &
-       Tsec,ngo,nmode,tbuf,ibuf,ndsec,PttPort,devin_name,devout_name)
-
+  ierr=start_threads()
 #endif
 
   return

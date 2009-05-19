@@ -353,29 +353,18 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
 }
 
 
-int padevsub_(int *numdev, int *ndefin, int *ndefout, 
-	      int nchin[], int nchout[])
+int padevsub_(int *idevin, int *idevout)
 {
+  int numdev,ndefin,ndefout;
+  int nchin[21], nchout[21];
   int      i, devIdx;
   int      numDevices;
   const PaDeviceInfo *pdi;
   PaError  err;
-  //  PaHostApiInfo *hostapi;
 
   Pa_Initialize();
-
-  /*
-  n = Pa_GetHostApiCount();
-  printf("HostAPI Type #Devices\n");
-  for(i = 0; i < n; i++) {
-    hostapi = Pa_GetHostApiInfo(i);
-    printf(" %3d   %2d   %3d  %s\n",i,hostapi->type,
-	   hostapi->deviceCount,hostapi->name);
-  }
-  */
-
   numDevices = Pa_GetDeviceCount();
-  *numdev = numDevices;
+  numdev = numDevices;
 
   if( numDevices < 0 )  {
     err = numDevices;
@@ -384,15 +373,15 @@ int padevsub_(int *numdev, int *ndefin, int *ndefout,
   }
 
   if ((devIdx = Pa_GetDefaultInputDevice()) > 0) {
-    *ndefin = devIdx;
+    ndefin = devIdx;
   } else {
-    *ndefin = 0;
+    ndefin = 0;
   }
 
   if ((devIdx = Pa_GetDefaultOutputDevice()) > 0) {
-    *ndefout = devIdx;
+    ndefout = devIdx;
   } else {
-    *ndefout = 0;
+    ndefout = 0;
   }
 
   printf("\nAudio     Input    Output     Device Name\n");
@@ -401,12 +390,25 @@ int padevsub_(int *numdev, int *ndefin, int *ndefout,
 
   for( i=0; i < numDevices; i++ )  {
     pdi = Pa_GetDeviceInfo(i);
-//    if(i == Pa_GetDefaultInputDevice()) *ndefin = i;
-//    if(i == Pa_GetDefaultOutputDevice()) *ndefout = i;
+//    if(i == Pa_GetDefaultInputDevice()) ndefin = i;
+//    if(i == Pa_GetDefaultOutputDevice()) ndefout = i;
     nchin[i]=pdi->maxInputChannels;
     nchout[i]=pdi->maxOutputChannels;
     printf("  %2d       %2d        %2d       %s\n",i,nchin[i],nchout[i],pdi->name);
   }
+
+  printf("\nUser requested devices:   Input = %2d   Output = %2d\n",
+  	 *idevin,*idevout);
+  printf("Default devices:          Input = %2d   Output = %2d\n",
+  	 ndefin,ndefout);
+  if((*idevin<0) || (*idevin>=numdev)) *idevin=ndefin;
+  if((*idevout<0) || (*idevout>=numdev)) *idevout=ndefout;
+  if((*idevin==0) && (*idevout==0))  {
+    *idevin=ndefin;
+    *idevout=ndefout;
+  }
+  printf("Will open devices:        Input = %2d   Output = %2d\n",
+  	 *idevin,*idevout);
 
   Pa_Terminate();
 
