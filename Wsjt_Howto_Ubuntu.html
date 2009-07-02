@@ -1,0 +1,437 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1251">
+  <title>Wsjt_Howto_Ubuntu1</title>
+
+
+  <meta name="GENERATOR" content="OpenOffice.org 2.4 Linux">
+
+  <meta name="CREATED" content="0;0">
+
+  <meta name="CHANGEDBY" content="Harry Popov">
+
+  <meta name="CHANGED" content="20080906;12425800">
+
+  <style>
+<!--
+@page { size: 21.01cm 29.69cm; margin: 2.01cm }
+TD P { margin-bottom: 0.2cm }
+P { margin-bottom: 0.2cm }
+-->
+  </style>
+</head>
+
+
+<body style="direction: ltr;" lang="en-US">
+
+<center class="" style="font-family: Arial;">
+
+<table style="page-break-before: always;" border="0" cellpadding="2" cellspacing="2" width="800">
+
+  <tbody>
+
+    <tr>
+
+      <td width="800">
+      <div style="text-align: center; font-weight: bold;"><big>How
+to compile WSJT under Ubuntu and Debian<br>
+
+      </big></div>
+
+      <br>
+
+      <div style="text-align: center;">by Harry Popov LZ1BB<br>
+
+      </div>
+
+      <div style="text-align: right;">
+      <div style="text-align: center;">Sep 04 2008<br>
+
+      <br>
+
+      <br>
+
+      </div>
+
+      </div>
+
+Several people asked how to compile WSJT as deb package provided by
+Ubuntu 7.10 is not working. Here is the easiest way. It was tested with
+Ubuntu 7.10, 8.04 and Debian Lenny distributions:<br>
+
+&nbsp;<br>
+
+1. Type in terminal:<br>
+
+      <br>
+
+sudo apt-get build-dep wsjt<br>
+
+      <br>
+
+This will install all necessary dev packages needed for compilation
+except fftw3 libraries. To install them open Synaptic Package Menager
+and hit SEARCH button. Type fftw3 in the search window. Mark for
+installation libfftw3 and libfftw3-dev packages. <br>
+
+      <br>
+
+2. Download WSJT source package from:<br>
+
+      <br>
+
+      <a href="http://lz1bb.bfra.org/wsjt/wsjt-7.0.0.r973.tar.gz">http://lz1bb.bfra.org/wsjt/wsjt-7.0.0.r973.tar.gz</a><br>
+
+      <br>
+
+As ordinary user type in the console (terminal):<br>
+
+      <br>
+
+tar xzvf wsjt-7.0.0.r973.tar.gz<br>
+
+      <br>
+
+cd wsjt-7.0.0.r973<br>
+
+./configure<br>
+
+make clean; make<br>
+
+      <br>
+
+That is all!! Next just start it. IMPORTANT!!! Always cd to
+wsjt-7.0.0.r973 folder before running wsjt::<br>
+
+      <br>
+
+cd ~/wsjt-7.0.0.r973<br>
+
+python -O wsjt.py<br>
+
+      <br>
+
+I use simple script to start WSJT. Useful in case of bad memory like
+mine:<br>
+
+      <br>
+
+Create a text file called wsjt7 and copy/paste the following:<br>
+
+      <br>
+
+--------Copy bellow me------------<br>
+
+#!/bin/sh<br>
+
+#<br>
+
+# wsjt7&nbsp;&nbsp;&nbsp;&nbsp; This shell script
+starts wsjt-7.0.0.r973<br>
+
+cd ~/wsjt-7.0.0.r973<br>
+
+python -O wsjt.py<br>
+
+--------Copy above me------------<br>
+
+      <br>
+
+Save file in your home folder and make it executable:<br>
+
+chmod +x wsjt7<br>
+
+      <br>
+
+If you like you could make symbolic link as root:<br>
+
+      <br>
+
+For Ubuntu:<br>
+
+      <br>
+
+sudo -s (to become root)<br>
+
+password (give your user password)<br>
+
+ln -s ~/wsjt7 /usr/bin/wsjt7<br>
+
+Ctrl+D (to become&nbsp; ordinary user again)<br>
+
+      <br>
+
+For Debian:<br>
+
+      <br>
+
+su (to become root)<br>
+
+password (give your root password)<br>
+
+ln -s ~/wsjt7 /usr/bin/wsjt7<br>
+
+Ctrl+D (to become&nbsp; ordinary user again)<br>
+
+      <br>
+
+      <br>
+
+Now you could start WSJT by simply typing wsjt7 in terminal.<br>
+
+      <br>
+
+      <hr style="width: 100%; height: 2px;"><br>
+
+For some unknown yet reasons compiled WSJT with gfortran compiler does
+not work on some machines. You will see the main window for a second
+and program crashes with "Segmentation fault" message. Solution for
+this problem is simple. You must install another compiler called g95
+and recompile WSJT. Then all must be fine: <br>
+
+1. Download the g95 compiler from:<br>
+
+      <br>
+
+      <a href="http://ftp.g95.org/#V0.91">http://ftp.g95.org/#V0.91</a><br>
+
+      <br>
+
+Look at G95 Binaries and Source (Stable version 0.91, March 2008) for
+your architecture. For example Linux x86 package is downloaded from:<br>
+
+      <br>
+
+      <a href="http://ftp.g95.org/v0.91/g95-x86-linux.tgz">http://ftp.g95.org/v0.91/g95-x86-linux.tgz</a><br>
+
+      <br>
+
+2. Unpack the downloaded tarball (e.g. g95-x86-linux.tgz) in a
+directory of your choice: <br>
+
+tar -zxvf g95-x86-linux.tgz For your convenience, you can create
+another symbolic link from a directory in your $PATH (e.g. /bin) to the
+executable. You must be root for this. In Ubuntu: <br>
+
+      <br>
+
+sudo -s <br>
+
+ln -s $PWD/g95-install/bin/*g95* /bin/g95<br>
+
+Ctr+D (to go back to ordinary user)<br>
+
+      <br>
+
+3. Test if all is fine with g95 installation. Type g95 as command in
+the terminal. If all is fine you will have this answer:<br>
+
+      <br>
+
+g95: no input files<br>
+
+      <br>
+
+4. Recompile WSJT<br>
+
+      <br>
+
+cd ~/wsjt-7.0.0.r973<br>
+
+./configure --enable-g95<br>
+
+make clean; make<br>
+
+      <br>
+
+      <hr style="width: 100%; height: 2px;"><br>
+
+If compilation fails either with gfortran or g95 compilers check
+version of the package python-numpy. If it is version 1.1.0 you must
+downgrade to the previous python-numpy version 1.0.4 This is known
+problem which will be solved soon I believe. <br>
+
+      <br>
+
+      <br>
+
+1. Start Synaptic Package Manager. Hit SEARCH button. Type
+python-numpy. Mark package python-numpy for Removal and remove it. <br>
+
+2. Download the older python-numpy version 1.0.4 from:<br>
+
+      <br>
+
+      <a href="http://lz1bb.bfra.org/wsjt/numpy-1.0.4.tar.gz">http://lz1bb.bfra.org/wsjt/numpy-1.0.4.tar.gz</a><br>
+
+      <br>
+
+3. Untar and install it:<br>
+
+      <br>
+
+For Ubuntu:<br>
+
+      <br>
+
+tar xzvf numpy-1.0.4.tar.gz<br>
+
+cd numpy-1.0.4.tar.gz<br>
+
+sudo -s (to become root)<br>
+
+password (give your user password)<br>
+
+python setup.py install<br>
+
+Ctrl+D (to become ordinary user again)<br>
+
+      <br>
+
+For Debian:<br>
+
+      <br>
+
+tar xzvf numpy-1.0.4.tar.gz<br>
+
+cd numpy-1.0.4.tar.gz<br>
+
+su (to become root)<br>
+
+password (give your root password)<br>
+
+python setup.py install<br>
+
+Ctrl+D (to become ordinary user again)<br>
+
+      <br>
+
+This is all. Now recompile WSJT following the steps above. All must be
+fine now.<br>
+
+      <br>
+
+      <hr style="width: 100%; height: 2px;"><br>
+
+If you do not like the fonts and font size of WSJT just change them. Go
+in the folder where you compiled WSJT. Use your favourite text editor
+and open the file called wsjtrc. Change the fonts and/or font size
+figures according your choice. Actually I think you will mostly like to
+play with font size figures only. Save the changes and restart WSJT so
+changes to take effect.<br>
+
+      <br>
+
+      <hr style="width: 100%; height: 2px;"><br>
+
+Please remember that any change of Audio Device needs restart of WSJT
+before changes take effect. <br>
+
+      <br>
+
+      <hr style="width: 100%; height: 2px;"><br>
+
+I have problems while using default Audio Device /dev/dsp/ of WSJT
+program. Problems are: <br>
+
+&nbsp; &nbsp;- Bad decode on FSK441<br>
+
+&nbsp; &nbsp;- Programs crashes every 8 of 10 times when try to transmit on JT65.<br>
+
+The last was confirmed by F1EBK too.<br>
+      <br>
+
+These two problems might be connected with our local hardware but might
+be /dev/dsp fault. If you encounter the same behaviour just use direct
+card access. Usually Audio Device 1 from WSJT Setup&gt;Options.
+      <br>
+      <br>
+Some
+modern sound cards do not support sample rate 11025 requested by WSJT .
+If you have such card you will receive errors during direct access try.
+If so use the clue suggested by Hamish Moffatt VK3SB:<br>
+&nbsp;<br>
+
+1. Create in your home folder empty hidden file with name:<br>
+
+.asoundrc<br>
+
+      <br>
+
+2. Copy in it the following code:<br>
+
+      <br>
+
+pcm.radio {<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+type hw<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+card 0<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+device 0<br>
+
+}<br>
+
+pcm_slave.radioslave {<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pcm radio<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rate 48000<br>
+
+}<br>
+
+pcm.radioconv {<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+type rate<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+slave radioslave<br>
+
+}<br>
+
+      <br>
+
+      <br>
+
+3. Use appropriate Audio Device number for device called "radioconv".<br>
+
+      <br>
+      <br>
+
+Have fun!<br>
+
+      <br>
+
+73, Harry LZ1BB<br>
+
+      </td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+</center>
+
+<br class="" style="font-family: Arial;">
+
+<center class="" style="font-family: Arial;"><br>
+
+</center>
+
+<br class="" style="font-family: Arial;">
+
+<br class="" style="font-family: Arial;">
+
+<br class="" style="font-family: Arial;">
+
+</body>
+</html>

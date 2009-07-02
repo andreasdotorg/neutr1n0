@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+  
+  <title>Wsjt_Howto_Mandriva_2007_Free.html</title>
+</head>
+
+
+<body>
+
+<div style="text-align: center; font-family: Arial;"><big><span style="font-weight: bold;">Compiling WSJT596r309 on Mandriva 2007 Free</span><br>
+</big></div>
+<span style="font-weight: bold; font-family: Arial;">
+<br style="font-weight: bold;">
+
+</span>
+<div style="text-align: center; font-family: Arial;">by Harry Popov LZ1BB <br>
+
+</div>
+
+<div style="text-align: center; font-family: Arial;">version 0.2.1<br>
+
+</div>
+
+<div style="text-align: center; font-family: Arial;">
+<div style="text-align: center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / thanks DL3LST, G8JMV, K1JT, VK3SB /<br>
+
+</div>
+
+<br>
+
+</div>
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">I did fresh
+Install of Mandriva 2007 Free. Used downloaded 4 ISO disks available
+from Mandriva for free download. It is very important to install all
+Development packages while installing Mandriva. They are too numerous
+to collect them later. If one missed this it is better to use Disk 1
+and when prompted - chose Upgrade Mandriva 2007. Check Development
+tools. They will be installed.</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Next step is to
+chose a ftp server which has all the rest packages of Mandriva 2007.
+They are about 10Gb so impossible to have all them on CDs. Use "easy
+urpmi" or "Configure your computer" for that.</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Next install one
+by one listed below packages. To satisfy dependences many of them will
+need more additional packages but URPMI /or RPMDRAKE/ will do the job.
+Just say "Yes" on all URPMI /or RPMDRAKE/ requests.</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">gcc-gfortran-4.1.1-3mdk</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">libtcl8.4-devel-8.4.13-1mdk</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">libtk8.4-devel-8.4.13-1mdk</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">libalsa2-devel-1.0.12-2mdv2007.0</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">libpython2.4-devel-2.4.3-3mdv2007.0</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">python-imaging-1.1.4-10mdk.i586</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">python-imaging-devel-1.1.4-10mdk</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">python-numeric-devel-24.2-2mdv2007.0</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">libsamplerate0-devel-0.1.2-2mdk</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">libf2c0-3.3.6-3mdk</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Create as root symbolic link:</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">ln -s /usr/lib/libg2c.so.0.0.0 /usr/lib/libg2c.so</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Next you need some more packages. As we do not have RPMs for them you have to download and install by yourself:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">---------------------------------------------------------</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">F2PY&nbsp; ( Fortran to Python )</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Download: </span><a style="font-family: Arial;" href="http://cens.ioc.ee/projects/f2py2e/2.x/F2PY-2-latest.tar.gz">http://cens.ioc.ee/projects/f2py2e/2.x/F2PY-2-latest.tar.gz</a><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">untar, then as root:</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">python setup.py install</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">---------------------------------------------------------</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Scipy_Distutils</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Download:&nbsp; </span><a style="font-family: Arial;" href="http://cens.ioc.ee/projects/f2py2e/2.x/scipy_distutils-latest.tar.gz">http://cens.ioc.ee/projects/f2py2e/2.x/scipy_distutils-latest.tar.gz</a><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">untar, then as root:</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">python setup.py install</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">---------------------------------------------------------</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Download WSJT source code:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<a style="font-family: Arial;" href="http://lz1bb.bfra.org/wsjt/wsjt596r309.tar.gz">http://lz1bb.bfra.org/wsjt/wsjt596r309.tar.gz</a><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">As ordinary user:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">tar xzvf wsjt596r309.tar.gz</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">cd wsjt596r309</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">./configure --enable-portaudio</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">make clean; make</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">That is all!! Next just start it. IMPORTANT!!! Alwais cd to wsjt596r309 folder before running wsjt:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">cd wsjt596r309</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">python -O wsjt.py</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">I use simple script to start WSJT. Useful in case of bad memory like mine:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Create a text file,called wsjt, and copy/paste the following:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">--------Copy bellow me------------</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">#!/bin/sh</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">#</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;"># wsjt&nbsp;&nbsp;&nbsp;&nbsp; This shell script starts WSJT596r309</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">cd ~/wsjt596r309</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">python -O wsjt.py</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">--------Copy above me------------</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Save file in your home folder and make it executable:</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">chmod +x wsjt</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">If you like you could make symbolic link as root:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">ln -s ~/wsjt /usr/bin/wsjt</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Now you could start WSJT by simply typing wsjt in terminal.</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+<hr style="width: 100%; height: 2px;">
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Be aware! Until
+today, October 24th 2006, the official link for WSJT archive contains
+broken package. So use the link above for downloading WSJT596r309.<br>
+<br>
+</span>
+<hr style="width: 100%; height: 2px;"><span style="font-family: Arial;"></span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">I have problems while using default Audio Device /dev/dsp/ of WSJT program. Problems are:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">1. Bad decode on FSK441</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">2. Programs crashes every 8 of 10 times when try to transmit on JT65. The last was confirmed by F1EBK too.</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">These two
+problems might be connected with our local hardware but might be
+/dev/dsp fault. If you encounter the same behaviour just use direct
+card access. Usually Audio Device 1 from WSJT Setup&gt;Options.</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Some modern
+sound cards do not suport sample rate 11025 requested by WSJT . If you
+have such card you will receive errors during direct access try. If so
+use the clue suggested by Hamish Moffatt VK3SB:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">1. Create in your home directory empty hidden file with name:</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">.asoundrc</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">2. Copy in it the following code:</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">pcm.radio {</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; type hw</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; card 0</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; device 0</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">}</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">pcm_slave.radioslave {</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pcm radio</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rate 48000</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">}</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">pcm.radioconv {</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; type rate</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; slave radioslave</span><br style="font-family: Arial;">
+
+<span style="font-family: Arial;">}</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">3. Use appropriate Audio Device number for device called "radioconv".</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">Have fun!</span><br style="font-family: Arial;">
+
+<br style="font-family: Arial;">
+
+<span style="font-family: Arial;">73, Harry LZ1BB</span><span style="font-weight: bold; font-family: Arial;"></span><span style="font-family: Arial;"></span>
+</body>
+</html>
