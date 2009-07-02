@@ -437,7 +437,7 @@ def stub(event=NONE):
 
 #------------------------------------------------------ MsgBox
 def MsgBox(t):
-    tkMessageBox(message=t)
+    tkMessageBox._show(message=t)
 
 #------------------------------------------------------ txstop
 def txstop(event=NONE):
@@ -1353,7 +1353,7 @@ def GenStdMsgs(event=NONE):
             Audio.gcom2.t0msg=(t0+' '*22)[:22]
             nplain,naddon,ndiff=Audio.chkt0()
             if nplain==1:
-                MsgBox("Bad call in To Radio?\nPlease check.")
+                MsgBox("Bad callsign in 'To Radio'?\nPlease check.")
             
         t0=(ToRadio.get() + " "+options.MyCall.get()).upper()
         Audio.gcom2.t0msg=(t0+' '*22)[:22]
@@ -1396,7 +1396,7 @@ def GenStdMsgs(event=NONE):
             Audio.gcom2.t0msg=(t0+' '*22)[:22]
             nplain,naddon,ndiff=Audio.chkt0()
             if nplain==1:
-                MsgBox("Bad call in To Radio?\nPlease check.")
+                MsgBox("Bad callsign in 'To Radio'?\nPlease check.")
             
         t0=("<" + ToRadio.get() + "> "+options.MyCall.get()).upper()
         Audio.gcom2.t0msg=(t0+' '*22)[:22]
