@@ -151,14 +151,23 @@ C  Compute width of sync tone to outermost -3 dB points
       call pctile(ccfred(i1),tmp,i2-i1+1,45,base)
 
       jpk=ipk-i0
-      stest=base + 0.5*(ccfred(jpk)-base)                ! -3 dB
+      if(abs(jpk).gt.450) then
+         print*,'sync24 a:',jpk,ipk,i0
+      else
+         stest=base + 0.5*(ccfred(jpk)-base) ! -3 dB
+      endif
       do i=-10,0
          if(jpk+i.ge.-371) then 
             if(ccfred(jpk+i).gt.stest) go to 30
          endif
       enddo
       i=0
- 30   x1=i-1+(stest-ccfred(jpk+i-1))/(ccfred(jpk+i)-ccfred(jpk+i-1))
+ 30   continue
+      if(abs(jpk+i-1).gt.450 .or. abs(jpk+i).gt.450) then
+         print*,'sync24 b:',jpk,i
+      else
+         x1=i-1+(stest-ccfred(jpk+i-1))/(ccfred(jpk+i)-ccfred(jpk+i-1))
+      endif
 
       do i=10,0,-1
          if(jpk+i.le.371) then
