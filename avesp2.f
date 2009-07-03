@@ -17,7 +17,6 @@
       do j=1,jz
          k=(j-1)*nfft + 1
          call ps(dat(k),nfft,psa)
-         print*,'avesp2: ',j,k,nfft,iz,jz,jza
          call move(psa,s2(1,j),iz)
       enddo
 
