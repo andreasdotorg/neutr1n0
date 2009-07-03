@@ -153,6 +153,8 @@ C  Compute width of sync tone to outermost -3 dB points
       jpk=ipk-i0
       if(abs(jpk).gt.450) then
          print*,'sync24 a:',jpk,ipk,i0
+         snrsync=0.
+         go to 999
       else
          stest=base + 0.5*(ccfred(jpk)-base) ! -3 dB
       endif
@@ -185,6 +187,6 @@ C  Compute width of sync tone to outermost -3 dB points
          ccfred1(i)=ccfred(i)
       enddo
 
-      return
+ 999  return
       end
 
