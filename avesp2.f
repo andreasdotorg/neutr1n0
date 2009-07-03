@@ -7,7 +7,8 @@
       real ref(557)                  !Ref spectrum, lines excised
       real birdie(557)               !Birdie spectrum (ave-ref)
       real variance(557)
-      real s2(557,323)
+!      real s2(557,323)
+      real s2(557,646)
       real fzap(200)
 
       iz=557                              !Compute the 2d spectrum
@@ -17,6 +18,7 @@
       do j=1,jz
          k=(j-1)*nfft + 1
          call ps(dat(k),nfft,psa)
+         print*,'avesp2: ',j,k,nfft,iz,jz,jza
          call move(psa,s2(1,j),iz)
       enddo
 
