@@ -65,7 +65,7 @@ C  Find the best frequency channel for CCF
       syncbest=-1.e30
       syncbest2=-1.e30
 
-      call zero(ccfred,745)
+      call zero(ccfred,901)
       do i=ia,ib
          call xcor24(s2,i,nsteps,nsym,lag1,lag2,mode,mode4,
      +        ccfblue,ccf0,lagpk0,flip)
@@ -146,8 +146,10 @@ C  Find rms of the CCF, without the main peak
 
 C  Compute width of sync tone to outermost -3 dB points
 !      call pctile(ccfred(ia-i0),tmp,ib-ia+1,45,base)
-      i1=max(-224,ia-i0)
-      i2=min(224,ib-i0)
+!      i1=max(-224,ia-i0)
+!      i2=min(224,ib-i0)
+      i1=max(-450,ia-i0)
+      i2=min(450,ib-i0)
       call pctile(ccfred(i1),tmp,i2-i1+1,45,base)
 
       jpk=ipk-i0

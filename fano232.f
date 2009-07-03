@@ -9,6 +9,7 @@ C  written by Phil Karn, KA9Q.
       parameter (MAXDAT=(MAXBITS+7)/8)
       integer*1 symbol(0:2*MAXBITS-1)
       integer*1 dat(MAXDAT)               !Decoded user data, 8 bits per byte
+      integer*1 i1
       integer mettab(0:255,0:1)           !Metric table
 
 C  These were the "node" structure in Karn's C code:
@@ -19,6 +20,7 @@ C  These were the "node" structure in Karn's C code:
       integer ii(0:MAXBITS-1)          !Current branch being tested
 
       logical noback
+      equivalence(i1,i4)
       include 'conv232.f'
 
       ntail=nbits-31
@@ -135,7 +137,6 @@ C  Search the next best branch
          endif
          go to 10
  99      continue
-!         print*,np,nt,gamma(np)
       enddo
       i=nbits*maxcycles
 
@@ -145,12 +146,11 @@ C  Copy decoded data to user's buffer
       nbytes=(nbits+7)/8
       np=7
       do j=1,nbytes-1
-         i4a=nstate(np)
-         dat(j)=i4a
+         i4=nstate(np)
+         dat(j)=i1
          np=np+8
       enddo
       dat(nbytes)=0
-
       ncycles=i+1
       ierr=0
       if(i.ge.maxcycles*nbits) ierr=-1
