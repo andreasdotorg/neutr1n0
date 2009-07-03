@@ -53,6 +53,7 @@
         common/clipcom/ nclip
         save
 
+        if(mode.eq.8) nzap=0
         lcum=.true.
         jz=jz0
         ntdecode=ntdecode0

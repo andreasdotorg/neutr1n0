@@ -7,8 +7,7 @@
       real ref(557)                  !Ref spectrum, lines excised
       real birdie(557)               !Birdie spectrum (ave-ref)
       real variance(557)
-!      real s2(557,323)
-      real s2(557,646)
+      real s2(557,323)
       real fzap(200)
 
       iz=557                              !Compute the 2d spectrum

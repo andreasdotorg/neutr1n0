@@ -1,6 +1,6 @@
       subroutine bzap(dat,jz,nadd,mode,fzap)
 
-      parameter (NMAX=2*1024*1024)
+      parameter (NMAX=1024*1024)
       parameter (NMAXH=NMAX)
       real dat(jz),x(NMAX)
       real fzap(200)
