@@ -105,11 +105,11 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
      im=mod(imin,60)
      is=mod(isec,60)
 
-! Don't write to azel.dat from Fortran, because Fortram I/O is not 
+! Don't write to azel.dat from Fortran, because Fortran I/O is not 
 ! thread-safe in gfortran.
 
-     call azelout(ih,im,is,AzMoon,ElMoon,AzSun,ElSun,AzAux,ElAux,    &
-          nfreq,doppler,dfdt,dopler00,dfdt0)
+!     call azelout(ih,im,is,AzMoon,ElMoon,AzSun,ElSun,AzAux,ElAux,    &
+!          nfreq,doppler,dfdt,dopler00,dfdt0)
      isec0=isec
   endif
 
