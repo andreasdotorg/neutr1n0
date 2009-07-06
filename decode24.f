@@ -15,6 +15,7 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       integer amp,delta
       integer mettab(0:255,0:1)             !Metric table
       integer fano
+      integer nch(7)
       integer npr2(207)
       logical first
       include 'avecom.h'
@@ -27,11 +28,8 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
      +  0,1,1,1,0,0,1,0,1,1,0,1,1,1,1,0,0,0,0,1,1,0,1,1,0,0,0,1,1,1,
      +  0,1,1,1,0,1,1,1,0,0,1,0,0,0,1,1,0,1,1,0,0,1,0,0,0,1,1,1,1,1,
      +  1,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,1,1,0,1,1,1,1,0,1,0,1/
+      data nch/1,2,4,9,18,36,72/
       save
-
-      rewind 41
-      rewind 42
-      rewind 43
 
       if(first) then
          call genmet(mode,mettab)
@@ -91,8 +89,6 @@ C  Compute soft symbols using differential BPSK demodulation
                nhmax=nh
                idfbest=idf
             endif
-!            write(42,3091) idf,nh
-! 3091       format(2i8)
          enddo
 
          c0=0
@@ -133,60 +129,61 @@ C  average phase and then use:
             if(j.ge.1) symbol(j)=i4
             ang0=ang
          enddo
-!###
-      else                                    !JT4x
-         nspchip=1260/mode4
-         nchips=mode4
-         if(mode4.eq.72) then
-            nspchip=35
-            nchips=36     !Try using twice as many chips and overlapping them?
-         endif
-         fac2=1.e-8 * sqrt(float(mode4))
-         do j=1,nsym+1
-            if(flip.gt.0.0) then
-               f0=1270.46 + dfx + (npr2(j)-1.5)*mode4*df
-               f1=1270.46 + dfx + (2+npr2(j)-1.5)*mode4*df
-            else
-               f0=1270.46 + dfx + (1-npr2(j)-1.5)*mode4*df
-               f1=1270.46 + dfx + (3-npr2(j)-1.5)*mode4*df
-            endif
-            dphi=twopi*dt*f0
-            dphi1=twopi*dt*f1
-            sq0=0.
-            sq1=0.
-            do nc=1,nchips
-               phi=0.d0
-               phi1=0.d0
-               c0=0.
-               c1=0.
-               do i=1,nspchip
-                  k=k+1
-                  phi=phi+dphi
-                  phi1=phi1+dphi1
-                  cz=dcmplx(cos(phi),-sin(phi))
-                  cz1=dcmplx(cos(phi1),-sin(phi1))
-                  if(k.le.npts) then
-                     c0=c0 + dat(k)*cz
-                     c1=c1 + dat(k)*cz1
-                  endif
-               enddo
-               sq0=sq0 + real(c0)**2 + aimag(c0)**2
-               sq1=sq1 + real(c1)**2 + aimag(c1)**2
-            enddo
-            sq0=fac2*sq0
-            sq1=fac2*sq1
-            rsym=amp*(sq1-sq0)
-            r=rsym+128.
-            if(r.gt.255.0) r=255.0
-            if(r.lt.0.0) r=0.0
-            i4=nint(r)
-            if(i4.gt.127) i4=i4-256
-            if(j.ge.1) symbol(j)=i4
-         enddo
+         go to 50
       endif
 
-      call flushqqq(41)
-      nbits=72+31
+! JT4 mode
+      ich=0
+ 40   ich=ich+1
+      nchips=nch(ich)
+      nspchip=1260/nchips
+      k=istart
+      phi=0.d0
+      phi1=0.d0
+      fac2=1.e-8 * sqrt(float(mode4))
+      do j=1,nsym+1
+         if(flip.gt.0.0) then
+            f0=1270.46 + dfx + (npr2(j)-1.5)*mode4*df
+            f1=1270.46 + dfx + (2+npr2(j)-1.5)*mode4*df
+         else
+            f0=1270.46 + dfx + (1-npr2(j)-1.5)*mode4*df
+            f1=1270.46 + dfx + (3-npr2(j)-1.5)*mode4*df
+         endif
+         dphi=twopi*dt*f0
+         dphi1=twopi*dt*f1
+         sq0=0.
+         sq1=0.
+         do nc=1,nchips
+            phi=0.d0
+            phi1=0.d0
+            c0=0.
+            c1=0.
+            do i=1,nspchip
+               k=k+1
+               phi=phi+dphi
+               phi1=phi1+dphi1
+               cz=dcmplx(cos(phi),-sin(phi))
+               cz1=dcmplx(cos(phi1),-sin(phi1))
+               if(k.le.npts) then
+                  c0=c0 + dat(k)*cz
+                  c1=c1 + dat(k)*cz1
+               endif
+            enddo
+            sq0=sq0 + real(c0)**2 + aimag(c0)**2
+            sq1=sq1 + real(c1)**2 + aimag(c1)**2
+         enddo
+         sq0=fac2*sq0
+         sq1=fac2*sq1
+         rsym=amp*(sq1-sq0)
+         r=rsym+128.
+         if(r.gt.255.0) r=255.0
+         if(r.lt.0.0) r=0.0
+         i4=nint(r)
+         if(i4.gt.127) i4=i4-256
+         if(j.ge.1) symbol(j)=i4
+      enddo
+
+ 50   nbits=72+31
       delta=100
       limit=100000
       ncycles=0
@@ -209,8 +206,9 @@ C  This is a kludge:
      +        delta,limit)
          if(ncount.ge.0) go to 100
       enddo
+      if(mode.eq.7 .and. nchips.lt.mode4) go to 40
 
- 100     do i=1,9
+ 100  do i=1,9
          i4=data1(i)
          if(i4.lt.0) i4=i4+256
          data4a(i)=i4
