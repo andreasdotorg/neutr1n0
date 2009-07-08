@@ -90,8 +90,6 @@ subroutine ftn_init
   stop
 920 print*,'Error opening DECODED.AVE'
   stop
-930 print*,'Error opening AZEL.DAT'
-  stop
 940 print*,'Error opening DEBUG.TXT'
   stop
 950 print*,'Error opening ALL.TXT'

@@ -1,4 +1,3 @@
-!---------------------------------------------------- decode2
 subroutine decode2
 
 ! Get data and parameters from gcom, then call the decoders
@@ -42,7 +41,7 @@ subroutine decode2
      nt=ntime/86400
      nt=86400*nt + tbuf(ibuf0)
      if(receiving.eq.0) nt=nt-trperiod
-     call get_fname(hiscall,iyr,imo,ida,nt,trperiod,lauto,fnamex)
+     call get_fname(hiscall,iyr,imo,ida,nt,lauto,fnamex)
      do i=1,lenpick
         k=k+1
         if(k.gt.NrxMax) k=k-NRxMax
@@ -60,7 +59,7 @@ subroutine decode2
      if(k.gt.NrxMax) k=k-NRxMax
      nt=ntime/86400
      nt=86400*nt + tbuf(ib0)
-     call get_fname(hiscall,iyr,imo,ida,nt,trperiod,lauto,fnamex)
+     call get_fname(hiscall,iyr,imo,ida,nt,lauto,fnamex)
      do i=1,lenpick
         k=k+1
         if(k.gt.NrxMax) k=k-NRxMax

@@ -1,8 +1,7 @@
-subroutine get_fname(hiscall,iyr,imo,ida,ntime,trperiod,lauto,fname)
+subroutine get_fname(hiscall,iyr,imo,ida,ntime,lauto,fname)
 
   character hiscall*12,fname*24,tag*7
   integer ntime
-  integer trperiod
 
   nsec=mod(ntime,86400)
   ihr=nsec/3600

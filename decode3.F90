@@ -27,19 +27,9 @@ subroutine decode3(d2,jz,istart,filename)
   if(mode(1:4).eq.'JT6M') nmode=4
   if(mode(1:2).eq.'CW') nmode=5
   if(mode(1:3).eq.'JT2') nmode=6
-  if(mode(1:3).eq.'JT4') then
-     nmode=7
-!     if(mode(4:4).eq.'A') mode4=1
-!     if(mode(4:4).eq.'B') mode4=2
-!     if(mode(4:4).eq.'C') mode4=4
-!     if(mode(4:4).eq.'D') mode4=9
-!     if(mode(4:4).eq.'E') mode4=18
-!     if(mode(4:4).eq.'F') mode4=36
-!     if(mode(4:4).eq.'G') mode4=72
-  endif
+  if(mode(1:3).eq.'JT4') nmode=7
   if(mode(1:4).eq.'WSPR') nmode=8
   if(mode(1:4).eq.'JT64') nmode=9
-
 
   sum=0.
   do i=1,jz
