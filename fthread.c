@@ -14,11 +14,13 @@ void fthread_create_(void *(*thread_func)(void *), pthread_t *theThread)
   pthread_create(theThread, NULL, thread_func, NULL);
 } 
 
+/*
 // Yield control to other threads
 void fthread_yield_() 
 {
   pthread_yield();
 } 
+*/
 
 // Return my own thread ID
 pthread_t fthread_self_() 

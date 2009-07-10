@@ -737,6 +737,7 @@ def ModeWSPR():
     cbzap.configure(state=DISABLED)
     lclip.configure(state=DISABLED)
     nfreeze.set(1)
+    nzap.set(0)
     cbfreeze.configure(state=DISABLED)
 ##    btxdf.configure(state=DISABLED)
 
