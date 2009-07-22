@@ -4,9 +4,10 @@
       character*8 c0,c1
       logical first
       data first/.true./
-      save
+      save first
 
       if(first) then
+         call cs_lock('interleave24')
          k=-1
          do i=0,255
             write(c0,1001) i
@@ -20,6 +21,7 @@
             endif
          enddo
          first=.false.
+         call cs_unlock
       endif
 
       if(ndir.eq.1) then

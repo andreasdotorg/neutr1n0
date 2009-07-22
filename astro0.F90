@@ -15,7 +15,7 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
   data uth8z/0.d0/,imin0/-99/
   save
 
-! These Fortran internal reads are dangerous: see note below.
+  call cs_lock('astro0')
   auxra=0.
   i=index(cauxra,':')
   if(i.eq.0) then
@@ -104,14 +104,19 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
      ih=uth8
      im=mod(imin,60)
      is=mod(isec,60)
-
-! Don't write to azel.dat from Fortran, because Fortran I/O is not 
-! thread-safe in gfortran.
-
-!     call azelout(ih,im,is,AzMoon,ElMoon,AzSun,ElSun,AzAux,ElAux,    &
-!          nfreq,doppler,dfdt,dopler00,dfdt0)
-     isec0=isec
+     rewind 14
+     write(14,1010,err=800) ih,im,is,AzMoon,ElMoon,                          &
+        ih,im,is,AzSun,ElSun,                                        &
+        ih,im,is,AzAux,ElAux,                                        &
+        nfreq,doppler,dfdt,doppler00,dfdt0
+1010 format(i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Moon'/        &
+            i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Sun'/         &
+            i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Source'/      &
+            i4,',',f8.1,',',f8.2,',',f8.1,',',f8.2,',Doppler')
+     rewind 14
+800  isec0=isec
   endif
 
+  call cs_unlock
   return
 end subroutine astro0

@@ -48,10 +48,16 @@
          call interleave63(mr2prob,-1)
 
          nsec1=nsec1+1
+
+         call cs_lock('extract')
          write(22,rec=1) nsec1,xlambda,maxe,naddsynd,
      +        mrsym,mrprob,mr2sym,mr2prob
          call flushqqq(22)
+         call cs_unlock
+
          call runqqq('kvasd.exe','-q',iret)
+
+         call cs_lock('extract')
          if(iret.ne.0) then
             if(first) write(*,1000) iret
  1000       format('Error in KV decoder, or no KV decoder present.'/
@@ -61,6 +67,8 @@
             go to 20
          endif
          read(22,rec=2) nsec2,ncount,dat4
+         call cs_unlock
+
          decoded='                      '
          if(ncount.ge.0) then
             call unpackmsg(dat4,decoded) !Unpack the user message

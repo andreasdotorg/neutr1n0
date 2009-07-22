@@ -104,9 +104,11 @@ C  Average the symbols from s2db into s2dc.
  20   if(nsig.gt.nslim2) then
          npkept=npkept+1
          avemsg=avemsg(1:msglen)//blanks
+         call cs_lock('avemsg6m')
          write(lumsg,1020) cfile6,nsig,ndf0,avemsg,msglen
          if(lcum) write(21,1020) cfile6,nsig,ndf0,avemsg,msglen
  1020    format(a6,8x,i6,i5,7x,a22,19x,'*',i4)
+         call cs_unlock
       endif
 
       return

@@ -33,6 +33,7 @@ subroutine wsjtgen
   include 'gcom1.f90'
   include 'gcom2.f90'
 
+  call cs_lock('wsjtgen')
   fsample_out=11025.d0*samfacout
   lcwid=.false.
   if(idinterval.gt.0) then
@@ -256,6 +257,8 @@ subroutine wsjtgen
      nwave=trperiod*fsample_out
   endif
 
-999 return
+999 continue
+  call cs_unlock
+  return
 end subroutine wsjtgen
 

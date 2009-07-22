@@ -376,11 +376,13 @@ C  Now the multi-tone decoding
               j=indx(i)
               if(pick .and. STFound .and.
      +          line(j)(29:31).eq.'   ') goto 10
+              call cs_lock('wsjt1')
               write(lumsg,1050) line(j) !Write to decoded.txt
  1050         format(a79)
               if(lcum) write(21,1050) line(j) !Write to ALL.TXT
               read(line(j),1060) sig,msg3
  1060         format(16x,f3.0,9x,a3)
+              call cs_unlock
               if(sig.gt.smax) then
                  smax=sig
                  tbest=tping(j)

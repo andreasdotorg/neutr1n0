@@ -5,6 +5,7 @@ subroutine chkt0(nplain,naddon,ndiff)
   character*22 t0msg2
   include 'gcom2.f90'
 
+  call cs_lock('chkt0')
   call packmsg(t0msg,dgen)
   call unpackmsg(dgen,t0msg2)
   if(index(t0msg,'/').gt.0) then
@@ -23,6 +24,7 @@ subroutine chkt0(nplain,naddon,ndiff)
   else
      ndiff=0
   endif
+  call cs_unlock
 
   return
 end subroutine chkt0

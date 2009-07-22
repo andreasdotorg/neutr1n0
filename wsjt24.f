@@ -102,6 +102,8 @@ C  If we get here, we have achieved sync!
          if(c1.ge.'a' .and. c1.le.'z') decoded(i:i)=char(ichar(c1)-32)
       enddo
       jdf=ndf+idf
+
+      call cs_lock('wsjt24')
       write(line,1010) cfile6,nsync,nsnr,dtx-1.0,jdf,
      +    nint(width),csync,special,decoded(1:19),cooo,kvqual,nqual
  1010 format(a6,i3,i5,f5.1,i5,i3,1x,a1,1x,a5,a19,1x,a3,i4,i4)
@@ -111,6 +113,7 @@ C  Blank all end-of-line stuff if no decode
 
       if(lcum) write(21,1011) line
  1011 format(a67)
+
 C  Write decoded msg unless this is an "Exclude" request:
       if(MinSigdB.lt.99) write(lumsg,1011) line
 
@@ -167,6 +170,7 @@ C  If Monitor segment #2 is available, write that line also
       call flushqqq(12)
  
       if(lumsg.ne.6) end file 11
+      call cs_unlock
 
  900  continue
 

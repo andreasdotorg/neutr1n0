@@ -36,6 +36,7 @@ subroutine getfile(fname,len)
 10 filename=fname(i+1:)
   ierr=0
 
+  call cs_lock('getfile')
 #ifdef CVF
   open(10,file=fname,form='binary',status='old',err=998)
   read(10,end=998) hdr
@@ -76,12 +77,14 @@ subroutine getfile(fname,len)
   ndiskdat=1
   mousebutton=0
   close(10)
+  call cs_unlock
   return
 
 #ifdef CVF
 998 ierr=1001
 999 close(10)
-    return
+  call cs_unlock
+  return
 #endif
 
 end subroutine getfile

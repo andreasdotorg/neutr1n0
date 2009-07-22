@@ -110,11 +110,13 @@ C  Is it time to write out the results?
                width=(512./11025.)*(1.5*n+1.0)
                if(nsig.ge.nslim) then
                   npkept=npkept+1
+                  call cs_lock('decode6m')
                   write(lumsg,1010) cfile6,tping,width,
      +            nsig,ndf0,(msg(k:k),k=1,n)
                   if(lcum) write(21,1010) cfile6,tping,width,
      +              nsig,ndf0,(msg(k:k),k=1,n)
  1010             format(a6,2f5.1,i4,i5,6x,48a1)       !### 6x was 7x ###
+                  call cs_unlock
                endif
                n=0
                sbest=-1.e9

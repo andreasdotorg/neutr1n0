@@ -46,9 +46,10 @@ else:
         pass
 root_geom=""
 
-
 #------------------------------------------------------ Global variables
 appdir=os.getcwd()
+Audio.gcom2.appdir=(appdir+(' '*80))[:80]
+Audio.ftn_init()
 addpfx0=""
 first=1
 g.appdir=appdir
@@ -1774,6 +1775,8 @@ def update():
     else:
         msg5.configure(text="TR Period: %d s" % (Audio.gcom1.trperiod,), \
                        bg='gray85')
+    t="%d" % (int(Audio.mtxcom.mtxstate),)
+    msg6.configure(text=t)
 
     tx1.configure(bg='white')
     tx2.configure(bg='white')
@@ -2488,6 +2491,8 @@ msg4=Message(iframe6, text='Message #4', width=300,relief=SUNKEN)
 msg4.pack(side=LEFT, fill=X, padx=1)
 msg5=Message(iframe6, text='Message #5', width=300,relief=SUNKEN)
 msg5.pack(side=LEFT, fill=X, padx=1)
+msg6=Message(iframe6, text='', width=300,relief=SUNKEN)
+msg6.pack(side=LEFT, fill=X, padx=1)
 Widget.bind(msg5,'<Button-1>',inctrperiod)
 Widget.bind(msg5,'<Button-3>',dectrperiod)
 msg7=Message(iframe6, text='                        ', width=300,relief=SUNKEN)
@@ -2674,12 +2679,10 @@ elif mode.get()[:3]=='JT4':
 
 lsync.configure(text=slabel+str(isync))
 lclip.configure(text='Clip   '+str(iclip))
-Audio.gcom2.appdir=(appdir+(' '*80))[:80]
 Audio.gcom2.azeldir=(options.azeldir.get()+' '*80)[:80]
 Audio.gcom2.ndepth=ndepth.get()
 Audio.gcom2.ndwspr=ndwspr.get()
 Audio.gcom2.nhighpri=options.HighPri.get()
-Audio.ftn_init()
 Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+(' '*8))[:8]
 stopmon()
 if g.Win32: root.iconbitmap("wsjt.ico")

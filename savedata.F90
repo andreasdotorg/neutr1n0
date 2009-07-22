@@ -68,8 +68,10 @@ subroutine savedata
   enddo
 
   if(ndebug.gt.0 .and. msbig.gt.msmax .and. msbig.gt.330) then
+     call cs_lock('savedata')
      write(*,1020) msbig
 1020 format('Warning: interrupt service interval',i11,' ms.')
+     call cs_unlock
   endif
   msmax=max(msbig,msmax)
 
@@ -112,6 +114,8 @@ subroutine savedata
      enddo
 10   longname=AppDir(1:i)//'/RxWav/'//fname
 
+
+     call cs_lock('savedata')
 #ifdef CVF
      open(17,file=longname,status='unknown',form='binary',err=20)
      write(17) ariff,nchunk,awave,afmt,lenfmt,nfmt2,nchan2,nsamrate, &
@@ -144,6 +148,7 @@ subroutine savedata
 20   print*,'Error opening Fortran unit 17.'
      print*,longname
 30   continue
+     call cs_unlock
   endif
 
 999 if(mode(1:4).ne.'JT65' .and. mode(1:3).ne.'JT2' .and. mode(1:3).ne.'JT2' &

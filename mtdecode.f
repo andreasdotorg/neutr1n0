@@ -135,9 +135,11 @@ C  If it's the best ping yet, save the spectrum:
          cf=' '
          if(nline.le.99) nline=nline+1
          tping(nline)=tstart
+         call cs_lock('mtdecode')
          write(line(nline),1050) cfile6,tstart,mswidth,int(peak),
      +        nwidth,nstrength,noffset,msg3,msg,cf
  1050    format(a6,f5.1,i5,i3,1x,2i1,i5,1x,a3,1x,a40,1x,a1)
+         call cs_unlock
  100  continue
       enddo
 

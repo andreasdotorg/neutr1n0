@@ -95,9 +95,12 @@ C  OK, we want to output this one.  Save the information.
             nst=(int(smax/smax2)-4)/2 + 1
             if(nst.lt.1) nst=1
             if(nst.gt.3) nst=3
+
+            call cs_lock('stdecode')
             write(line(nline),1050) cfile6,tstart,mswidth,int(peak),
      +           nwidth,nstrength,noffset,msg3,nst
  1050       format(a6,f5.1,i5,i3,1x,2i1,i5,1x,a3,40x,i3)
+            call cs_unlock
          endif
 
  20      continue

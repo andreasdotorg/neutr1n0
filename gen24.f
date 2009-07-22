@@ -32,9 +32,7 @@ C  Encodes a JT2 or JT4 message into a wavefile.
       call packmsg(message,dgen)  !Pack 72-bit message into 12 six-bit symbols
       call entail(dgen,data0)
       call unpackmsg(dgen,msgsent)
-!      write(*,3001) (data0(i),i=1,9),(dgen(i),i=1,12)
-! 3001 format('Gen24:   ',9(1x,z2),2x,12(1x,z2))
-!      print*,msgsent
+
       nbytes=(72+31+7)/8
       call encode(data0,nbytes,symbol(2))    !Convolutional encoding
       symbol(1)=0                            !Reference phase

@@ -130,6 +130,8 @@ C  If we get here, we have achieved sync!
       enddo
       jdf=ndf+idf
       if(nstest.gt.0) jdf=ndf
+
+      call cs_lock('')
       write(line,1010) cfile6,nsync,nsnr,dtx-1.0,jdf,
      +    nint(width),csync,special,decoded(1:19),cooo,kvqual,nqual
  1010 format(a6,i3,i5,f5.1,i5,i3,1x,a1,1x,a5,a19,1x,a3,i4,i4)
@@ -184,6 +186,7 @@ C  Write the average line
      +      write(21,1011) ave1
          ns10=ns1
       endif
+      call cs_unlock
 
 C  If Monitor segment #2 is available, write that line also
 !      if(ns2.ge.1 .and. ns2.ne.ns20) then     !***Why the 2nd part?? ***

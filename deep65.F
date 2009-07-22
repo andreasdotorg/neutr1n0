@@ -38,6 +38,7 @@ C  This prevents some optimizations that break this subroutine.
       data iseed/1000000001/,dgen(1)/999/
       save
 
+      call cs_lock('deep65')
       rewind 23
       k=0
       icall=0
@@ -104,6 +105,7 @@ C  Insert CQ message unless sync=OOO (flip=-1).
  10      continue
       enddo
  20   ntot=k
+      call cs_unlock
       neme0=neme
 
       ref0=0.

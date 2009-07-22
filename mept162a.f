@@ -88,6 +88,7 @@ C  Look for sync patterns, get DF and DT
 
  23         nf1=nint(-a(2))
             if(ndiag.ne.0) then
+               call cs_lock('mept162a')
                write(11,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message,
      +              ii,ncycles/81
                write(21,1012) cfile6,nsync,nsnrx,dtx,ndf,nf1,message,
@@ -98,6 +99,7 @@ C  Look for sync patterns, get DF and DT
             endif
  1012       format(a6,i4,i4,f5.1,i6,i3,2x,a22,15x,i4,i6)
             i1=index(message,' ')
+            call cs_unlock
          endif
       enddo
 

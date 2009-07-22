@@ -19,6 +19,7 @@ subroutine wqdecode(data0,message,ntype)
   data cwind/'CALM','BREEZES','WINDY','DRY','HUMID'/
   save first,dcall
 
+  call cs_lock('wqdecode')
   if(first) then
      dcall='            '
      first=.false.
@@ -306,5 +307,6 @@ subroutine wqdecode(data0,message,ntype)
      i2=i2-1
   enddo
 
-900  return
+900 call cs_unlock
+  return
 end subroutine wqdecode

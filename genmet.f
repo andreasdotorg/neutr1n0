@@ -7,6 +7,7 @@ C  Return appropriate metric table for soft-decision convolutional decoder.
 C Metric table (RxSymbol,TxSymbol)
       integer mettab(0:255,0:1)
 
+      call cs_lock('genmet')
       bias=0.5
       if(mode.eq.6) then       !JT2, DBPSK
          open(19,file='dmet_20_-2_2.dat',status='old')
@@ -18,6 +19,7 @@ C Metric table (RxSymbol,TxSymbol)
          print*,'Unsupported mode:',mode,' in genmet.'
          stop 'genmet'
       endif
+      call cs_unlock
 
       do i=0,255
          read(19,*) junk,d0,d1

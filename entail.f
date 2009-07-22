@@ -1,7 +1,7 @@
       subroutine entail(dgen,data0)
 
 C  Move 72-bit packed data from 6-bit to 8-bit symbols and add a zero tail.
-      integer dgen(12)
+      integer dgen(13)
       integer*1 data0(13)
 
       i4=0
@@ -12,6 +12,7 @@ C  Move 72-bit packed data from 6-bit to 8-bit symbols and add a zero tail.
          do j=1,6
             k=k+1
             i4=i4+i4+iand(1,ishft(n,j-6))
+            i4=iand(i4,255)
             if(k.eq.8) then
                m=m+1
                if(i4.gt.127) i4=i4-256

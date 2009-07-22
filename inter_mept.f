@@ -10,6 +10,7 @@ C  Interleave (ndir=1) or de-interleave (ndir=-1) the array id.
       save
 
       if(first) then
+         call cs_lock('inter_mept')
          k=-1
          do i=0,255
             write(c0,1001) i
@@ -22,6 +23,7 @@ C  Interleave (ndir=1) or de-interleave (ndir=-1) the array id.
                j0(k)=n
             endif
          enddo
+         call cs_unlock
          first=.false.
       endif
 

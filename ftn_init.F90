@@ -8,8 +8,8 @@
 !   16  c:/wsjt.reg 
 !   17  wave files written to disk
 !   18  test file to be transmitted (wsjtgen.f90)
-!   19
-!   20
+!   19  dmet_* files
+!   20  prefixes.txt
 !   21  ALL.TXT
 !   22  kvasd.dat
 !   23  CALL3.TXT
@@ -22,8 +22,11 @@ subroutine ftn_init
   include 'gcom2.f90'
   include 'gcom3.f90'
   include 'gcom4.f90'
+  character*12 csub0
+  common/mtxcom/ltrace,mtx,mtxstate,csub0
 
-!  print*,'ftn_init.F90 nport=', nport, 'pttport=', pttport
+  call cs_init
+  call cs_lock('ftn_init')
   i=ptt(nport,pttport,0,iptt)                       !Clear the PTT line
   addpfx='    '
 
@@ -84,6 +87,7 @@ subroutine ftn_init
        status='unknown')
 #endif
 
+  call cs_unlock
   return
 
 910 print*,'Error opening DECODED.TXT'

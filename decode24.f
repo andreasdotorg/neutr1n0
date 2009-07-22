@@ -213,10 +213,12 @@ C  This is a kludge:
          if(i4.lt.0) i4=i4+256
          data4a(i)=i4
       enddo
+      call cs_lock('decode24')
       write(c72,1100) (data4a(i),i=1,9)
  1100 format(9b8.8)
       read(c72,1102) data4
  1102 format(12b6)
+      call cs_unlock
 
       decoded='                      '
       if(ncount.ge.0) call unpackmsg(data4,decoded)
