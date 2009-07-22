@@ -22,6 +22,7 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       save first,poloffset2
 
       if(first) then
+         call cs_lock('astro')
          do i=80,1,-1
             if(ichar(AppDir(i:i)).ne.0 .and. 
      +           ichar(AppDir(i:i)).ne.32) goto 1
@@ -49,6 +50,7 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
 #endif
          ltsky=.true.
          first=.false.
+         call cs_unlock
       endif
       go to 20
  10   ltsky=.false.

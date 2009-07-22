@@ -18,11 +18,9 @@ C  Write a wave file to disk.
       enddo
 
  10   fname=fname(1:iz)//char(0)
-      call cs_lock('rfile2')
       fd=open(fname,RMODE)                  !Open file for reading
       nr=read(fd,buf,n)
       i=close(fd)
-      call cs_unlock
 
       return
       end

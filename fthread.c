@@ -14,13 +14,11 @@ void fthread_create_(void *(*thread_func)(void *), pthread_t *theThread)
   pthread_create(theThread, NULL, thread_func, NULL);
 } 
 
-/*
 // Yield control to other threads
 void fthread_yield_() 
 {
   pthread_yield();
 } 
-*/
 
 // Return my own thread ID
 pthread_t fthread_self_() 
@@ -29,9 +27,14 @@ pthread_t fthread_self_()
 } 
 
 // Lock the execution of all threads until we have the mutex
-void fthread_mutex_lock_(pthread_mutex_t **theMutex) 
+int fthread_mutex_lock_(pthread_mutex_t **theMutex) 
 {
-  pthread_mutex_lock(*theMutex);
+  return(pthread_mutex_lock(*theMutex));
+}
+
+int fthread_mutex_trylock_(pthread_mutex_t **theMutex) 
+{
+  return(pthread_mutex_trylock(*theMutex));
 }
 
 // Unlock the execution of all threads that were stopped by this mutex

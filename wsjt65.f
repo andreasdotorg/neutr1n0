@@ -131,7 +131,7 @@ C  If we get here, we have achieved sync!
       jdf=ndf+idf
       if(nstest.gt.0) jdf=ndf
 
-      call cs_lock('')
+      call cs_lock('wsjt65')
       write(line,1010) cfile6,nsync,nsnr,dtx-1.0,jdf,
      +    nint(width),csync,special,decoded(1:19),cooo,kvqual,nqual
  1010 format(a6,i3,i5,f5.1,i5,i3,1x,a1,1x,a5,a19,1x,a3,i4,i4)
@@ -144,8 +144,6 @@ C  Blank DT if shorthand message  (### wrong logic? ###)
          line(15:19)='     '
          line=line(:35)
           ccfblue(-5)=-9999.0
-!         if(ndiag.gt.0) write(line(51:57),1012) iderrsh,idriftsh
-! 1012    format(i3,i4)
       else
          nspecial=0
       endif
@@ -154,6 +152,7 @@ C  Blank DT if shorthand message  (### wrong logic? ###)
  1011 format(a67)
 C  Write decoded msg unless this is an "Exclude" request:
       if(MinSigdB.lt.99) write(lumsg,1011) line
+      call cs_unlock
 
       if(nsave.ge.1) call avemsg65(1,mode65,ndepth,nchallenge,
      +   avemsg1,nused1,nq1,nq2,neme,mycall,hiscall,hisgrid,qual1,
@@ -173,6 +172,7 @@ C  Write decoded msg unless this is an "Exclude" request:
 C  Write the average line
 !      if(ns1.ge.1 .and. ns1.ne.ns10) then
       if(ns1.ge.1) then
+         call cs_lock('wsjt65')
          if(ns1.lt.10) write(ave1,1021) cfile6,1,nused1,ns1,avemsg1,
      +      nc1,nqual1
  1021    format(a6,i3,i4,'/',i1,20x,a19,i8,i4)
@@ -185,8 +185,8 @@ C  Write the average line
          if(lcum .and. (avemsg1.ne.'                  ')) 
      +      write(21,1011) ave1
          ns10=ns1
+         call cs_unlock
       endif
-      call cs_unlock
 
 C  If Monitor segment #2 is available, write that line also
 !      if(ns2.ge.1 .and. ns2.ne.ns20) then     !***Why the 2nd part?? ***

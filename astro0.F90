@@ -52,6 +52,7 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
   if(mode(1:4).eq.'WSPR') nmode=8
   if(mode(1:4).eq.'JT64') nmode=9
   uth=uth8
+  call cs_unlock
 
   call astro(AppDir,nyear,month,nday,uth,nfreq,hisgrid,2,nmode,1,    &
        AzSun,ElSun,AzMoon,ElMoon,ntsky,doppler00,doppler,            &
@@ -101,6 +102,7 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
   isec=3600*uth8
 
   if(isec.ne.isec0 .and. ndecoding.eq.0) then
+     call cs_lock('astro0')
      ih=uth8
      im=mod(imin,60)
      is=mod(isec,60)
@@ -115,8 +117,8 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
             i4,',',f8.1,',',f8.2,',',f8.1,',',f8.2,',Doppler')
      rewind 14
 800  isec0=isec
+     call cs_unlock
   endif
 
-  call cs_unlock
   return
 end subroutine astro0
