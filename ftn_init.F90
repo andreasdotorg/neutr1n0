@@ -4,6 +4,7 @@
 !   11  decoded.txt
 !   12  decoded.ave
 !   13  tsky.dat
+!   14  azel.dat
 !   15  debug.txt
 !   16  c:/wsjt.reg 
 !   17  wave files written to disk
@@ -61,6 +62,14 @@ subroutine ftn_init
   endfile 12
 
 #ifdef CVF
+  open(14,file=appdir(:iz)//'/azel.dat',status='unknown',                 &
+       share='denynone',err=930)
+#else
+  open(14,file=appdir(:iz)//'/azel.dat',status='unknown',                 &
+       err=930)
+#endif
+
+#ifdef CVF
   open(15,file=appdir(:iz)//'/debug.txt',status='unknown',                 &
        share='denynone',err=940)
 #else
@@ -93,6 +102,8 @@ subroutine ftn_init
 910 print*,'Error opening DECODED.TXT'
   stop
 920 print*,'Error opening DECODED.AVE'
+  stop
+930 print*,'Error opening azel.dat'
   stop
 940 print*,'Error opening DEBUG.TXT'
   stop

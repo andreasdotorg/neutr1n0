@@ -44,8 +44,7 @@ subroutine cs_lock(csub)
   return
 end subroutine cs_lock
 
-subroutine cs_unlock(csub)
-  character*(*) csub
+subroutine cs_unlock
   character*12 csub0
   common/mtxcom/ltrace,mtx,mtxstate,csub0
   mtxstate=0
