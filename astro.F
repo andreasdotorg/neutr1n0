@@ -36,7 +36,7 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
          close(13)
 #else
          call rfile2(fname,nsky,129600,nr)
-         if(nr.ne.129600) go to 10
+!         if(nr.ne.129600) go to 10
          nsky4=nsky(1,1)
          if (iabs(nsky4).gt.500) then
             write(*,1000)
@@ -54,7 +54,7 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       endif
       go to 20
  10   ltsky=.false.
-
+ 
  20   call grid2deg(MyGrid,elon,lat)
       lon=-elon
       call sun(nyear,month,nday,uth,lon,lat,RASun,DecSun,LST,
