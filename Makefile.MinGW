@@ -31,7 +31,8 @@ SRCS2F90 = a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	wsjtgen.f90 runqqq.f90 fivehz.f90 chkt0.f90 \
 	genwspr.f90 wqencode.f90 wqdecode.f90 packpfx.f90 unpackpfx.f90 \
 	packname.f90 unpackname.f90 packtext2.f90 unpacktext2.f90 \
-	packprop.f90 unpackprop.f90 hash.f90 wsjtwspr.f90 gen64.f90
+	packprop.f90 unpackprop.f90 hash.f90 wsjtwspr.f90 gen64.f90 \
+	thnix.f90
 
 SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	stdecode.f indexx.f s2shape.f flat2.f gen65.f gen24.f entail.f \
@@ -56,7 +57,7 @@ SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c start_portaudio.c \
-	cutil.c w21.c azelout.c
+	cutil.c fthread.c
 WSJT7.EXE: WsjtMod/Audio.pyd wsjt.spec
 	c:/python25/python c:/python25/pyinstaller-1.3/Build.py wsjt.spec
 	mv wsjt.exe WSJT7.EXE
