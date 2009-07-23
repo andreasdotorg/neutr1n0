@@ -47,8 +47,8 @@ end subroutine cs_lock
 subroutine cs_unlock
   character*12 csub0
   common/mtxcom/ltrace,mtx,mtxstate,csub0
+  if(ltrace.ge.3) print*,'Mutex unlocked,',ltrace,mtx,mtxstate,csub0
   mtxstate=0
-  if(ltrace.ge.3) print*,'Mutex unlocked'
   call fthread_mutex_unlock(mtx)
   return
 end subroutine cs_unlock

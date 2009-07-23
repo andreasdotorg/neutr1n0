@@ -15,7 +15,7 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
   data uth8z/0.d0/,imin0/-99/
   save
 
-  call cs_lock('astro0')
+  call cs_lock('astro0a')
   auxra=0.
   i=index(cauxra,':')
   if(i.eq.0) then
@@ -102,7 +102,7 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
   isec=3600*uth8
 
   if(isec.ne.isec0 .and. ndecoding.eq.0) then
-     call cs_lock('astro0')
+     call cs_lock('astro0b')
      ih=uth8
      im=mod(imin,60)
      is=mod(isec,60)

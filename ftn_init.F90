@@ -83,10 +83,6 @@ subroutine ftn_init
 #else
   open(21,file=appdir(:iz)//'/ALL.TXT',status='unknown',                   &
        position='append',err=950)
-!  do i=1,9999999
-!     read(21,*,end=10) cjunk
-!  enddo
-!10 continue
 #endif
 
 #ifdef CVF

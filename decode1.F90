@@ -52,7 +52,7 @@ subroutine decode1(iarg)
   endif
   n=Tsec
   if(n.lt.ns0 .and. utcdate(1:1).eq.'2') then
-     call cs_lock('decode1')
+     call cs_lock('decode1a')
      write(21,1001) utcdate(:11)
 1001 format(/'UTC Date: ',a11/'---------------------')
      call flushqqq(21)
@@ -67,7 +67,7 @@ subroutine decode1(iarg)
      is=mod(n,60)
      cshort='           '
      if(sendingsh.eq.1) cshort='(Shorthand)'
-     call cs_lock('decode1')
+     call cs_lock('decode1b')
      write(21,1010) ih,im,is,mode,sending,cshort
 1010 format(3i2.2,'  Transmitting: ',a6,2x,a28,2x,a11)
      call flushqqq(21)
