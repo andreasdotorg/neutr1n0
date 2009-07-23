@@ -12,7 +12,6 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       character mycall*12,hiscall*12,hisgrid*6
       include 'avecom.h'
       include 'prcom.h'
-      save
 
       dt=2.0/11025.0                   !Sample interval (2x downsampled data)
       istart=nint(dtx/dt)              !Start index for synced FFTs

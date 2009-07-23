@@ -38,8 +38,8 @@ subroutine getfile(fname,len)
 
   call cs_lock('getfile')
 #ifdef CVF
-  open(10,file=fname,form='binary',status='old',err=998)
-  read(10,end=998) hdr
+  open(10,file=fname,form='binary',status='old',err=997)
+  read(10,end=997) hdr
 #else
   call rfile2(fname,hdr,44+2*NDMAX,nr)
 #endif
@@ -50,7 +50,7 @@ subroutine getfile(fname,len)
 
 #ifdef CVF
      call rfile(10,d1,ndata,ierr)
-     if(ierr.ne.0) go to 999
+     if(ierr.ne.0) go to 998
 #endif
 
      do i=1,ndata
@@ -65,7 +65,7 @@ subroutine getfile(fname,len)
 #ifdef CVF
      call rfile(10,d2c,ndata,ierr)
      jzc=ndata/2
-     if(ierr.ne.0) go to 999
+     if(ierr.ne.0) go to 998
 #else
      jzc=ndata/2
      do i=1,jzc
@@ -77,15 +77,15 @@ subroutine getfile(fname,len)
   ndiskdat=1
   mousebutton=0
   close(10)
-  call cs_unlock
-  return
+  go to 999
 
 #ifdef CVF
-998 ierr=1001
-999 close(10)
-  call cs_unlock
-  return
+997 ierr=1001
+998 close(10)
 #endif
+
+999 call cs_unlock
+  return
 
 end subroutine getfile
 

@@ -17,9 +17,8 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       integer fano
       integer nch(7)
       integer npr2(207)
-      logical first
       include 'avecom.h'
-      data first/.true./
+      data mode0/-999/
       data npr2/
      +  0,0,0,0,1,1,0,0,0,1,1,0,1,1,0,0,1,0,1,0,0,0,0,0,0,0,1,1,0,0,
      +  0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,0,0,
@@ -29,18 +28,15 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
      +  0,1,1,1,0,1,1,1,0,0,1,0,0,0,1,1,0,1,1,0,0,1,0,0,0,1,1,1,1,1,
      +  1,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,1,1,0,1,1,1,1,0,1,0,1/
       data nch/1,2,4,9,18,36,72/
-      save
+      save mettab,mode0
 
-      if(first) then
-         call genmet(mode,mettab)
-         twopi=8*atan(1.d0)
-         dt=2.d0/11025          !Sample interval (2x downsampled data)
-         df=11025.d0/2520.d0
-         nsym=206
-         amp=15
-         first=.false.
-      endif
-
+      if(mode.ne.mode0) call genmet(mode,mettab)
+      mode0=mode
+      twopi=8*atan(1.d0)
+      dt=2.d0/11025             !Sample interval (2x downsampled data)
+      df=11025.d0/2520.d0
+      nsym=206
+      amp=15
       istart=nint(dtx/dt)              !Start index for synced FFTs
       if(istart.lt.0) istart=0
 

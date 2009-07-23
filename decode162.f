@@ -11,8 +11,6 @@ C  Decode MEPT_JT data, assuming that DT and DF have already been determined.
       integer*1 data1(11)
       integer amp
       integer mettab(0:255,0:1)
-      logical first
-      data first/.true./
       integer npr3(162)
       common/ccom/rr(162)
       data npr3/
@@ -78,18 +76,14 @@ C  Decode MEPT_JT data, assuming that DT and DF have already been determined.
      +   5,   5,   5,   5,   5,   5,   5,   5,   5,   5,
      +   5,   5,   5,   5,   5,   5,   5,   5,   5,   5,
      +   5,   5/
-      save
 
-      if(first) then
-         twopi=8*atan(1.d0)
-         dt=1.d0/375.d0                        !Sample interval
-         df=375.d0/256.d0
-         nsym=162
-         nbits=50+31
-         amp=20                                !### 32 ??? ###
-         ndelta=50
-         first=.false.
-      endif
+      twopi=8*atan(1.d0)
+      dt=1.d0/375.d0            !Sample interval
+      df=375.d0/256.d0
+      nsym=162
+      nbits=50+31
+      amp=20                    !### 32 ??? ###
+      ndelta=50
 
       limit=20000
       if(ndwspr.eq.0) limit=10000

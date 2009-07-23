@@ -19,7 +19,7 @@ C  The WSPR pseudo-random sync pattern:
      +       0,0,0,0,0,0,0,1,1,0,1,0,1,1,0,0,0,1,1,0,
      +       0,0/
       data first/.true./
-      save
+      save first,pr,nsym
 
       if(first) then
          nsym=162

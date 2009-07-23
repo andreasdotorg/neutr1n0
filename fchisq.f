@@ -15,7 +15,6 @@
       real*8 twopi,baud,p2
 !      real ss(2812)
       real ss(5624)
-      save
 
       twopi=8.d0*atan(1.d0)
       baud=12000.d0/8192

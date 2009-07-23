@@ -1,10 +1,6 @@
       subroutine azdist(MyGrid,HisGrid,utch,nAz,nEl,nDmiles,nDkm,
      +  nHotAz,nHotABetter)
 
-C  Old calling sequence:
-c      subroutine azdist(MyGrid,HisGrid,UTChours,Az,Dmiles,Dkm,El,
-c     +  HotA,HotB,HotABetter)
-
       character*6 MyGrid,HisGrid,mygrid0,hisgrid0
       real*8 utch,utch0
       logical HotABetter,IamEast
@@ -14,7 +10,7 @@ c     +  HotA,HotB,HotABetter)
       data daztab/21.,18.,16.,15.,14.,13.,12.,11.,10.7,10.3,10.,
      +  10.,10.,10.,10.,10.,10.,9.,9.,9.,8.,8./
       data mygrid0/"      "/,hisgrid0/"      "/,utch0/-999.d0/
-      save
+      save utch0,mygrid0,hidgrid0
 
       if(MyGrid.eq.HisGrid) then
          naz=0
