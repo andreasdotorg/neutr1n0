@@ -549,7 +549,7 @@ fdf.pack(side=LEFT)
 
 lab3=Label(sbar,padx=13,bd=0)
 lab3.pack(side=LEFT)
-bbw=Button(sbar,text='BW',command=set_frange,padx=1,pady=1,width=button_width)
+bbw=Button(sbar,text='BW',command=set_frange,padx=1,pady=1,width=3)
 bbw.pack(side=LEFT)
 
 lab0=Label(sbar,padx=10,bd=0)
