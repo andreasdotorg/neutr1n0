@@ -24,7 +24,7 @@ SRCS2F90 = a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	blanker.f90 decode1.f90 decode2.f90 decode3.f90 ftn_init.f90 \
 	ftn_quit.f90 get_fname.f90 getfile.f90 horizspec.f90 hscroll.f90 \
 	pix2d.f90 pix2d65.f90 rfile.f90 savedata.f90 spec.f90 \
-	wsjtgen.f90 runqqq.f90 fivehz.f90 msgparms.f90 chkt0.f90 \
+	wsjtgen.f90 runqqq.f90 fivehz.f90 chkt0.f90 \
 	genwspr.f90 wqencode.f90 wqdecode.f90 packpfx.f90 unpackpfx.f90 \
 	hash.f90 packprop.f90 unpackprop.f90 packname.f90 unpackname.f90 \
 	packtext2.f90 unpacktext2.f90 wsjtwspr.f90 gen64.f90 thcvf.f90
