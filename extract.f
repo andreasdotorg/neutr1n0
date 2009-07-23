@@ -67,14 +67,15 @@
             go to 20
          endif
          read(22,rec=2) nsec2,ncount,dat4
-         call cs_unlock
 
          decoded='                      '
          if(ncount.ge.0) then
             call unpackmsg(dat4,decoded) !Unpack the user message
          endif
       endif
- 20   if(ndec.eq.0) then
+
+ 20   call cs_unlock
+      if(ndec.eq.0) then
          call indexx(63,mrprob,indx)
          do i=1,nemax
             j=indx(i)
