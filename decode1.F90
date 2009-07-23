@@ -16,7 +16,6 @@ subroutine decode1(iarg)
   include 'gcom4.f90'
 
   data sending0/'                      '/
-  save
 
   ntr0=iarg                                    !Silence compiler warning
   ntr0=ntr
