@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#----------------------------------------------------------------------- WSJT
+#---------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -2769,4 +2769,4 @@ Audio.ftn_quit()
 Audio.gcom1.ngo=0                         #Terminate audio streams
 Audio.gcom2.lauto=0
 Audio.gcom1.txok=0
-time.sleep(2)
+time.sleep(3)
