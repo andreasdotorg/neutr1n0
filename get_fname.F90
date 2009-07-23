@@ -7,7 +7,7 @@ subroutine get_fname(hiscall,iyr,imo,ida,ntime,lauto,fname)
   ihr=nsec/3600
   imin=mod(nsec/60,60)
   isec=mod(nsec,60)
-  call cs_lock('')
+  call cs_lock('get_fname')
   write(fname,1000) iyr-2000,imo,ida,ihr,imin,isec
 1000 format('_',3i2.2,'_',3i2.2,'.WAV')
   call cs_unlock

@@ -1,7 +1,7 @@
 subroutine cs_init
   character*12 csub0
   common/mtxcom/ltrace,mtx,mtxstate,csub0
-  ltrace=1
+  ltrace=0
   mtxstate=0
   csub0='**unlocked**'
   call fthread_mutex_init(mtx)
