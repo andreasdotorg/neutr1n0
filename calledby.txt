@@ -1,0 +1,170 @@
+Name             Called by
+----------------------------------------------------------------------------
+a2d.f90          *start of thread*
+abc441.F90       wsjtgen.F90
+astro0.F90       *GUI*
+astro.F          astro0
+audio_init.F90   *GUI*
+avemsg65.f       wsjt65 (also wsjt24, temporary)
+avemsg6m.f       decode6m
+avesp2.f         wsjt1
+azdist0.f90      *GUI*
+azdist.f         azdist0
+blanker.f90      decode3
+bzap.f           wsjt1
+ccf2.f           fchisq
+chkhist.f        extract
+chkmsg.f         gen24, gen65
+chkt0.f90        *GUI*
+coord.f          astro
+cs_lock          astro0, astro, avemsg6m, azdist0, chkt0, decode1, decode24,
+                 decode6m, deep65, extract, ftn_init, genmet, getfile, 
+                 get_fname, interleave24, inter_mept, mept162a, mtdecode,
+                 rfile, savedata, spec, stdecode, wqdecode, wsjt1, wsjt24, 
+                 wsjt65, wsjtgen
+cs_unlock        astro0, astro, avemsg6m, azdist0, chkt0, decode1, decode24,
+                 decode6m, deep65, extract, ftn_init, genmet, getfile, 
+                 get_fname, interleave24, inter_mept, mept162a, mtdecode,
+                 rfile, savedata, spec, stdecode, wqdecode, wsjt1, wsjt24, 
+                 wsjt65, wsjtgen
+db.f             avemsg6m, decode6m, flatten, mtdecode, short65, sync162,
+                 sync24, sync64, sync65, pix2d65
+dcoord.f         moon2, MoonDop
+decode162.f      mept162a
+decode1.F90      *start of thread*
+decode24.f       wsjt24
+decode2.f90      decode1
+decode3.F90      decode2
+decode65.f       wsjt65
+decode6m.f       wsjt1
+deep65.F         avemsg65, decode65
+deg2grid.f       k2grid, unpackgrid
+demod64a.f       extract
+detect.f         longx
+dot.f            MoonDop
+encode232.f      genwspr
+encode65.f       deep65
+entail.f         gen24
+extract.f        avemsg65, decode65
+fano232.f        decode162
+fchisq.f         sync162
+fil651.f         ftpeak65
+fil652.f         ftpeak65
+fil653.f         ftpeak65
+filbig2.F        ftn_quit, wsjtwspr
+fivehz.F90       *interrupt service routine*
+flat1.f          short65, sync24, sync65
+flat2.f          spec
+flatten.f        avesp2
+four2a.f         bzap,decode6m, ftn_quit, lpf1, ps162, spec2d65, xfft
+fourt.f          mept162, ps24
+ftn_init.F90     *GUI*
+ftn_quit.f90     *GUI*
+ftpeak65.f       spec2d65
+ftsky.f          astro.F
+gen24.f          wsjtgen
+gen64.f90        wsjtgen
+gen65.f          wsjtgen
+gen6m.f          wsjtgen
+gencw.f          wsjtgen
+gencwid.f        wsjtgen
+genmet.f         decode24
+gentone.f        gen6m
+genwspr.f90      wsjtgen
+geocentric.f     MoonDop
+GeoDist.f        azdist
+getfile.F90      *GUI*
+get_fname.F90    decode2, savedata
+getpfx1.f        packmsg
+getpfx2.f        unpackmsg
+getsnr.f         short65
+graycode.f       encode65, extract, gen65
+grid2deg.f       astro, azdist, grid2k, packgrid
+grid2k.f         unpackmsg
+hash.f90         wqdecode, wqencode
+horizspec.f90    spec
+hscroll.f90      horizspec, spec
+indexx.f         extract, mtdecode, spec2d, wsjt1
+interleave24.f   decode24, gen24
+interleave63.f   encode65, extract, gen65
+inter_mept.f     decode162, genwspr
+k2grid.f         packmsg
+limit.f          sync64, sync65
+longx.f          mtdecode
+lpf1.f           wsjt1
+mept162a.f       wsjtwspr
+moon2.f          MoonDop
+MoonDop.f        astro
+morse.f          gencw, gencwid
+msgtype.f        gencw
+mtdecode.f       wsjt1
+nchar.f          packcall
+pack50.f         wqencode
+packcall.f       packmsg, packpfx, wqencode
+packgrid.f       packmsg, wqencode
+packmsg.f        chkt0/GUI, deep65, encode65, gen24, gen65
+packname.f90     wqencode
+packpfx.f90      wqencode
+packprop.f90     wqencode
+packtext2.f90    wqencode
+packtext.f       packmsg
+pctile.f         extract, flat1, flat2, flatten, mtdecode, spec2d,
+                 sync162, sync24, sync65, xcor
+peakup.f         longx, stdecode, sync24, sync65
+pfxdump.f        ftn_init/GUI
+ping.f           mtdecode
+pix2d65.f90      decode3
+pix2d.f90        decode3
+ps162.f          sync162
+ps24.f           sync24
+ps.f             avesp2, short65, sync64, sync65
+rfile2.f         astro, getfile, wsjtgen
+rfile.f90        getfile, wsjtgen
+runqqq.F90       extract
+s2shape.f        wsjt1
+savedata.F90     decode1
+set.f            gen65, spec2d, wsjt65
+setup65.f        gen65, wsjt65
+short65.f        wsjt1
+slope.f          sync24, sync66
+smooth.f         mtdecode, short65, sync24, sync64, sync65, syncf1
+sort.f           pctile
+spec2d65.f       decode65
+spec2d.f         wsjt1
+spec441.f        mtdecode, wsjt1
+spec.f90         *GUI*
+ssort.f          indexx, sort
+stdecode.f       wsjt1
+sun.f            astro
+symsync65.f      ftpeak65
+sync162.f        mept162a
+sync24.f         wsjt24
+sync64.f         wsjt64
+sync65.f         wsjt65
+sync.f           longx
+syncf0.f         wsjt1
+syncf1.f         wsjt1
+synct.f          wsjt1
+toxyz.f          MoonDop
+twkfreq.f        mept162a
+unpack50.f       wqdecode
+unpackcall.f     unpackmsg, wqdecode
+unpackgrid.f     wqdecode
+unpackmsg.f      chkt0/GUI, decode24, deep65, extract, gen24, gen64, gen65
+unpackname.f90   wqdecode
+unpackpfx.f90    wqdecode
+unpackprop.f90   unpackprop
+unpacktext2.f90  wqdecode
+unpacktext.f     unpackmsg, wqdecode
+wqdecode.f90     decode162, genwspr
+wqencode.f90     gen64, genwspr
+wsjt1.F          decode3
+wsjt24.f         wsjt1
+wsjt64.f         wsjt1
+wsjt65.f         wsjt1
+wsjtgen.F90      fivehz
+wsjtwspr.f90     wsjt1
+xcor24.f         sync24
+xcor.f           sync65
+xfft2.f          horizspec, spec
+xfft.f           bzap, lpf1, ps, spec2d, spec441, syncf0, syncf1, sync
