@@ -13,10 +13,12 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       real lat,lon
       real ldeg
       integer*2 nsky
-      common/sky/ nsky(360,180),ltsky
+      common/sky/ nsky(360,180)
       common/echo/xdop(2),techo,ElMoon,mjd
       data rad/57.2957795/
       save
+
+      ltsky=nsky(1,1).eq.192
 
  20   call grid2deg(MyGrid,elon,lat)
       lon=-elon

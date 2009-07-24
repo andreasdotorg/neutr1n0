@@ -6,8 +6,7 @@ C  file tsky.dat into memory.
 
       real*4 l,b
       integer*2 nsky
-      logical ltsky
-      common/sky/ nsky(360,180),ltsky
+      common/sky/ nsky(360,180)
       save
 
       j=nint(b+91.0)

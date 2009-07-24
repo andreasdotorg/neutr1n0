@@ -24,10 +24,9 @@ subroutine ftn_init
   include 'gcom3.f90'
   include 'gcom4.f90'
   character*12 csub0
-  common/mtxcom/ltrace,mtx,mtxstate,csub0
   integer*2 nsky
-  logical ltsky
-  common/sky/ nsky(360,180),ltsky
+  common/sky/ nsky(360,180)
+  common/mtxcom/ltrace,mtx,mtxstate,csub0
 
   call cs_init
   call cs_lock('ftn_init')
@@ -116,11 +115,8 @@ subroutine ftn_init
      enddo
   endif
 #endif
-  ltsky=.true.
-  go to 20
-10 ltsky=.false.
 
-20 call cs_unlock
+10 call cs_unlock
   return
 
 910 print*,'Error opening DECODED.TXT'
