@@ -92,7 +92,7 @@ OBJS2C  = ${SRCS2C:.c=.o}
 
 SRCS3C	= ptt_unix.c igray.c wrapkarn.c
 OBJS3C  = ${SRCS3C:.c=.o}
-AUDIOSRCS =	a2d.f90 jtaudio.c start_portaudio.c resample.c
+AUDIOSRCS =	a2d.f90 jtaudio.c start_threads.c resample.c
 
 all:	WsjtMod/Audio.so wsjt7 JT65code
 
