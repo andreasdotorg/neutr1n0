@@ -1,4 +1,4 @@
-      subroutine astro(AppDir,nyear,month,nday,uth,nfreq,Mygrid,
+      subroutine astro(nyear,month,nday,uth,nfreq,Mygrid,
      +     NStation,mode,MoonDX,AzSun,ElSun,AzMoon,ElMoon0,
      +     ntsky,doppler00,doppler,dbMoon,RAMoon,DecMoon,HA,Dgrd,sd,
      +     poloffset,xnr,auxra,auxdec,azaux,elaux)
@@ -8,53 +8,16 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
 
       character*80 AppDir,fname
       character*6 MyGrid,HisGrid
-      logical first,ltsky
+      logical ltsky
       real LST
       real lat,lon
       real ldeg
-      real poloffset2
       integer*2 nsky
-      common/sky/ nsky(360,180)
+      common/sky/ nsky(360,180),ltsky
       common/echo/xdop(2),techo,ElMoon,mjd
-      data ltsky/.false./
-      data first/.true./
       data rad/57.2957795/
-      save first,poloffset2
+      save
 
-      if(first) then
-         call cs_lock('astro')
-         do i=80,1,-1
-            if(ichar(AppDir(i:i)).ne.0 .and. 
-     +           ichar(AppDir(i:i)).ne.32) goto 1
-         enddo
- 1       lenappdir=i
-         call zero(nsky,180*180)
-         fname=Appdir(1:lenappdir)//'/TSKY.DAT'
-#ifdef CVF
-         open(13,file=fname,status='old',form='binary',err=10)
-         read(13) nsky
-         close(13)
-#else
-         call rfile2(fname,nsky,129600,nr)
-!         if(nr.ne.129600) go to 10
-         nsky4=nsky(1,1)
-         if (iabs(nsky4).gt.500) then
-            write(*,1000)
- 1000       format('Converting TSKY.DAT')
-            do i=1,360
-               do j=1,180
-                  nsky(i,j) = iswap_short(nsky(i,j))
-               enddo
-            enddo
-         endif 
-#endif
-         ltsky=.true.
-         first=.false.
-         call cs_unlock
-      endif
-      go to 20
- 10   ltsky=.false.
- 
  20   call grid2deg(MyGrid,elon,lat)
       lon=-elon
       call sun(nyear,month,nday,uth,lon,lat,RASun,DecSun,LST,

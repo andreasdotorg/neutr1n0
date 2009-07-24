@@ -18,13 +18,16 @@
 !------------------------------------------------ ftn_init
 subroutine ftn_init
 
-  character*1 cjunk
+  character*1 cjunk,fname*80
   include 'gcom1.f90'
   include 'gcom2.f90'
   include 'gcom3.f90'
   include 'gcom4.f90'
   character*12 csub0
   common/mtxcom/ltrace,mtx,mtxstate,csub0
+  integer*2 nsky
+  logical ltsky
+  common/sky/ nsky(360,180),ltsky
 
   call cs_init
   call cs_lock('ftn_init')
@@ -93,7 +96,31 @@ subroutine ftn_init
        status='unknown')
 #endif
 
-  call cs_unlock
+  call zero(nsky,180*180)
+  fname=appdir(:iz)//'/TSKY.DAT'
+#ifdef CVF
+  open(13,file=fname,status='old',form='binary',err=10)
+  read(13) nsky
+  close(13)
+#else
+  call rfile2(fname,nsky,129600,nr)
+  if(nr.ne.129600) go to 10
+  nsky4=nsky(1,1)
+  if (iabs(nsky4).gt.500) then
+     write(*,1000)
+1000 format('Converting TSKY.DAT')
+     do i=1,360
+        do j=1,180
+           nsky(i,j) = iswap_short(nsky(i,j))
+        enddo
+     enddo
+  endif
+#endif
+  ltsky=.true.
+  go to 20
+10 ltsky=.false.
+
+20 call cs_unlock
   return
 
 910 print*,'Error opening DECODED.TXT'

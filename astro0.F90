@@ -54,13 +54,13 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
   uth=uth8
   call cs_unlock
 
-  call astro(AppDir,nyear,month,nday,uth,nfreq,hisgrid,2,nmode,1,    &
+  call astro(nyear,month,nday,uth,nfreq,hisgrid,2,nmode,1,    &
        AzSun,ElSun,AzMoon,ElMoon,ntsky,doppler00,doppler,            &
        dbMoon,RAMoon,DecMoon,HA,Dgrd,sd,poloffset,xnr,auxra,auxdec,  &
        AzAux,ElAux)
   AzMoonB8=AzMoon
   ElMoonB8=ElMoon
-  call astro(AppDir,nyear,month,nday,uth,nfreq,grid,1,nmode,1,       &
+  call astro(nyear,month,nday,uth,nfreq,grid,1,nmode,1,       &
        AzSun,ElSun,AzMoon,ElMoon,ntsky,doppler00,doppler,            &
        dbMoon,RAMoon,DecMoon,HA,Dgrd,sd,poloffset,xnr,auxra,auxdec,  &
        AzAux,ElAux)
