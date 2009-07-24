@@ -10,7 +10,7 @@
       data daztab/21.,18.,16.,15.,14.,13.,12.,11.,10.7,10.3,10.,
      +  10.,10.,10.,10.,10.,10.,9.,9.,9.,8.,8./
       data mygrid0/"      "/,hisgrid0/"      "/,utch0/-999.d0/
-      save utch0,mygrid0,hidgrid0
+      save
 
       if(MyGrid.eq.HisGrid) then
          naz=0
