@@ -56,7 +56,7 @@ SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	ps162.f fchisq.f fano232.f ccf2.f wsjt64.f sync64.f
 
 
-SRCS2C   = resample.c ptt.c igray.c wrapkarn.c start_portaudio.c \
+SRCS2C   = resample.c ptt.c igray.c wrapkarn.c start_threads.c \
 	cutil.c fthread.c
 WSJT7.EXE: WsjtMod/Audio.pyd wsjt.spec
 	c:/python25/python c:/python25/pyinstaller-1.3/Build.py wsjt.spec
@@ -92,4 +92,4 @@ decode_rs.o: decode_rs.c
 .PHONY : clean
 
 clean:
-	rm *.o JT65code.exe wsjt7.exe WsjtMod/Audio.pyd
+	rm -f *.o JT65code.exe wsjt7.exe WsjtMod/Audio.pyd
