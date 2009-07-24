@@ -1,12 +1,57 @@
-a2d.f90:       padevsub
-afc65.f:       peakup
-astro0.F90:    astro, cs_lock, cs_unlock
-astro.F:       grid2deg, coord, cs_lock, cs_unlock, MoonDop, rfile2, sun, zero
-avemsg65.f:    add, deep65, extract, zero
-avemsg6m.f:    add, cs_lock, cs_unlock, move, zero
-avesp2.f:      flatten, move, ps, zero
+----------------------------------------------------------------------------
+Audio Threads (including interrupt service routines)                      AI
+Name           Routines called
+----------------------------------------------------------------------------
+a2d.f90:       padevsub                                                    A
+fivehz.F90:    random_number, random_seed, wsjtgen                         I
+gen24.f:       chkmsg, encode, entail, interleave24, packmsg, unpackmsg  ...
+gen64.f90:     random_number
+gen65.f:       chkmsg, graycode, interleave63, packmsg, rs_encode, 
+               unpackmsg, setup65
+gen6m.f:       gentone
+gencw.f:       morse, msgtype
+gencwid.f:     morse
+genwspr.f90:   encode232, inter_mept, wqdecode, wqencode
+grid2k.f:      grid2deg
+interleave24.f:  cs_lock, cs_unlock                                       DI
+interleave63.f:  move                                                     DI
+inter_mept.f:  cs_lock, cs_unloc                                          DI
+k2grid.f:      deg2grid
+packgrid.f:    grid2deg
+packmsg.f:     packtext, getpfx1, k2grid, packcall, packgrid             DGI
+packpfx.f90:   packcall
+rfile.f90:     cs_lock, cs_unlock                                         GI
+wqencode.f90:  hash, pack50, packcall, packgrid, packname, packpfx, 
+               packprop, packtext2
+wsjtgen.F90:   abc441, cs_lock, cs_unlock, gen24, gen64, gen65, gen6m, 
+               gencwid, gencw, genwspr, rfile, rfile2
+
+
+----------------------------------------------------------------------------
+GUI Thread                                                                 G
+Name           Routines called
+----------------------------------------------------------------------------
+astro0.F90:    astro, cs_lock, cs_unlock                                   G
+astro.F:       grid2deg, coord, cs_lock, cs_unlock, MoonDop, rfile2,     ...
+               sun, zero
 azdist0.f90:   azdist, cs_lock, cs_unlock
 azdist.f:      geodist, grid2deg
+ftn_init.F90:  cs_init, cs_lock, cs_unlock, pfxdump
+ftn_quit.f90:  cs_destroy, filbig2, four2a
+getfile.F90:   check_endian, cs_lock, cs_unlock, rfile, rfile2, sleepqq, usleep
+horizspec.f90: hscroll, xfft2
+moon2.f:       dcoord
+MoonDop.f:     dcoord, fromxyz, geocentric, moon2, toxyz
+spec.f90:      cs_lock, cs_unlock, horizspec, hscroll, xfft2, flat2
+
+
+----------------------------------------------------------------------------
+Decoder Thread                                                             D
+Name           Routines called
+----------------------------------------------------------------------------
+avemsg65.f:    add, deep65, extract, zero                                  D
+avemsg6m.f:    add, cs_lock, cs_unlock, move, zero                       ...
+avesp2.f:      flatten, move, ps, zero
 bzap.f:        four2a, xfft, zero
 chkt0.f90:     cs_lock, cs_unlock, packmsg, unpackmsg
 decode162.f:   fano232, inter_mept, wqdecode
@@ -21,48 +66,24 @@ encode65.f:    graycode, interleave63, packmsg, rs_encode
 extract.f:     demod64a, chkhist, cs_lock, cs_unlock, flushqqq, graycode,
                indexx, interleave63, pctile, rs_decode, runqqq, unpackmsg
 fchisq.f:      ccf2
-filbig2.F:     sfftw_*
-fivehz.F90:    random_number, random_seed, wsjtgen
+filbig2.F:     sfftw_*                                                    DG
 flat1.f:       pctile
 flat2.f:       pctile
 flatten.f:     add, move, pctile, zero
-four2a.f:      sleep_msec, sfftw_*
-ftn_init.F90:  cs_init, cs_lock, cs_unlock, pfxdump
-ftn_quit.f90:  cs_destroy, filbig2, four2a
+four2a.f:      sleep_msec, sfftw_*                                        DG
 ftpeak65.f:    fil651, fil652, fil653, fil653, symsync65
-gen24.f:       chkmsg, encode, entail, interleave24, packmsg, unpackmsg
-gen64.f90:     random_number
-gen65.f:       chkmsg, graycode, interleave63, packmsg, rs_encode, 
-               unpackmsg, setup65
-gen6m.f:       gentone
-gencw.f:       morse, msgtype
-gencwid.f:     morse
 genmet.f:      cs_lock, cs_unlock
-genwspr.f90:   encode232, inter_mept, wqdecode, wqencode
-getfile.F90:   check_endian, cs_lock, cs_unlock, rfile, rfile2, sleepqq, usleep
 get_fname.F90: cs_lock, cs_unlock
-grid2k.f:      grid2deg
-horizspec.f90: hscroll, xfft2
 indexx.f:      ssort
-interleave24.f:  cs_lock, cs_unlock
-interleave63.f:  move
-inter_mept.f:  cs_lock, cs_unloc
-k2grid.f:      deg2grid
 longx.f:       detect, peakup, sync
 lpf1.f:        four2a, xfft, zero
 mept162a.f:    cs_lock, cs_unlock, decode162, fourt, sync162, twkfreq
-moon2.f:       dcoord
-MoonDop.f:     dcoord, fromxyz, geocentric, moon2, toxyz
 mtdecode.f:    cs_lock, cs_unlock, indexx, longx, pctile, ping, 
                smooth, spec441
-packgrid.f:    grid2deg
-packmsg.f:     packtext, getpfx1, k2grid, packcall, packgrid
-packpfx.f90:   packcall
 pctile.f:      sort
 ps162.f:       four2a
 ps24.f:        fourt
 ps.f:          xfft
-rfile.f90:     cs_lock, cs_unlock
 runqqq.F90:    flush, sleepqq, usleep
 savedata.F90:  cs_lock, cs_unlock, get_fname
 short65.f:     add, flat1, getsnr, ps, smooth, zero
@@ -70,31 +91,28 @@ sort.f:        ssort
 spec2d65.f:    add, four2a, ftpeak65, move, zero
 spec2d.f:      indexx, move, pctile, set, xfft, zero
 spec441.f:     move, xfft, zero
-spec.f90:      cs_lock, cs_unlock, horizspec, hscroll, xfft2, flat2
 stdecode.f:    cs_lock, cs_unlock, peakup
 sync162.f:     add, pctile, ps162, zero
 sync24.f:      add, flat1, pctile, peakup, ps24, slope, xcor24, zero, 
 sync64.f:      add, limit, ps, zero, smooth
-sync65.f:      add, flat1, limit, pctile, peakup, ps, slope, xcor, zero, smooth
+sync65.f:      add, flat1, limit, pctile, peakup, ps, slope, xcor, zero, 
+               smooth
 syncf0.f:      add, move, xfft, zero
 syncf1.f:      add, move, smooth, xfft, zero
 sync.f:        xfft, zero
-unpackgrid.f:  deg2grid
-unpackmsg.f:   grid2k, unpackcall, unpacktext, getpfx2
-wqdecode.f90:  cs_unlock, cs_lock, hash, unpack50, unpackcall, unpackgrid, 
-               unpackname, unpackpfx, unpackprop, unpacktext2
-wqencode.f90:  hash, pack50, packcall, packgrid, packname, packpfx, 
-               packprop, packtext2
-wsjt1.F:       bzap, cs_lock, cs_unlock, decode6m, flushqqq, indexx, lpf1, 
-               mtdecode, s2shape, spec2d, spec441, stdecode, syncf0, syncf1, 
-               synct, wsjtwspr, zero, wsjt24, wsjt64, wsjt65, avesp2, 
-               short65, bzap, avesp2
+unpackgrid.f:  deg2grid                                                   DI
+unpackmsg.f:   grid2k, unpackcall, unpacktext, getpfx2                    DI
+wqdecode.f90:  cs_unlock, cs_lock, hash, unpack50, unpackcall,            DI
+               unpackgrid, unpackname, unpackpfx, unpackprop, 
+               unpacktext2
+wsjt1.F:       bzap, cs_lock, cs_unlock, decode6m, flushqqq, indexx, 
+               lpf1, mtdecode, s2shape, spec2d, spec441, stdecode, 
+               syncf0, syncf1, synct, wsjtwspr, zero, wsjt24, wsjt64, 
+               wsjt65, avesp2, short65, bzap, avesp2
 wsjt24.f:      cs_lock, cs_unlock, decode24, flushqqq, sync24, avemsg65
 wsjt64.f:      sync64
 wsjt65.f:      cs_lock, cs_unlock, decode65, flushqqq, setup65, sync65, 
 	       avemsg65
-wsjtgen.F90:   abc441, cs_lock, cs_unlock, gen24, gen64, gen65, gen6m, 
-               gencwid, gencw, genwspr, rfile, rfile2
 wsjtwspr.f90:  filbig2, mept162a
 xcor.f:        pctile
 xfft.f:        four2a

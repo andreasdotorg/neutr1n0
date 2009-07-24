@@ -13,6 +13,7 @@ subroutine wqencode(msg,ntype,data0)
   integer nu(0:9)
   data nu/0,-1,1,0,-1,2,1,0,-1,1/
 
+  call cs_lock('wqencode')
   read(msg,1001,end=1,err=1) ng,n1
 1001 format(z4,z7)
   ntype=62
@@ -339,5 +340,6 @@ subroutine wqencode(msg,ntype,data0)
   go to 900
 
 900 continue
+  call cs_unlock
   return
 end subroutine wqencode
