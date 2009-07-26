@@ -135,7 +135,7 @@ C     .. Intrinsic Functions ..
       INTRINSIC COS,MAX0,REAL,SIN
 C     ..
 C     .. Data statements ..
-      DATA NP0/0/,NPREV/0/
+      DATA NP0/0/,NPREV/0/,TWOWR/0.0/
       DATA TWOPI/6.2831853071796/,RTHLF/0.70710678118655/
 C     ..
       IF (NDIM-1) 232,101,101

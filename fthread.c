@@ -7,6 +7,7 @@
 */
 #include <stdio.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 // Create a new fortran thread through a subroutine.
 void fthread_create_(void *(*thread_func)(void *), pthread_t *theThread) 

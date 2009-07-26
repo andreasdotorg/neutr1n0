@@ -48,6 +48,7 @@ C  Compute soft symbols using differential BPSK demodulation
       fac=1.e-4
       phi=0.d0
       phi1=0.d0
+      ang0=0.
 
       if(mode.eq.6) then                   !JT2
          nhmax=0
