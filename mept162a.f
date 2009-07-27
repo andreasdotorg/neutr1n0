@@ -23,7 +23,6 @@ C  Mix 1500 Hz +/- 100 Hz to baseband, and downsample by 1/32
       c2a(0:jz-1)=c2
       c2a(jz:)=0.
       nfft0=65536
-      df0=375.0/nfft0
       call fourt(c2a,65536,1,-1,1,0.0)
       do k=-256,256
          i=128*k

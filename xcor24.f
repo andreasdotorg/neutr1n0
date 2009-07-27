@@ -34,7 +34,6 @@ C  the "OOO" message.
          first=.false.
       endif
 
-      df=0.5*11025.0/2520.0
       do j=1,nsteps
          if(mode.eq.6) then
             a(j)=s2(ipk+2,j) - s2(ipk,j)             !JT2

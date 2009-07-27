@@ -6,7 +6,6 @@
 C  Computes astronomical quantities for display in JT65, CW, and EME Echo mode.
 C  NB: may want to smooth the Tsky map to 10 degrees or so.
 
-      character*80 AppDir,fname
       character*6 MyGrid,HisGrid
       logical ltsky
       real LST
@@ -20,7 +19,7 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
 
       ltsky=nsky(1,1).eq.192
 
- 20   call grid2deg(MyGrid,elon,lat)
+      call grid2deg(MyGrid,elon,lat)
       lon=-elon
       call sun(nyear,month,nday,uth,lon,lat,RASun,DecSun,LST,
      +    AzSun,ElSun,mjd)

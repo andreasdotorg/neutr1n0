@@ -18,7 +18,7 @@
 !------------------------------------------------ ftn_init
 subroutine ftn_init
 
-  character*1 cjunk,fname*80
+  character*1 fname*80
   include 'gcom1.f90'
   include 'gcom2.f90'
   include 'gcom3.f90'
@@ -39,11 +39,6 @@ subroutine ftn_init
 1 iz=i
   lenappdir=iz
   call pfxdump(appdir(:iz)//'/prefixes.txt')
-
-  do i=80,1,-1
-     if(AzElDir(i:i).ne.' ') goto 2
-  enddo
-2 iz2=i
 
 #ifdef CVF
   open(11,file=appdir(:iz)//'/decoded.txt',status='unknown',               &

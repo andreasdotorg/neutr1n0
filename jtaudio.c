@@ -2,8 +2,8 @@
 #include <portaudio.h>
 #include <string.h>
 
-void fivehz_();
-void fivehztx_();
+void fivehz_(void);
+void fivehztx_(void);
 void addnoise_(short int *n);
 
 //  Definition of structure pointing to the audio data
@@ -72,11 +72,8 @@ SoundIn( void *inputBuffer, void *outputBuffer,
   paTestData *data = (paTestData*)userData;
   short *in = (short*)inputBuffer;
   unsigned int i;
-  static int n0;
   static int ia=0;
   static int ib=0;
-  static int ic=0;
-  static int TxOKz=0;
   static int ncall=0;
   static int nsec0=0;
   static double stime0=86400.0;
@@ -104,7 +101,7 @@ SoundIn( void *inputBuffer, void *outputBuffer,
   if((statusFlags!=0) & (ncall>2) & (stime>stime0)) {
     if(*data->ndebug) 
       printf("Status flags %d at Tsec = %7.1f s, DT = %7.1f\n",
-		      statusFlags,stime,stime-stime0);
+	       (int)statusFlags,stime,stime-stime0);
     stime0=stime;
   }
 
@@ -142,12 +139,8 @@ SoundOut( void *inputBuffer, void *outputBuffer,
   short *wptr = (short*)outputBuffer;
   unsigned int i,n;
   static short int n2;
-  static int n0;
-  static int ia=0;
-  static int ib=0;
   static int ic=0;
   static int TxOKz=0;
-  static double stime0=86400.0;
   int nsec;
   double stime;
   SYSTEMTIME st;
