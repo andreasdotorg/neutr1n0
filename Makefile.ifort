@@ -2,11 +2,11 @@ MV ?= mv
 CC ?= gcc
 MKDIR ?= mkdir
 INSTALL=	install
-FFLAGS	= -O0 -C -threads -reentrancy threaded -traceback -static
+FFLAGS	= -O2 -C -threads -reentrancy threaded -traceback -static
 LDFLAGS	= -L/usr/lib -L/usr/local/lib 
 LIBS	+=  -lpthread  -lportaudio -lsamplerate -lfftw3f
 CPPFLAGS = -I/usr/include -I/usr/local/include 
-CFLAGS	=  -Wall -O0 -g  -Wall -O0 -g
+CFLAGS	=  -Wall -O0 -g
 PREFIX	= NONE
 # WSJT specific C flags
 CFLAGS	+= -DBIGSYM=1 -fPIC
@@ -101,7 +101,7 @@ JT65code: $(OBJS1)
 
 build:	WsjtMod/Audio.so
 WsjtMod/Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
-	 ${F2PY} -c --quiet --opt="-O ${CFLAGS} \
+	 ${F2PY} -c --quiet --opt="-O2 ${CFLAGS} \
 	${FFLAGS}"	$(OBJS2C) $(OBJS2F77) -m Audio \
 	--fcompiler=${FCV} --f77exec=${FC} --f90exec=${FC} \
 	${CPPFLAGS} ${LDFLAGS} ${LIBS} \
