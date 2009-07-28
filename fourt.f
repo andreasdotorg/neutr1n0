@@ -138,6 +138,12 @@ C     .. Data statements ..
       DATA NP0/0/,NPREV/0/,TWOWR/0.0/
       DATA TWOPI/6.2831853071796/,RTHLF/0.70710678118655/
 C     ..
+      WI = 0.0
+      W2I = 0.0
+      W3I = 0.0
+      WR = 0.0
+      W2R = 0.0
+      W3R = 0.0
       IF (NDIM-1) 232,101,101
   101 NTOT = 2
       DO 103 IDIM = 1,NDIM

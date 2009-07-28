@@ -13,6 +13,8 @@ subroutine wqencode(msg,ntype,data0)
   integer nu(0:9)
   data nu/0,-1,1,0,-1,2,1,0,-1,1/
 
+  nwatts=0
+  i1=0
   call cs_lock('wqencode')
   read(msg,1001,end=1,err=1) ng,n1
 1001 format(z4,z7)

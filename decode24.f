@@ -39,6 +39,9 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       amp=15
       istart=nint(dtx/dt)              !Start index for synced FFTs
       if(istart.lt.0) istart=0
+      idfbest = 0
+      nchips = 0
+      ich = 0
 
 C  Should amp be adjusted according to signal strength?
 

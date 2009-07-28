@@ -28,6 +28,10 @@ C  Mix and integrate four channels
       w2=1.0
       w3=1.0
       w4=1.0
+      ws1=1.0
+      ws2=1.0
+      ws3=1.0
+      ws4=1.0
       x0=0.5*(npts+1)           !Middle sample
       s=2.0/npts
       dt=1.0/fsample
