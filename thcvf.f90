@@ -3,7 +3,7 @@ subroutine cs_init
   type (RTL_CRITICAL_SECTION) ncrit1
   character*12 csub0
   common/mtxcom/ltrace,mtx,mtxstate,csub0
-  ltrace=1
+  ltrace=0
   mtx=loc(ncrit1)
   mtxstate=0
   csub0='**unlocked**'

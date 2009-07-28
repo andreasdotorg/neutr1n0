@@ -14,6 +14,7 @@ subroutine decode1(iarg)
   include 'gcom2.f90'
   include 'gcom3.f90'
   include 'gcom4.f90'
+  common/mtxcom/ltrace,mtx,mtxstate,csub0
 
   data sending0/'                      '/
 
@@ -21,7 +22,7 @@ subroutine decode1(iarg)
   ntr0=ntr
   ns0=999999
 
-10 continue
+10 ltrace=ndebug
   if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4'  &
        .or. mode(1:2).eq.'CW' .or. mode(1:4).eq.'WSPR' .or.               &
        mode(1:4).eq.'JT64') then
