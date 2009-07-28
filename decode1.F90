@@ -21,6 +21,7 @@ subroutine decode1(iarg)
   ntr0=iarg                                    !Silence compiler warning
   ntr0=ntr
   ns0=999999
+  sendingsh0=-3
 
 10 ltrace=ndebug
   if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4'  &
