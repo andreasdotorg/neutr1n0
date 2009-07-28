@@ -19,6 +19,7 @@ subroutine fivehz
   logical first,txtime,filled
   integer ptt
   integer TxOKz
+  integer time
   real*8 fs,fsample,tt,u
   include 'gcom1.f90'
   include 'gcom2.f90'
