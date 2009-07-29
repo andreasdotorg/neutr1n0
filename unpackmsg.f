@@ -29,9 +29,11 @@
          if(nc1.eq.NBASE+2) c1='QRZ   '
          nfreq=nc1-NBASE-3
          if(nfreq.ge.0 .and. nfreq.le.999) then
-            write(c1,1002) nfreq
- 1002       format('CQ ',i3.3)
-            cqnnn=.true.
+            c1(1:3)='CQ '
+            c1(4:4)=char(48+nfreq/100)
+            c1(5:5)=char(48+mod(nfreq/10,10))
+            c1(6:6)=char(48+mod(nfreq,10))
+            cqnnn=.true.           
          endif         
       endif
 

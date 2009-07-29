@@ -1,7 +1,8 @@
       subroutine unpackgrid(ng,grid)
 
       parameter (NGBASE=180*180)
-      character grid*4,grid6*6
+      character grid*4,grid6*6,digit*10
+      data digit/'0123456789'/
 
       grid='    '
       if(ng.ge.32400) go to 10
@@ -13,12 +14,14 @@
 
  10   n=ng-NGBASE-1
       if(n.ge.1 .and.n.le.30) then
-         write(grid,1012) -n
- 1012    format(i3.2)
+         grid(1:1)='-'
+         grid(2:2)=char(48+n/10)
+         grid(3:3)=char(48+mod(n,10))
       else if(n.ge.31 .and.n.le.60) then
          n=n-30
-         write(grid,1022) -n
- 1022    format('R',i3.2)
+         grid(1:2)='R-'
+         grid(3:3)=char(48+n/10)
+         grid(4:4)=char(48+mod(n,10))
       else if(n.eq.61) then
          grid='RO'
       else if(n.eq.62) then

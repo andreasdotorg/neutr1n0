@@ -3,8 +3,9 @@
 C  Pack a valid callsign into a 28-bit integer.
 
       parameter (NBASE=37*36*10*27*27*27)
-      character callsign*6,c*1,tmp*6
+      character callsign*6,c*1,tmp*6,digit*10
       logical text
+      data digit/'0123456789'/
 
       text=.false.
 
@@ -16,7 +17,9 @@ C  Work-around for Swaziland prefix:
          if(callsign(4:4).ge.'0' .and. callsign(4:4).le.'9' .and. 
      +      callsign(5:5).ge.'0' .and. callsign(5:5).le.'9' .and. 
      +      callsign(6:6).ge.'0' .and. callsign(6:6).le.'9') then
-            read(callsign(4:6),*) nfreq
+            nfreq=100*(ichar(callsign(4:4))-48) + 
+     +             10*(ichar(callsign(5:5))-48) +
+     +                 ichar(callsign(6:6))-48
             ncall=NBASE + 3 + nfreq
          endif
          return
