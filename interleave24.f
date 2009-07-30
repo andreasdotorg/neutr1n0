@@ -7,21 +7,23 @@
       save first
 
       if(first) then
-         call cs_lock('interleave24')
          k=-1
          do i=0,255
-            write(c0,1001) i
- 1001       format(b8.8)
-            c1=c0(8:8)//c0(7:7)//c0(6:6)//c0(5:5)//c0(4:4)//c0(3:3)//
-     +         c0(2:2)//c0(1:1)
-            read(c1,1001) n
+            m=i
+            n=iand(m,1)
+            n=2*n + iand(m/2,1)
+            n=2*n + iand(m/4,1)
+            n=2*n + iand(m/8,1)
+            n=2*n + iand(m/16,1)
+            n=2*n + iand(m/32,1)
+            n=2*n + iand(m/64,1)
+            n=2*n + iand(m/128,1)
             if(n.le.205) then
                k=k+1
                j0(k)=n
             endif
          enddo
          first=.false.
-         call cs_unlock
       endif
 
       if(ndir.eq.1) then
