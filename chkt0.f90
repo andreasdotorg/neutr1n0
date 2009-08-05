@@ -1,5 +1,6 @@
 subroutine chkt0(nplain,naddon,ndiff)
 
+!f2py threadsafe
 !f2py intent(out) nplain,naddon,ndiff
   integer dgen(12)
   character*22 t0msg2

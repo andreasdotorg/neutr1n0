@@ -1,4 +1,5 @@
 subroutine getfile(fname,len)
+!f2py threadsafe
 
 #ifdef CVF
   use dflib

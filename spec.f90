@@ -1,4 +1,5 @@
 subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
+!f2py threadsafe
 
 ! Called by SpecJT in its TopLevel Python code.  
 ! Probably should use the "!f2py intent(...)" structure here.

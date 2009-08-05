@@ -100,13 +100,14 @@ JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
 
 build:	WsjtMod/Audio.so
+
 WsjtMod/Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
-	 ${F2PY} -c --quiet --opt="-O ${CFLAGS} \
-	${FFLAGS}"	$(OBJS2C) $(OBJS2F77) -m Audio \
+	${F2PY} -c --quiet --noopt --debug \
+	--f77flags="${FFLAGS}" --f90flags="${FFLAGS}" \
+	$(OBJS2C) $(OBJS2F77) -m Audio \
 	--fcompiler=${FCV} --f77exec=${FC} --f90exec=${FC} \
 	${CPPFLAGS} ${LDFLAGS} ${LIBS} \
-	only: $(F2PYONLY) \
-	: $(SRCS2F90) \
+	only: $(F2PYONLY) : $(SRCS2F90) \
 	${SRCS3C} ${AUDIOSRCS}
 	${MV} Audio.so WsjtMod
 

@@ -1,4 +1,5 @@
 subroutine azdist0(MyGrid,HisGrid,utch,nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter)
+!f2py threadsafe
   character*6 MyGrid,HisGrid
   real*8 utch
 !f2py intent(in) MyGrid,HisGrid,utch

@@ -1,4 +1,5 @@
 subroutine audio_init(ndin,ndout)
+!f2py threadsafe
 
 #ifdef CVF
   use dfmt
