@@ -1,0 +1,55 @@
+<HTML><HEAD><TITLE>Howto Install WSJT on Mac OS X</TITLE></HEAD><BODY>
+<p><div align="center">Notes by John Nelson G4KLA<br>9 August 2009<br>
+(with acknowledgment to Joe Large W6CQZ for breaking the ground.)</div><br><br>
+Current Macs arrive with Python 2.5 already installed but with old versions of other infrastructure. <br>
+We will come to this later.   Hint:  I suggest you ensure that your path environment parameter contains <br>
+the current directory as "."<br><br>
+<b>Step 1. </b>You need to install the Mac Developer Tool - Xcode.   Visit <br>
+<a href="http://developer.apple.com/support/mac/tools">http://developer.apple.com/support/mac/tools</a>  and create a (free) ADC account <br>
+then visit the Developer Tools in the downloads section and get the latest release <br>
+of Xcode Developer Tools.  You now have most compilers, but not Fortran.<br><br>
+<b>Step 2. </b>There are several versions that are available but I prefer <br>
+<a href="http://r.research.att.com/tools">http://r.research.att.com/tools</a>.   At the time of writing the latest version is <br>
+gfortan-4.2-5566-darwin9.tar.gz.   Download this and copy to the root directory / <br>
+and, after logging in as root (type su), untar the file.  Exit from root (type exit).<br><br>
+<b>Step 3. </b>Now you have the basic Mac infrastructure.  Next you need support for<br>
+python and WSJT code. I suggest you make an installation directory such as WSJT/Installaton<br>
+into which these various downloads will be kept. <br><br>
+<em>Fast Fourier Transform library</em>  Visit <a href="http://www.fftw.org">http://www.fftw.org</a> and get the <br>
+latest release which is currently fftw-3.2.2.tar.gz. A useful way to untar a file and  to keep the <br>
+original download is:  "gzip -dc fftw-3.2.2.tar.gz | tar -xvf -" (without the quotes, of course). <br>
+Then:    cd  fftw-3.2.2;  configure --enable-float; make;  sudo make install<br><br>
+<em>Numpy</em>  Change back to the Installation directory and get numpy as follows: <br>
+Visit <a href="http://www.scipy.org/Download">http://www.scipy.org/Download</a> and get the official release from SourceForge. <br>
+This is 1.3.0 and select numpy-1.3.0.tar.gz.  Untar this and then: <br>
+cd numpy; python setup.py build;  sudo python setup.py install  <br>
+This will create /Library/Python/2.5/site-packages.<br><br>
+<em>Scipy</em>  Before you install scipy, there is a fix that needs to be made to the basic Mac OS X <br>
+installation.  An older version of numpy (1.0.1) is installed in the /System/Library and scipy cannot be <br>
+built against this version.   Login as root (type su) cd to /System/Library/Frameworks/Python.framework/Versions/2.5/Extras/lib/python <br>
+and rename the numpy directory:  mv numpy numpy_old  and then link to the new version like this: <br>
+"ln -s /Library/Python/2.5/site-packages/numpy numpy" without the quotes.  Exit from root (type exit). <br>
+Now you can get scipy.  Change back to the Installation directory. <br>
+Visit <a href="http://www.scipy.org/Download">http://www.scipy.org/Download</a> and get the official release from SourceForge. <br>
+This is scipy-0.7.1.tar.gz.  Untar this and then: <br>
+cd scipy; export MACOSX_DEPLOYMENT_TARGET=10.5; <br>python setup.py build_src build_clib --fcompiler=gnu95 build_ext --fcompiler=gnu95; <br>
+sudo python setup.py install <br>
+(Other advice can be found at <a href="http://www.scipy.org/Installing_SciPy/Mac_OS_X">http://www.scipy.org/Installing_SciPy/Mac_OS_X</a>)<br><br>
+<em>Imaging</em> Change back to the Installation directory and visit <a href="http://www.python.com/products/pil/">http://www.python.com/products/pil/</a> and download <br> the Imaging library (version 1.1.6) for all platforms.   Untar this file and then: <br>
+cd Imaging-1.1.6; python setup.py build; sudo python setup.py install <br><br>
+<em>libsamplerate</em> Change back to the Installation directory and visit <a href="http://www.mega-nerd.com/SRC/download.html">http://www.mega-nerd.com/SRC/download.html</a><br> and download libsamplerate-0.1.7.tar.gz.  Untar this file and then: <br>
+cd libsamplerate-0.1.7; configure; make; sudo make install <br><br>
+<em>portaudio</em> Change back to the Installation directory and visit <a href="http://www.portaudio.com/archives/">http://www.portaudio.com/archives/</a> and download pa_snapshot_v19.tar.gz <br>
+This is the version I use.   There is another v19 issue at http://www.portaudio.com/download.html but I havn't tested this.<br>
+Untar this file and then:  cd portaudio; configure; make; sudo make install <br><br>
+<b>Step 4</b> Hopefully you will not have to repeat these procedures again.  Next step is to compile WSJT code.<br>
+To get the latest version change back to the Installation directory and then  svn co svn://svn.berlios.de/wsjt/trunk <br>
+I suggest you use an editor (e.g.vi) to look at trunk/wsjt.py and find Version.  This is currently 7.04 revsion 1316 and then rename trunk:<br>
+mv trunk wsjt-v7.04-r1316<br>  
+Now cd wsjt-v7.04-r1316; configure --with-portaudio-lib-dir=/usr/local/lib --with-portaudio-include-dir=/usr/local/include; make <br>
+This should generate the complete package without errors.  If you are successful, the final line will read:  mv Audio.so WsjtMod <br>
+Finally (!!!!) type    python wsjt.py and you should be in business. <br>
+I use the SignaLink USB interface to a TS870 (for HF) and TS790 (for 2m EME) and this works perfectly with WSJT/WSPR<br><br>
+<em>Last point</em> If you find errors or omissions in this document, or improvements, pleaes let me know.   g4kla at rmnjmn dot demon dot co dot uk<br>
+</p>
+</BODY></HTML>
