@@ -1767,8 +1767,12 @@ def update():
     else:
         msg3.configure(text=t,fg='black',bg='gray85')    
     bdecode.configure(bg='gray85',activebackground='gray95')
+    if (sys.platform == 'darwin'):
+        bdecode.configure(text='Decode')
     if Audio.gcom2.ndecoding:       #Set button bg=light_blue while decoding
         bdecode.configure(bg='#66FFFF',activebackground='#66FFFF')
+        if (sys.platform == 'darwin'):
+           bdecode.configure(text='*Decode*')
     if mode.get()[:2]=="CW":
         msg5.configure(text="TR Period: %d s" % (Audio.gcom1.trperiod,), \
                        bg='white')
@@ -1797,8 +1801,12 @@ def update():
         Audio.gcom1.txsnrdb=txsnrdb
     if Audio.gcom2.monitoring and not Audio.gcom1.transmitting:
         bmonitor.configure(bg='green')
+        if (sys.platform == 'darwin'):
+           bmonitor.configure(text='*Monitor*')
     else:
         bmonitor.configure(bg='gray85')    
+        if (sys.platform == 'darwin'):
+           bmonitor.configure(text='Monitor')    
     if Audio.gcom1.transmitting:
         nmsg=int(Audio.gcom2.nmsg)
         t=g.ftnstr(Audio.gcom2.sending)
