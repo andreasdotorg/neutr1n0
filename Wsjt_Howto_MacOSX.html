@@ -13,7 +13,7 @@ of Xcode Developer Tools.  You now have most compilers, but not Fortran.<br><br>
 gfortan-4.2-5566-darwin9.tar.gz.   Download this and copy to the root directory / <br>
 and, after logging in as root (type su), untar the file.  Exit from root (type exit).<br><br>
 <b>Step 3. </b>Now you have the basic Mac infrastructure.  Next you need support for<br>
-python and WSJT code. I suggest you make an installation directory such as WSJT/Installaton<br>
+python and WSJT code. I suggest you make an installation directory such as WSJT/Installation<br>
 into which these various downloads will be kept. <br><br>
 <em>Fast Fourier Transform library</em>  Visit <a href="http://www.fftw.org">http://www.fftw.org</a> and get the <br>
 latest release which is currently fftw-3.2.2.tar.gz. A useful way to untar a file and  to keep the <br>
@@ -35,7 +35,7 @@ This is scipy-0.7.1.tar.gz.  Untar this and then: <br>
 cd scipy; export MACOSX_DEPLOYMENT_TARGET=10.5; <br>python setup.py build_src build_clib --fcompiler=gnu95 build_ext --fcompiler=gnu95; <br>
 sudo python setup.py install <br>
 (Other advice can be found at <a href="http://www.scipy.org/Installing_SciPy/Mac_OS_X">http://www.scipy.org/Installing_SciPy/Mac_OS_X</a>)<br><br>
-<em>Imaging</em> Change back to the Installation directory and visit <a href="http://www.python.com/products/pil/">http://www.python.com/products/pil/</a> and download <br> the Imaging library (version 1.1.6) for all platforms.   Untar this file and then: <br>
+<em>Imaging</em> Change back to the Installation directory and visit <a href="http://www.pythonware.com/products/pil/">http://www.pythonware.com/products/pil/</a> and download <br> the Imaging library (version 0.1.6) for all platforms.   Untar this file and then: <br>
 cd Imaging-1.1.6; python setup.py build; sudo python setup.py install <br><br>
 <em>libsamplerate</em> Change back to the Installation directory and visit <a href="http://www.mega-nerd.com/SRC/download.html">http://www.mega-nerd.com/SRC/download.html</a><br> and download libsamplerate-0.1.7.tar.gz.  Untar this file and then: <br>
 cd libsamplerate-0.1.7; configure; make; sudo make install <br><br>
