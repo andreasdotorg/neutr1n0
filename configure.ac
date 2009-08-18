@@ -190,7 +190,7 @@ if test $HAS_FFTW3FLIBS -eq 1; then
 	LIBS="${LIBS} -lfftw3f"
 	AC_DEFINE(HAS_FFTW3FLIBS, 1, )
 else
-	fail =1
+	fail=1
 	echo "You are missing the fortran shim libs in libfftw3."
 fi
 
