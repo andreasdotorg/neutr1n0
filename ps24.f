@@ -3,19 +3,21 @@
       parameter (NMAX=2520+2)
       parameter (NHMAX=NMAX/2-1)
       real dat(nfft)
+      real dat2(NMAX)
       real s(NHMAX)
       real work(2*NMAX)
       complex c(0:NMAX)
+      equivalence(dat2,c)
 
       nh=nfft/2
       do i=1,nh
-         c(i-1)=dat(i)/128.0       !### Why 128 ??
+         dat2(i)=dat(i)/128.0       !### Why 128 ??
       enddo
       do i=nh+1,nfft
-         c(i-1)=0.
+         dat2(i)=0.
       enddo
 
-      call fourt(c,nfft,1,-1,0,work)
+      call four2a(c,nfft,1,-1,0)
 
       fac=1.0/nfft
       do i=1,nh

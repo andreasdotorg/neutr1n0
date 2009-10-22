@@ -1,4 +1,4 @@
-      SUBROUTINE FOUR2a (a,nfft,NDIM,ISIGN,IFORM)
+      subroutine four2a(a,nfft,ndim,isign,iform)
 
 C     IFORM = 1, 0 or -1, as data is
 C     complex, real, or the first half of a complex array.  Transform
@@ -18,13 +18,14 @@ C     to -1.  In the N array, N(1) must be the true N(1), not N(1)/2+1.
 C     The transform will be real and returned to the input array.
 
       parameter (NPMAX=100)
+      parameter (NSMALL=16384)
       complex a(nfft)
-      complex aa(32768)
+      complex aa(NSMALL)
       integer nn(NPMAX),ns(NPMAX),nf(NPMAX),nl(NPMAX)
-      integer plan(NPMAX)                   !As recommended by fftw3 docs
+      real*8 plan(NPMAX)             !Actually should be i*8, but no matter
       data nplan/0/
-      include <fftw3.f>
-      save
+      include 'fftw3.f'
+      save plan,nplan,nn,ns,nf,nl
 
       if(nfft.lt.0) go to 999
 
@@ -41,44 +42,53 @@ C     The transform will be real and returned to the input array.
       nf(i)=iform
       nl(i)=nloc
 
-C  Planning: FFTW_ESTIMATE, FFTW_MEASURE, FFTW_PATIENT, FFTW_EXHAUSTIVE
-      nspeed=FFTW_ESTIMATE
-      if(nfft.le.16384) nspeed=FFTW_MEASURE
-      nspeed=FFTW_MEASURE
-      if(nfft.le.32768) then
-         do j=1,nfft
+C  Planning: FFTW_ESTIMATE, FFTW_ESTIMATE_PATIENT, FFTW_MEASURE, 
+C            FFTW_PATIENT,  FFTW_EXHAUSTIVE
+      npatience=1
+      nflags=FFTW_ESTIMATE
+      if(npatience.eq.1) nflags=FFTW_ESTIMATE_PATIENT
+      if(npatience.eq.2) nflags=FFTW_MEASURE
+      if(npatience.eq.3) nflags=FFTW_PATIENT
+      if(npatience.eq.4) nflags=FFTW_EXHAUSTIVE
+      if(nfft.le.NSMALL) then
+         jz=nfft
+         if(iform.eq.0) jz=nfft/2
+         do j=1,jz
             aa(j)=a(j)
          enddo
       endif
-      call sleep_msec(0)
+!      call sleep_msec(0)
       if(isign.eq.-1 .and. iform.eq.1) then
-         call sfftw_plan_dft_1d(plan(i),nfft,a,a,
-     +        FFTW_FORWARD,nspeed)
+         call sfftw_plan_dft_1d_(plan(i),nfft,a,a,
+     +        FFTW_FORWARD,nflags)
       else if(isign.eq.1 .and. iform.eq.1) then
-         call sfftw_plan_dft_1d(plan(i),nfft,a,a,
-     +        FFTW_BACKWARD,nspeed)
+         call sfftw_plan_dft_1d_(plan(i),nfft,a,a,
+     +        FFTW_BACKWARD,nflags)
       else if(isign.eq.-1 .and. iform.eq.0) then
-         call sfftw_plan_dft_r2c_1d(plan(i),nfft,a,a,nspeed)
+         call sfftw_plan_dft_r2c_1d_(plan(i),nfft,a,a,nflags)
       else if(isign.eq.1 .and. iform.eq.-1) then
-         call sfftw_plan_dft_c2r_1d(plan(i),nfft,a,a,nspeed)
+         call sfftw_plan_dft_c2r_1d_(plan(i),nfft,a,a,nflags)
       else
          stop 'Unsupported request in four2a'
       endif
-      call sleep_msec(0)
+!      call sleep_msec(0)
       i=nplan
-      if(nfft.le.32768) then
-         do j=1,nfft
+      if(nfft.le.NSMALL) then
+         jz=nfft
+         if(iform.eq.0) jz=nfft/2
+         do j=1,jz
             a(j)=aa(j)
          enddo
       endif
 
- 10   call sleep_msec(0)
-      call sfftw_execute(plan(i))
-      call sleep_msec(0)
+ 10   continue
+!      call sleep_msec(0)
+      call sfftw_execute_(plan(i))
+!      call sleep_msec(0)
       return
 
  999  do i=1,nplan
-         call sfftw_destroy_plan(plan(i))
+         call sfftw_destroy_plan_(plan(i))
       enddo
 
       return
