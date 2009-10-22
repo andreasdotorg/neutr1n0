@@ -130,7 +130,9 @@ subroutine wsjtgen
         call gen65(msg,mode65,samfacout,ntxdf,ndebug,iwave,nwave,sendingsh,   &
              msgsent,nmsg0)
      else if(mode(1:4).eq.'WSPR') then
+        call cs_unlock                            !genwspr calls cs_lock
         call genwspr(msg,samfacout,ntxdf,iwave,nwave,sendingsh,msgsent)
+        call cs_lock('wsjtgen')
      else if(mode(1:3).eq.'JT2' .or. mode(1:3).eq.'JT4' ) then
         call gen24(msg,mode,mode4,samfacout,ntxdf,ndebug,iwave,nwave,      &
              sendingsh,msgsent,nmsg0)
