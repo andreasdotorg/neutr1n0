@@ -36,12 +36,12 @@ SRCS2F90 = a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 
 SRCS2F77 = wsjt1.f avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	stdecode.f indexx.f s2shape.f flat2.f gen65.f gen24.f entail.f \
-	genmet.f wsjt24.f sync24.f ps24.f fourt.f xcor24.f decode24.f\
+	genmet.f wsjt24.f sync24.f ps24.f xcor24.f decode24.f\
 	chkmsg.f gen6m.f interleave24.f \
 	gentone.f syncf0.f syncf1.f synct.f decode6m.f avemsg6m.f \
 	set.f flatten.f db.f pctile.f sort.f ssort.f ps.f smooth.f ping.f \
 	longx.f peakup.f sync.f detect.f avemsg65.f decode65.f demod64a.f \
-	encode65.f extract.f chkhist.f flat1.f four2.f gencw.f \
+	encode65.f extract.f chkhist.f flat1.f four2a.f gencw.f \
 	gencwid.f msgtype.f getpfx1.f \
 	getpfx2.f getsnr.f graycode.f grid2k.f interleave63.f k2grid.f \
 	limit.f lpf1.f deep65.f morse.f nchar.f packcall.f packgrid.f \
