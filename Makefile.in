@@ -131,7 +131,6 @@ decode_rs_int.o: decode_rs.c
 cutil.o: cutil.c
 	$(CC) $(CFLAGS) -c -DSTARNIX=1 cutil.c
 
-.PHONY : clean
 install:	WsjtMod/Audio.so
 	${RM} -rf build/
 	${PYTHON} setup.py install
@@ -140,6 +139,23 @@ install:	WsjtMod/Audio.so
 	${INSTALL} -m 0644 wsjtrc ${PREFIX}/share/wsjt/
 	${INSTALL} -m 0644 dmet_*.dat ${PREFIX}/share/wsjt/
 	${INSTALL} wsjt ${PREFIX}/bin
+
+deb: wsjt.py WsjtMod/Audio.so WsjtMod/g.py WsjtMod/__init__.py \
+	WsjtMod/options.py WsjtMod/palettes.py WsjtMod/PmwBlt.py \
+	WsjtMod/PmwColor.py WsjtMod/Pmw.py WsjtMod/smeter.py \
+	WsjtMod/specjt.py WsjtMod/astro.py DEB/DEBIAN/control \
+	wsjtrc DEB/WSJT/wsjt
+
+	cp wsjt.py wsjtrc CALL3.TXT dmet_10_-1_3.dat \
+	dmet_20_-2_2.dat kvasd.dat KVASD_g95 TSKY.DAT \
+	UpdateHistory.txt wsjt.ico WSJT_Quick_Reference.pdf \
+	WSJT_User_600.pdf WSPR_mode.pdf DEB/WSJT
+
+	cp WsjtMod/Audio.so DEB/WSJT/WsjtMod
+	cp WsjtMod/*.py DEB/WSJT/WsjtMod
+	dpkg-deb --build DEB wsjt_ver_rev_i386.deb
+
+.PHONY : clean
 clean:
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt7 WsjtMod/*.pyc WsjtMod/*.pyc \
 		WsjtMod/*.so wsjt7.py wsjt7.spec
