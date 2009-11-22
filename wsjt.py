@@ -97,6 +97,7 @@ nhotabetter=0
 nopen=0
 nosh441=IntVar()
 noshjt65=IntVar()
+noshjt65all=IntVar()
 qdecode=IntVar()
 setseq=IntVar()
 ShOK=IntVar()
@@ -1674,8 +1675,10 @@ def update():
                 g.ndop=g.ndop00
                 g.dfdt=g.dfdt0
 
-            Audio.gcom2.ntx2=0
-            if ntx.get()==1 and noshjt65.get()==1: Audio.gcom2.ntx2=1
+            if (ntx.get()==1 and noshjt65.get()==1) or noshjt65all.get()==1:
+                Audio.gcom2.ntx2=1
+            else:
+                Audio.gcom2.ntx2=0
 
         if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
                mode.get()[:3]=='JT4' or mode.get()[:2]=='CW' or \
@@ -1787,6 +1790,7 @@ def update():
     tx3.configure(bg='white')
     tx4.configure(bg='white')
     tx5.configure(bg='white')
+    if len(tx5.get())>13: tx5.configure(bg='pink')
     tx6.configure(bg='white')
     if tx6.get()[:1]=='#':
         try:
@@ -2084,6 +2088,7 @@ decodemenu.FSK441=Menu(decodemenu,tearoff=0)
 decodemenu.FSK441.add_checkbutton(label='No shorthands',variable=nosh441)
 decodemenu.JT65=Menu(decodemenu,tearoff=0)
 decodemenu.JT65.add_checkbutton(label='Only EME calls in Deep Search',variable=neme)
+decodemenu.JT65.add_checkbutton(label='No Shorthands',variable=noshjt65all)
 decodemenu.JT65.add_checkbutton(label='No Shorthands if Tx 1',variable=noshjt65)
 decodemenu.JT65.add_checkbutton(label='Quick Decode',variable=qdecode)
 decodemenu.JT65.add_separator()
