@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-version="WSJT Version 7.04, by K1JT"
+version="WSJT Version 7.05, by K1JT"
 
 from distutils.core import setup
 from distutils.file_util import copy_file
