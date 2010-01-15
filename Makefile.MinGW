@@ -65,11 +65,10 @@ WSJT7.EXE: WsjtMod/Audio.pyd wsjt.spec
 WsjtMod/Audio.pyd: $(OBJS2C) $(SRCS2F90) $(SRCS2F77) $(SRCS2C) 
 	c:/python25/python c:/python25/scripts/f2py.py -c -I. \
 	--quiet --fcompiler=g95 \
-	--opt="-fbounds-check -ftrace=full -O2 -cpp -DUSE_PORTAUDIO" \
+	--opt="-cpp" \
 	--compiler=mingw32 \
-	$(OBJS2C) \
-	libportaudio.a libfftw3f.a libsamplerate.a libpthreadGC2.a -lwinmm  \
-	-m Audio \
+	$(OBJS2C) libportaudio.a libfftw3f_win.a libsamplerate.a \
+	libpthreadGC2.a -lwinmm -m Audio \
 	only: $(F2PYONLY) : \
 	$(SRCS2F90) $(SRCS2F77) $(SRCS2C)
 	mv Audio.pyd WsjtMod/Audio.pyd
