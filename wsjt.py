@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#---------------------------------------------------------------------- WSJT
+#----------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -2361,6 +2361,7 @@ labToRadio.grid(column=0,row=0)
 ToRadio=Entry(f5a,width=9)
 ToRadio.insert(0,'W8WN')
 ToRadio.grid(column=1,row=0,pady=3)
+ToRadio.bind('<Return>',lookup)
 bLookup=Button(f5a, text='Lookup',underline=0,command=lookup,padx=1,pady=1)
 bLookup.grid(column=2,row=0,sticky='EW',padx=4)
 labGrid=Label(f5a,text='Grid:', width=9, relief=FLAT)

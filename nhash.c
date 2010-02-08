@@ -174,7 +174,7 @@ acceptable.  Do NOT use for cryptographic purposes.
 #ifdef STDCALL
 uint32_t __stdcall NHASH( const void *key, size_t *length0, uint32_t *initval0)
 #else
-uint32_t nhash_( const void *key, size_t *length0, uint32_t *initval0)
+uint32_t nhash_( const void *key, int *length0, uint32_t *initval0)
 #endif
 {
   uint32_t a,b,c;                                          /* internal state */
