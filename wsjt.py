@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------------ WSJT
+#----------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -1671,6 +1671,9 @@ def update():
                     options.auxra.get()+(' '*9)[:9],     \
                     options.auxdec.get()+(' '*9)[:9])
 
+            if Audio.gcom2.monitoring==1:
+                Audio.kenpro(g.AzMoon,g.ElMoon)
+
             if len(HisGrid.get().strip())<4:
                 g.ndop=g.ndop00
                 g.dfdt=g.dfdt0
@@ -1936,8 +1939,8 @@ def update():
         Audio.gcom2.idinterval=options.IDinterval.get()
     except:
         Audio.gcom2.idinterval=0
-#    Audio.gcom1.rxdelay=float('0'+options.RxDelay.get())
-#    Audio.gcom1.txdelay=float('0'+options.TxDelay.get())
+    Audio.gcom1.rxdelay=float('0'+options.RxDelay.get())
+    Audio.gcom1.txdelay=float('0'+options.TxDelay.get())
     Audio.gcom2.nslim2=isync-4
     if nosh441.get()==1 and mode.get()=='FSK441': Audio.gcom2.nslim2=99
     try:
@@ -2361,8 +2364,7 @@ labToRadio.grid(column=0,row=0)
 ToRadio=Entry(f5a,width=9)
 ToRadio.insert(0,'W8WN')
 ToRadio.grid(column=1,row=0,pady=3)
-ToRadio.bind('<Return>',lookup)
-bLookup=Button(f5a, text='Lookup',underline=0,command=lookup,padx=1,pady=1)
+bLookup=Button(f5a, text='Lookup',underline=0,command=lookup,padx=1,pady=1,width=8)
 bLookup.grid(column=2,row=0,sticky='EW',padx=4)
 labGrid=Label(f5a,text='Grid:', width=9, relief=FLAT)
 labGrid.grid(column=0,row=1)
@@ -2391,13 +2393,13 @@ lsync.grid(column=0,row=0,padx=2,pady=1,sticky='EW')
 Widget.bind(lsync,'<Button-1>',incsync)
 Widget.bind(lsync,'<Button-3>',decsync)
 nzap=IntVar()
-cbzap=Checkbutton(f5b,text='Zap',underline=0,variable=nzap)
+cbzap=Checkbutton(f5b,text='Zap',underline=0,variable=nzap,padx=6)
 cbzap.grid(column=1,row=0,padx=2,pady=1,sticky='W')
-cbnb=Checkbutton(f5b,text='NB',variable=nblank)
+cbnb=Checkbutton(f5b,text='NB',variable=nblank,padx=6)
 cbnb.grid(column=1,row=1,padx=2,pady=1,sticky='W')
-cbfreeze=Checkbutton(f5b,text='Freeze',underline=0,variable=nfreeze)
+cbfreeze=Checkbutton(f5b,text='Freeze',underline=0,variable=nfreeze,padx=6)
 cbfreeze.grid(column=1,row=2,padx=2,sticky='W')
-cbafc=Checkbutton(f5b,text='AFC',variable=nafc)
+cbafc=Checkbutton(f5b,text='AFC',variable=nafc,padx=6)
 cbafc.grid(column=1,row=3,padx=2,pady=1,sticky='W')
 lclip=Label(f5b, bg='white', fg='black', text='Clip   0', width=8, relief=RIDGE)
 lclip.grid(column=0,row=1,padx=2,sticky='EW')
@@ -2421,7 +2423,7 @@ f5b.pack(side=LEFT,expand=0,fill=BOTH)
 
 #------------------------------------------------------ Tx params and msgs
 f5c=Frame(iframe5,bd=2,relief=GROOVE)
-txfirst=Checkbutton(f5c,text='Tx First',justify=RIGHT,variable=TxFirst)
+txfirst=Checkbutton(f5c,text='Tx First',justify=RIGHT,variable=TxFirst,padx=6)
 f5c2=Frame(f5c,bd=0)
 labreport=Label(f5c2,text='Rpt',width=4)
 report=Entry(f5c2, width=4)
@@ -2429,11 +2431,11 @@ report.insert(0,'26')
 labreport.pack(side=RIGHT,expand=1,fill=BOTH)
 report.pack(side=RIGHT,expand=1,fill=BOTH)
 shmsg=Checkbutton(f5c,text='Sh Msg',justify=RIGHT,variable=ShOK,
-            command=restart2)
+            command=restart2,padx=6)
 btxdf=Button(f5c,text='TxDF = 0',command=toggletxdf,
             padx=1,pady=1)
 genmsg=Button(f5c,text='GenStdMsgs',underline=0,command=GenStdMsgs,
-            padx=1,pady=1)
+            padx=1,pady=1,width=12)
 auto=Button(f5c,text='Auto is Off',underline=0,command=toggleauto,
             padx=1,pady=1)
 auto.focus_set()
@@ -2582,8 +2584,8 @@ try:
                 lookup()
             HisGrid.delete(0,END)
             HisGrid.insert(0,hisgrid)
-#        elif key == 'RxDelay': options.RxDelay.set(value)
-#        elif key == 'TxDelay': options.TxDelay.set(value)
+        elif key == 'RxDelay': options.RxDelay.set(value)
+        elif key == 'TxDelay': options.TxDelay.set(value)
         elif key == 'IDinterval': options.IDinterval.set(value)
         elif key == 'PttPort':
             try:
@@ -2721,8 +2723,8 @@ f.write("HisCall " + t + "\n")
 t=g.ftnstr(Audio.gcom2.hisgrid)
 if t=="      ": t="XX00xx"
 f.write("HisGrid " + t + "\n")
-#f.write("RxDelay " + str(options.RxDelay.get()) + "\n")
-#f.write("TxDelay " + str(options.TxDelay.get()) + "\n")
+f.write("RxDelay " + str(options.RxDelay.get()) + "\n")
+f.write("TxDelay " + str(options.TxDelay.get()) + "\n")
 f.write("IDinterval " + str(options.IDinterval.get()) + "\n")
 f.write("PttPort " + str(options.PttPort.get()) + "\n")
 f.write("Mileskm " + str(options.mileskm.get()) + "\n")
@@ -2777,7 +2779,8 @@ f.write("Debug " + str(ndebug.get()) + "\n")
 mrudir2=mrudir.replace(" ","#")
 f.write("MRUDir " + mrudir2 + "\n")
 if g.astro_geom[:7]=="200x200": g.astro_geom="316x373" + g.astro_geom[7:]
-f.write("AstroGeometry " + g.astro_geom + "\n")
+#f.write("AstroGeometry " + g.astro_geom + "\n")
+f.write("AstroGeometry 212x334+10+490\n")
 f.write("CWTRPeriod " + str(ncwtrperiod) + "\n")
 f.close()
 
@@ -2785,4 +2788,5 @@ Audio.ftn_quit()
 Audio.gcom1.ngo=0                         #Terminate audio streams
 Audio.gcom2.lauto=0
 Audio.gcom1.txok=0
+Audio.kenpro(-1.0,-1.0)
 time.sleep(1)
