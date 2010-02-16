@@ -9,12 +9,13 @@ subroutine decode1(iarg)
 
   character sending0*28,mode0*6,cshort*11
   integer sendingsh0
+  integer*8 mtx
   
   include 'gcom1.f90'
   include 'gcom2.f90'
   include 'gcom3.f90'
   include 'gcom4.f90'
-  common/mtxcom/ltrace,mtx,mtxstate,csub0
+  common/mtxcom/mtx,ltrace,mtxstate,csub0
 
   data sending0/'                      '/
 

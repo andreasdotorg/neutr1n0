@@ -25,9 +25,10 @@ subroutine ftn_init
   include 'gcom3.f90'
   include 'gcom4.f90'
   character*12 csub0
+  integer*8 mtx
   integer*2 nsky
   common/sky/ nsky(360,180)
-  common/mtxcom/ltrace,mtx,mtxstate,csub0
+  common/mtxcom/mtx,ltrace,mtxstate,csub0
 
   call cs_init
   call cs_lock('ftn_init')
