@@ -1,0 +1,88 @@
+<HTML><HEAD><TITLE>Howto Install WSJT on Mac OS X Snow Leopard</TITLE></HEAD><BODY>
+<p><div align="center">Notes by John Nelson G4KLA<br>25 Feburary 2010<br>
+(with acknowledgment to Joe Large W6CQZ for breaking the ground.)</div><br><br>
+<font size="1" face="Verdana">
+Mac OS X 10.6 (Snow Leopard) differs significantly from Mac OS X 10.5 (Leopard) in that compilations 
+default to 64-bit operation instead of 32-bit.   A new Fortran compiler is needed and must not co-exist 
+with any previous compiler you might have installed.  In addition, some compiler options that were
+available previously have now been abandoned. You will need some experience with using Unix commands
+but if what follows is too daunting, contact me and I will try and help.   (If you want installation
+directions for an earlier version of Mac OS X such as  10.4 or 10.5 on either an PowerPC or Intel Mac, 
+please contact me - email address below.)<br>
+Snow Leopard has Python 2.6 installed (64-bit by default) but with old versions of other infrastructure. 
+We will come to this later.   Hint:  I suggest you ensure that your path environment parameter contains
+the current directory as "."<br><br>
+<b>Step 1. </b>You need to install the Mac Developer Tool - Xcode.   Visit 
+<a href="http://developer.apple.com/support/mac/tools">http://developer.apple.com/support/mac/tools</a>  and create a (free) ADC account
+then visit the Developer Tools in the downloads section and get the latest release
+of Xcode Developer Tools.  This must be the version for Snow Leopard and will  3.2.1 or later.  You will need  Fortran.<br><br>
+<b>Step 2. </b>There are several versions that are available but I recommend 
+<a href="http://r.research.att.com/tools">http://r.research.att.com/tools</a>.   At the time of writing the latest version is
+gfortran-4.2-5646.pkg for Snow Leopard.   Download this and install.<br> <br>
+<b>Step 3. </b>Now you have the basic Mac infrastructure.  Next you need support for
+python and WSJT code. I suggest you make an installation directory such as WSJT/Installation
+into which these various downloads will be kept. <br><br>
+<em>Fast Fourier Transform library</em>  Visit <a href="http://www.fftw.org">http://www.fftw.org</a> and get the latest release which is
+currently fftw-3.2.2.tar.gz. A useful way to untar a file and  to keep the original download is: <br> gzip -dc fftw-3.2.2.tar.gz | tar -xvf - <br>
+Then: <br>cd  fftw-3.2.2 <br> configure --enable-float CC="gcc -arch i386 -arch x86_64" CXX="g++ -arch -i386 -arch x86_64" 
+CPP="gcc -E" CXXPP="g++ -E" <br>
+make <br>
+sudo make install<br><br>
+<em>Numpy</em>  Change back to the Installation directory and get numpy as follows.
+Visit <a href="http://www.scipy.org/Download">http://www.scipy.org/Download</a> and get the official release from SourceForge. 
+This is 1.3.0 and select numpy-1.3.0.tar.gz.  Untar this and then (I use tcsh but you can translate this for bash if you must) and
+set the envirnoment parameters that are needed to specify the OS X level as well as the architechture of the libraries that will be constructed.<br>
+setenv MACOSX_DEPLOYMENT_TARGET 10.6 <br>
+setenv CFLAGS "-arch i386 -arch x86-64" <br>
+setenv FFLAGS "-m32 -m64" <br>
+setenv LDFLAGS "-Wall -undefined dynamic_lookup -bundle -arch i386 -arch x86-64"<br>
+cd numpy-1.3.0<br>
+python setup.py build <br>
+(Note: on some builds this procedure fails with a "mathlib" missing error. In this case add an additional parameter <br>
+setenv CC "gcc -arch i386 -arch x86_64"<br>
+and try the "python setup.py build" command again.)<br>
+sudo python setup.py install  <br>
+This will create /Library/Python/2.6/site-packages/numpy<br><br>
+<em>Scipy</em>  Before you install scipy, there is a fix that needs to be made to the basic Mac OS X installation.
+An older version of numpy is installed in the /System/Library and scipy cannot be built against this version. 
+Then <br>
+sudo cd /System/Library/Frameworks/Python.framework/Versions/2.6/Extras/lib/python <br>
+sudo mv numpy numpy_old    // this renames the existing numpy directory to numpy_old) <br>
+sudo ln -s /Library/Python/2.6/site-packages/numpy numpy   // this links to the new version <br><br>
+
+Now you can get scipy.  Change back to the Installation directory.
+Visit <a href="http://www.scipy.org/Download">http://www.scipy.org/Download</a> and get the official release from SourceForge. 
+This is scipy-0.7.1.tar.gz.  Untar this and then: <br>
+cd scipy<br>python setup.py build<br>sudo python setup.py install <br>
+(Other advice can be found at <a href="http://www.scipy.org/Installing_SciPy/Mac_OS_X">http://www.scipy.org/Installing_SciPy/Mac_OS_X</a>)<br><br>
+<em>Imaging</em> Change back to the Installation directory and visit <a href="http://www.pythonware.com/products/pil/">http://www.pythonware.com/products/pil/</a> 
+and download the Imaging library (version 0.1.6) for all platforms.   Untar this file and then: <br>
+cd Imaging-1.1.7<br> python setup.py build<br>sudo python setup.py install <br><br>
+<em>libsamplerate</em> Change back to the Installation directory and visit <a href="http://www.mega-nerd.com/SRC/download.html">http://www.mega-nerd.com/SRC/download.html</a>
+and download libsamplerate-0.1.7.tar.gz.  Untar this file and then remove the CC and LDFLAGS parameters: <br>
+unsetenv CC<br>
+unsetenv LDFLAGS<br>
+cd libsamplerate-0.1.7<br>configure<br>make<br>sudo make install <br><br>
+<em>portaudio</em> Change back to the Installation directory and visit <a href="http://www.portaudio.com/archives/">http://www.portaudio.com/archives/</a> 
+and download pa_snapshot_v19.tar.gz which is the version I use.   There is another v19 issue at http://www.portaudio.com/download.html but I havn't tested this. Untar this file and then:<br> 
+cd portaudio<br>configure<br>make<br>
+sudo make install <br><br>
+At this point you can remove the compiler flags<br>
+unsetenv CFLAGS<br>
+unsetenv FFLAGS<br>
+The basic infrastructure is now installed and you should not need to repeat these procedures again.<br><br>
+<b>Step 4</b> At this point you should ensure that Python will be in 32-bit mode.  This environment parameter should always be in place when you want to execute WSJT or WSPR<br>
+setenv VERSIONER_PYTHON_PREFER_32_BIT yes<br>
+Next step is to compile WSJT code. To get the latest version change back to the Installation directory and then (you need to have port 3690 open in your firewall).  Type:<br> 
+svn co svn://svn.berlios.de/wsjt/trunk <br>
+I suggest you use an editor (e.g.vi) to look at trunk/wsjt.py and find Version.  This is currently 7.05 revsion 1800 and then rename trunk:<br>
+mv trunk wsjt-v7.05-r1800<br>
+The reason for this is that you won't accidentally overwrite your changes by downloading from the respository again.  Now:<br>
+cd wsjt-v7.05-r1800<br>sudo cp gnu.py /Library/Python/2.6/site-packages/numpy/distutils/fcompiler<br>/configure --with-portaudio-lib-dir=/usr/local/lib --with-portaudio-include-dir=/usr/local/include<br>make <br><br>
+This should generate the complete package without errors.  If you are successful, the final line will read: <br>
+mv Audio.so WsjtMod <br>
+Finally (!!!!) type    python wsjt.py and you should be in business. <br>
+I use the SignaLink USB interface to a TS870 (for HF) and TS790 (for 2m EME) and this works perfectly with WSJT/WSPR<br><br>
+<em>Last point</em> If you find errors or omissions in this document, or improvements, or need help, please let me know.   g4kla at rmnjmn dot demon dot co dot uk<br>
+</p>
+</BODY></HTML>
