@@ -70,19 +70,19 @@ sudo make install <br><br>
 At this point you can remove the compiler flags<br>
 unsetenv CFLAGS<br>
 unsetenv FFLAGS<br>
-The basic infrastructure is now installed and you should not need to repeat these procedures again.<br><br>
-<b>Step 4</b> At this point you should ensure that Python will be in 32-bit mode.  This environment parameter should always be in place when you want to execute WSJT or WSPR<br>
+The basic infrastructure is now installed and you should not need to repeat any of these procedures again.   In future, go directly to <b>Step 4</b> below.<br><br>
+<b>Step 4</b> At this point you should ensure that Python will be in 32-bit mode.  This environment parameter should always be in place when you want to execute WSJT.<br>
 setenv VERSIONER_PYTHON_PREFER_32_BIT yes<br>
 Next step is to compile WSJT code. To get the latest version change back to the Installation directory and then (you need to have port 3690 open in your firewall).  Type:<br> 
 svn co svn://svn.berlios.de/wsjt/trunk <br>
 I suggest you use an editor (e.g.vi) to look at trunk/wsjt.py and find Version.  This is currently 7.05 revsion 1800 and then rename trunk:<br>
 mv trunk wsjt-v7.05-r1800<br>
 The reason for this is that you won't accidentally overwrite your changes by downloading from the respository again.  Now:<br>
-cd wsjt-v7.05-r1800<br>sudo cp gnu.py /Library/Python/2.6/site-packages/numpy/distutils/fcompiler<br>/configure --with-portaudio-lib-dir=/usr/local/lib --with-portaudio-include-dir=/usr/local/include<br>make <br><br>
+cd wsjt-v7.05-r1800<br>sudo cp gnu.py /Library/Python/2.6/site-packages/numpy/distutils/fcompiler<br>configure_10.6 --with-portaudio-lib-dir=/usr/local/lib --with-portaudio-include-dir=/usr/local/include<br>make <br><br>
 This should generate the complete package without errors.  If you are successful, the final line will read: <br>
 mv Audio.so WsjtMod <br>
 Finally (!!!!) type    python wsjt.py and you should be in business. <br>
-I use the SignaLink USB interface to a TS870 (for HF) and TS790 (for 2m EME) and this works perfectly with WSJT/WSPR<br><br>
+I use the SignaLink USB interface to a TS870 (for HF) and TS790 (for 2m EME) and this works perfectly with WSJT.<br><br>
 <em>Last point</em> If you find errors or omissions in this document, or improvements, or need help, please let me know.   g4kla at rmnjmn dot demon dot co dot uk<br>
 </p>
 </BODY></HTML>
