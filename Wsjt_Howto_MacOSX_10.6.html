@@ -34,9 +34,9 @@ Visit <a href="http://www.scipy.org/Download">http://www.scipy.org/Download</a> 
 This is 1.3.0 and select numpy-1.3.0.tar.gz.  Untar this and then (I use tcsh but you can translate this for bash if you must) and
 set the envirnoment parameters that are needed to specify the OS X level as well as the architechture of the libraries that will be constructed.<br>
 setenv MACOSX_DEPLOYMENT_TARGET 10.6 <br>
-setenv CFLAGS "-arch i386 -arch x86-64" <br>
+setenv CFLAGS "-arch i386 -arch x86_64" <br>
 setenv FFLAGS "-m32 -m64" <br>
-setenv LDFLAGS "-Wall -undefined dynamic_lookup -bundle -arch i386 -arch x86-64"<br>
+setenv LDFLAGS "-Wall -undefined dynamic_lookup -bundle -arch i386 -arch x86_64"<br>
 cd numpy-1.3.0<br>
 python setup.py build <br>
 (Note: on some builds this procedure fails with a "mathlib" missing error. In this case add an additional parameter <br>
