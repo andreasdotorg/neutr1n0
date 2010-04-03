@@ -1,5 +1,5 @@
 <HTML><HEAD><TITLE>Howto Install WSJT on Mac OS X Snow Leopard</TITLE></HEAD><BODY>
-<p><div align="center">Notes by John Nelson G4KLA<br>25 Feburary 2010<br>
+<p><div align="center">Notes by John Nelson G4KLA<br>2 April 2010<br>
 (with acknowledgment to Joe Large W6CQZ for breaking the ground.)</div><br><br>
 <font size="1" face="Verdana">
 Mac OS X 10.6 (Snow Leopard) differs significantly from Mac OS X 10.5 (Leopard) in that compilations 
@@ -8,7 +8,9 @@ with any previous compiler you might have installed.  In addition, some compiler
 available previously have now been abandoned. You will need some experience with using Unix commands
 but if what follows is too daunting, contact me and I will try and help.   (If you want installation
 directions for an earlier version of Mac OS X such as  10.4 or 10.5 on either an PowerPC or Intel Mac, 
-please contact me - email address below.)<br>
+please contact me - email address below.)  You need to make sure you have the latest version of the WSJT code.  
+Please visit the WSJT Home page at http://www.physics.princeton.edu/pulsar/K1JT for details on
+how to do this.<br>
 Snow Leopard has Python 2.6 installed (64-bit by default) but with old versions of other infrastructure. 
 We will come to this later.   Hint:  I suggest you ensure that your path environment parameter contains
 the current directory as "."<br>
@@ -47,9 +49,10 @@ This will create /Library/Python/2.6/site-packages/numpy<br><br>
 <em>Scipy</em>  Before you install scipy, there is a fix that needs to be made to the basic Mac OS X installation.
 An older version of numpy is installed in the /System/Library and scipy cannot be built against this version. 
 Then <br>
-sudo cd /System/Library/Frameworks/Python.framework/Versions/2.6/Extras/lib/python <br>
-sudo mv numpy numpy_old    // this renames the existing numpy directory to numpy_old) <br>
-sudo ln -s /Library/Python/2.6/site-packages/numpy numpy   // this links to the new version <br><br>
+cd /System/Library/Frameworks/Python.framework/Versions/2.6/Extras/lib/python <br>
+sudo mv numpy numpy_old <br>
+sudo ln -s /Library/Python/2.6/site-packages/numpy numpy <br><br>
+These two lines rename the numpy directory to numpy_old and then makes a link to the new version of numpy <br><br>
 
 Now you can get scipy.  Change back to the Installation directory.
 Visit <a href="http://www.scipy.org/Download">http://www.scipy.org/Download</a> and get the official release from SourceForge. 
