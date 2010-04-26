@@ -846,7 +846,7 @@ these operating modes:
   6. JT4    - for HF and EME
   7. WSPR   - for HF and EME
 
-Copyright (c) 2001-2008 by Joseph H. Taylor, Jr., K1JT, with
+Copyright (c) 2001-2010 by Joseph H. Taylor, Jr., K1JT, with
 contributions from additional authors.  WSJT is Open Source 
 software, licensed under the GNU General Public License (GPL).
 Source code and programming information may be found at 
