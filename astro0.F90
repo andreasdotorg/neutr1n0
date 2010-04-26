@@ -115,7 +115,7 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
 1010 format(i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Moon'/        &
             i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Sun'/         &
             i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Source'/      &
-            i4,',',f8.1,',',f8.2,',',f8.1,',',f8.2,',Doppler')
+            i5,',',f8.1,',',f8.2,',',f8.1,',',f8.2,',Doppler')
      rewind 14
 800  isec0=isec
      call cs_unlock
