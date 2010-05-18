@@ -49,13 +49,17 @@
       call grid2deg(HisGrid,dlong2,dlat2)
       call geodist(dlat1,dlong1,dlat2,dlong2,Az,Baz,Dkm)
 
-      j=nint(Dkm/100.0)-4
+      ndkm=Dkm/100
+      j=ndkm-4
       if(j.lt.1) j=1
       if(j.gt.21)j=21
-      ndkm=Dkm/100
-      d1=100.0*ndkm
-      u=(Dkm-d1)/100.0
-      El=eltab(j) + u * (eltab(j+1)-eltab(j))
+      if(Dkm.lt.500.0) then
+        El=18.0
+      else
+        u=(Dkm-100.0*ndkm)/100.0
+        El=(1.0-u)*eltab(j) + u*eltab(j+1)
+      endif
+
       daz=daztab(j) + u * (daztab(j+1)-daztab(j))
       Dmiles=Dkm/1.609344
 
