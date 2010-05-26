@@ -4,7 +4,7 @@
       character*8 c0,c1
       logical first
       data first/.true./
-      save first
+      save first,j0
 
       if(first) then
          k=-1
