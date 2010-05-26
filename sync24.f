@@ -170,7 +170,8 @@ C  Compute width of sync tone to outermost -3 dB points
       if(abs(jpk+i-1).gt.450 .or. abs(jpk+i).gt.450) then
          print*,'sync24 b:',jpk,i
       else
-         x1=i-1+(stest-ccfred(jpk+i-1))/(ccfred(jpk+i)-ccfred(jpk+i-1))
+!         x1=i-1+(stest-ccfred(jpk+i-1))/(ccfred(jpk+i)-ccfred(jpk+i-1))
+         x1=i-0.5
       endif
 
       do i=10,0,-1
@@ -179,7 +180,8 @@ C  Compute width of sync tone to outermost -3 dB points
          endif
       enddo
       i=0
- 32   x2=i+1-(stest-ccfred(jpk+i+1))/(ccfred(jpk+i)-ccfred(jpk+i+1))
+! 32   x2=i+1-(stest-ccfred(jpk+i+1))/(ccfred(jpk+i)-ccfred(jpk+i+1))
+ 32   x2=i+0.5
       width=x2-x1
       if(width.gt.1.2) width=sqrt(width**2 - 1.44)
       width=df*width
