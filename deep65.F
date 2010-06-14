@@ -14,6 +14,7 @@
 !      character*1 cflag
       character*36 cc
       integer dgen(12)
+      common/tmp8/ mcode(63)
       common/tmp9/ mrs(63),mrs2(63)
       data cc/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
 #ifdef CVF
@@ -151,6 +152,9 @@ C  Insert CQ message unless sync=OOO (flip=-1).
          if(ip1.le.ntot) then
             if(qual.lt.6.0) c='?'
             decoded=testmsg(ip1)
+            do j=1,63
+               mcode(j)=ncode(j,ip1)+1
+            enddo
          else
             i=ip1-ntot-1
             i1=i/(36**3)
@@ -160,6 +164,7 @@ C  Insert CQ message unless sync=OOO (flip=-1).
             decoded=cc(i1+1:i1+1)//cc(i2+1:i2+1)//cc(i3+1:i3+1)//
      +           cc(i4+1:i4+1)//'                  '
          endif
+
       endif
       decoded(22:22)=c
 

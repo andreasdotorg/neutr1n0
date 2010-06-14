@@ -10,6 +10,11 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
       real ftrack(126)
       character decoded*22,deepmsg*22
       character mycall*12,hiscall*12,hisgrid*6
+!###
+      real xx(256)
+      real ss(-128:128)
+      common/tmp8/ mcode(63)
+!###
       include 'avecom.h'
       include 'prcom.h'
 
@@ -34,6 +39,38 @@ C  Compute spectra of the channel symbols
       qual=0.
       if(ndepth.ge.1) call deep65(s3,mode65,neme,
      +    flip,mycall,hiscall,hisgrid,deepmsg,qual)
+
+
+!###
+      if(qual.gt.10.0) then
+         rewind 82
+         j=1
+         do i=1,126
+            k=mdat(j)
+            if(flip.lt.0.0) k=mdat2(j)
+            if(i.eq.k) then
+               xx(i)=s2(mcode(j)+7,i)
+               j=j+1
+            else
+               xx(i)=s2(6,i)
+            endif
+         enddo
+         do i=127,256
+            xx(i)=0.
+         enddo
+         call ps(xx,256,ss(1))
+         do i=1,128
+            ss(-i)=ss(i)
+         enddo
+         ss(0)=ss(1)
+         call smooth(ss,257)
+         do i=-128,128
+            ff=i*11025.0/(4096.0*256)
+            write(82,3001) ff,1000.0*ss(i),db(ss(i)/ss(0))
+ 3001       format(f9.4,2f12.3)
+         enddo
+      endif
+!###
 
       if(ncount.lt.0) decoded='                      '
 
