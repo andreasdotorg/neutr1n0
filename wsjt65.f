@@ -191,6 +191,7 @@ C  Write the average line
 C  If Monitor segment #2 is available, write that line also
 !      if(ns2.ge.1 .and. ns2.ne.ns20) then     !***Why the 2nd part?? ***
       if(ns2.ge.1) then
+         call cs_lock('wsjt65')
          if(ns2.lt.10) write(ave2,1021) cfile6,2,nused2,ns2,avemsg2,
      +      nc2,nqual2
          if(ns2.ge.10 .and. nsave.le.99) write(ave2,1022) cfile6,
@@ -200,15 +201,17 @@ C  If Monitor segment #2 is available, write that line also
          if(lcum .and. (avemsg2.ne.'                  ')) 
      +      write(21,1011) ave2
          ns20=ns2
+         call cs_unlock
       endif
 
       if(ave1(31:40).eq.'          ') ave1=ave1(:30)
       if(ave2(31:40).eq.'          ') ave2=ave2(:30)
+      call cs_lock('wsjt65')
       write(12,1011) ave1
       write(12,1011) ave2
       call flushqqq(12)
- 
       if(lumsg.ne.6) end file 11
+      call cs_unlock
 
  900  continue
 
