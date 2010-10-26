@@ -43,28 +43,40 @@ addpfx=StringVar()
 auxra=StringVar()
 auxdec=StringVar()
 azeldir=StringVar()
-myname=StringVar()
-hisname=StringVar()
-wx=StringVar()
+##necho=IntVar()
+##dlatency=DoubleVar()
+ntc=IntVar()
+fRIT=IntVar()
+dither=IntVar()
 temp=StringVar()
 wind=StringVar()
 pwr=StringVar()
 ant=StringVar()
-wxlist=("CLEAR","CLOUDY")
+mytag=IntVar()
+histag=IntVar()
+genmsg=IntVar()
+
+ntc.set(1)
+
+def resetgen():
+    defaults()
+    genmsg.set(1)
 
 def defaults():
-#    if g.mode=="FSK441" or g.mode=="JT6M":
+    t=''
+    if mytag.get()==1: t=' %S'
+    if histag.get()==1: t=' %H'
     if (ireport.get()==0 and iregion.get()==0):
         tx1.delete(0,END)
         tx1.insert(0,'%T %M')
         tx2.delete(0,END)
-        tx2.insert(0,'%T %R %M %R%R')
+        tx2.insert(0,'%T %M %R')
         tx3.delete(0,END)
-        tx3.insert(0,'R%R')
+        tx3.insert(0,'R%R'+t)
         tx4.delete(0,END)
-        tx4.insert(0,'RRR')
+        tx4.insert(0,'RRR'+t)
         tx5.delete(0,END)
-        tx5.insert(0,'73')
+        tx5.insert(0,'73'+t)
         tx6.delete(0,END)
         tx6.insert(0,'CQ %M')
     elif (ireport.get()==1 and iregion.get()==0):
@@ -73,14 +85,14 @@ def defaults():
         tx2.delete(0,END)
         tx2.insert(0,'%T %M %G')
         tx3.delete(0,END)
-        tx3.insert(0,'RR %G')
+        tx3.insert(0,'RR %G'+t)
         tx4.delete(0,END)
-        tx4.insert(0,'RRR')
+        tx4.insert(0,'RRR'+t)
         tx5.delete(0,END)
-        tx5.insert(0,'73')
+        tx5.insert(0,'73'+t)
         tx6.delete(0,END)
         tx6.insert(0,'CQ %M')
-        
+
     elif (ireport.get()==0 and iregion.get()==1):
         tx1.delete(0,END)
         tx1.insert(0,'%T %M')
@@ -109,22 +121,13 @@ def defaults():
         tx6.delete(0,END)
         tx6.insert(0,'CQ %M')
 
-#------------------------------------------------------ set_wx
-def set_wx(event=NONE):
-    print 'hello'
-    wxdialog=Pmw.ComboBoxDialog(root, title="Wx options",
-        buttons=('OK','cancel'),defaultbutton='OK',
-        scrolledlist_items=tx6list,listbox_width=9)
-    wxdialog.geometry(msgpos())
-    if g.Win32: wxdialog.iconbitmap("wsjt.ico")
-    wxdialog.tkraise()
-    t=wxdialog.activate()
-    if t=='OK':
-        t=wxdialog.get()
-        wx_entry.delete(0,END)
-        wx_entry.insert(0,t)
+#------------------------------------------------------ setMyTag
+def setMyTag(event=NONE):
+    if(mytag.get()==1): histag.set(0)
 
-
+#------------------------------------------------------ setHisTag
+def setHisTag(event=NONE):
+    if(histag.get()==1): mytag.set(0)
 
 mycall=Pmw.EntryField(g1.interior(),labelpos=W,label_text='My Call:',
         value='K1JT',entry_textvariable=MyCall,entry_width=12)
@@ -154,7 +157,17 @@ for widget in widgets:
 
 Pmw.alignlabels(widgets)
 mycall.component('entry').focus_set()
-f1=Frame(g1.interior(),width=100,height=20)
+
+f0=Frame(g1.interior(),width=100,height=15)
+ndtr=IntVar()
+Label(f0,text='PTT line:  ').pack(side=LEFT)
+rb7=Radiobutton(f0,text='DTR',value=1,variable=ndtr)
+rb8=Radiobutton(f0,text='RTS',value=0,variable=ndtr)
+rb7.pack(anchor=W,side=LEFT,padx=2,pady=2)
+rb8.pack(anchor=W,side=LEFT,padx=2,pady=2)
+f0.pack()
+
+f1=Frame(g1.interior(),width=100,height=15)
 mileskm=IntVar()
 Label(f1,text='Distance unit:').pack(side=LEFT)
 rb5=Radiobutton(f1,text='mi',value=0,variable=mileskm)
@@ -163,27 +176,34 @@ rb5.pack(anchor=W,side=LEFT,padx=2,pady=2)
 rb6.pack(anchor=W,side=LEFT,padx=2,pady=2)
 f1.pack()
 
-g2=Pmw.Group(root,tag_text="FSK441/JT6M message templates")
+g2=Pmw.Group(root,tag_text="Message templates for FSK441, ISCAT")
 f2=Frame(g2.interior(),width=100,height=20)
 f2a=Frame(f2,width=50,height=20,bd=2,relief=GROOVE)
-f2a.pack(side=LEFT,padx=6,pady=6)
+f2a.pack(side=LEFT,padx=6,pady=6,fill=Y)
 f2b=Frame(f2,width=50,height=20,bd=2,relief=GROOVE)
 f2b.pack(side=LEFT,padx=6,pady=6)
+iregion=IntVar()
+rb4=Radiobutton(f2a,text='EU',value=1,variable=iregion)
+rb4.pack(anchor=W,side=LEFT,padx=2,pady=2)
+rb3=Radiobutton(f2a,text='NA',value=0,variable=iregion)
+rb3.pack(anchor=W,side=LEFT,padx=2,pady=2)
 
 ireport=IntVar()
-rb1=Radiobutton(f2a,text='Report',value=0,variable=ireport)
-rb2=Radiobutton(f2a,text='Grid',value=1,variable=ireport)
-rb1.pack(anchor=W,side=LEFT,padx=2,pady=2)
-rb2.pack(anchor=W,side=LEFT,padx=2,pady=2)
+rb1=Radiobutton(f2b,text='Report',value=0,variable=ireport)
+rb2=Radiobutton(f2b,text='Grid',value=1,variable=ireport)
+rb1.grid(column=0,row=0)
+rb2.grid(column=1,row=0)
+cb1=Checkbutton(f2b,text='My tag',variable=mytag,command=setMyTag)
+cb1.grid(column=0,row=2)
+cb2=Checkbutton(f2b,text='His tag',variable=histag,command=setHisTag)
+cb2.grid(column=1,row=2)
 
-iregion=IntVar()
-rb3=Radiobutton(f2b,text='NA',value=0,variable=iregion)
-rb4=Radiobutton(f2b,text='EU',value=1,variable=iregion)
-rb3.pack(anchor=W,side=LEFT,padx=2,pady=2)
-rb4.pack(anchor=W,side=LEFT,padx=2,pady=2)
 f2.pack()
 
-Button(g2.interior(),text="Reset defaults",command=defaults).pack(padx=6,pady=6)
+f3=Frame(g2.interior(),width=100,height=20)
+Button(f3,text="   Reset   ",command=defaults).pack(side=LEFT,padx=6,pady=6)
+Button(f3,text="Reset and Gen Msgs",command=resetgen).pack(side=LEFT,padx=6,pady=6)
+f3.pack()
 
 tx1=Pmw.EntryField(g2.interior(),labelpos=W,label_text='Tx 1:',
                    entry_textvariable=Template1)
@@ -212,17 +232,22 @@ aux_dec=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Source DEC:',
     entry_width=9,entry_textvariable=auxdec)
 azeldir_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='AzElDir:',
     entry_width=9,value=g.appdir,entry_textvariable=azeldir)
-myname_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='MyName:',
-    entry_width=9,entry_textvariable=myname)
+ntc_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Echo Avg (m):',
+    entry_width=9,entry_textvariable=ntc)
+##necho_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Echo waveform:',
+##    entry_width=9,entry_textvariable=necho)
+fRIT_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='RIT (Hz):',
+    entry_width=9,entry_textvariable=fRIT)
+dither_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Dither (Hz):',
+    entry_width=9,entry_textvariable=dither)
+##dlatency_entry=Pmw.EntryField(g3.interior(),labelpos=W,label_text='Latency (s):',
+##    entry_width=9,entry_textvariable=dlatency)
 
-widgets = (temp_prefix,aux_ra,aux_dec,azeldir_entry,myname_entry)
+widgets = (temp_prefix,aux_ra,aux_dec,azeldir_entry,ntc_entry, \
+           fRIT_entry,dither_entry)
 for widget in widgets:
     widget.pack(padx=10,pady=2)
-hipriority=Checkbutton(g3.interior(),text='High Priority',justify=RIGHT,
-                       variable=HighPri)
-hipriority.pack(padx=10,pady=2,side=BOTTOM)
 Pmw.alignlabels(widgets)
-
 
 g1.pack(side=LEFT,fill=BOTH,expand=1,padx=6,pady=6)
 g2.pack(side=LEFT,fill=BOTH,expand=1,padx=6,pady=6)

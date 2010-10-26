@@ -156,8 +156,14 @@ SoundOut( void *inputBuffer, void *outputBuffer,
     n=nsec/(*data->trperiod);
     //    ic = (int)(stime - *data->trperiod*n) * data->nfs/framesPerBuffer;
     //    ic = framesPerBuffer*ic;
-    ic = (int)(stime - *data->trperiod*n) * data->nfs;
-    ic = ic % *data->nwave;
+
+    if(*data->nmode == 3)  {
+      ic = 0;
+    }
+    else  {
+      ic = (int)(stime - *data->trperiod*n) * data->nfs;
+      ic = ic % *data->nwave;
+    }
   }
 
   TxOKz=*data->TxOK;
@@ -172,7 +178,8 @@ SoundOut( void *inputBuffer, void *outputBuffer,
       ic++;
 
       if(ic >= *data->nwave) {
-        if((*data->nmode != 1) && (*data->nmode != 4)) {
+	/*             FSK441               JT6M                 JT41  */
+        if((*data->nmode != 1) && (*data->nmode != 4) && (*data->nmode != 9)) {
           *data->TxOK = 0;
           ic--;
         } else {
@@ -240,7 +247,7 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
   inputParameters.device = ndevice_in;
   inputParameters.channelCount = 2;
   inputParameters.sampleFormat = paInt16;
-  inputParameters.suggestedLatency = 1.0;
+  inputParameters.suggestedLatency = 0.2;
   inputParameters.hostApiSpecificStreamInfo = NULL;
 
 // Test if this configuration actually works, so we do not run into an ugly assertion
@@ -275,7 +282,7 @@ int jtaudio_(int *ndevin, int *ndevout, short y1[], short y2[],
   outputParameters.device = ndevice_out;
   outputParameters.channelCount = 2;
   outputParameters.sampleFormat = paInt16;
-  outputParameters.suggestedLatency = 1.0;
+  outputParameters.suggestedLatency = 0.2;
   outputParameters.hostApiSpecificStreamInfo = NULL;
 
 // Test if this configuration actually works, so we do not run into an ugly assertion

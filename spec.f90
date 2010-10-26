@@ -55,12 +55,10 @@ subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
   nmode=1
   if(mode(1:4).eq.'JT65') nmode=2
   if(mode(1:4).eq.'Echo') nmode=3
-  if(mode(1:4).eq.'JT6M') nmode=4
   if(mode(1:2).eq.'CW') nmode=5
-  if(mode(1:3).eq.'JT2') nmode=6
   if(mode(1:3).eq.'JT4') nmode=7
-  if(mode(1:4).eq.'WSPR') nmode=8
-  if(mode(1:4).eq.'JT64') nmode=9
+  if(mode(1:4).eq.'JTMS') nmode=8
+  if(mode(1:5).eq.'ISCAT') nmode=9
 
   nlines=0
   newdat=0
@@ -88,7 +86,7 @@ subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
      kread=kread+istep                       !Update pointer
   else
 ! Real-time data
-     dgain=2.0*10.0**(0.005*ngain)
+     dgain=2.0*10.0**(0.015*ngain)
      k=iread
      do i=1,nfft
         k=k+1
@@ -196,7 +194,7 @@ subroutine spec(brightness,contrast,logmap,ngain,nspeed,a)
 
 !  Compute pixel values 
   iz=750
-  logmap=0
+!  logmap=0
   if(brightness.ne.b0 .or. contrast.ne.c0 .or. logmap.ne.logmap0 .or.    &
           nspeed.ne.nspeed0 .or. nlines.gt.1) then
      iz=225000

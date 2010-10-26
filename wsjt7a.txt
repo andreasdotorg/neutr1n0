@@ -1,0 +1,34 @@
+	Temporary Supplement to WSJT User's Guide, version 7.1+
+	-------------------------------------------------------
+
+Version 7.1+ of WSJT is an experimental release designed to allow
+testing of two new modes:
+
+  JTMS_2  -- possible replacement for FSK441 (meteor scatter)
+  ISCAT_2 -- possible replacement for JT6M (ionoscatter, weak Es, F2)
+
+Despite the similarity in names, these modes are *not* the same as the
+modes JTMS and ISCAT offered for testing in WSJT8.  The "_2" versions
+use the same modulation methods but different coding.  They use
+free-text rather than structured messages.
+
+If JTMS_2 or ISCAT_2 remains part of a production release of WSJT, the
+"_2" portion of the mode name will eventually be dropped.  In the
+meantime, during the testing phase, the suffix should help to avoid
+confusion.
+
+
+
+The following table summarizes some parameters of the new modes in
+WSJT 7.1 and the comparable older modes.
+
+                      FSK441  JTMS_2            JT6M    ISCAT_2
+------------------------------------------------------------------
+T/R period (s)          30     30                30       30
+Modulation type       4-FSK   MSK*             44-FSK    41-FSK
+Keying rate (baud)     441   1378               21.5     43.1
+Characters/s           147    197               14.3     32.3
+Bandwidth (Hz)        1764   1378               947      1809
+
+*MSK stands for "minimum shift keying", a technique that allows faster
+keying while minimizing bandwidth.

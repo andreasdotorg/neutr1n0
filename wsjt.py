@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#---------------------------------------------------------------------- WSJT
+#--------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -22,9 +22,11 @@ from WsjtMod.palettes import colormapblue, colormapgray0, colormapHot, \
      colormapAFMHot, colormapgray1, colormapLinrad, Colormap2Palette
 from types import *
 import array
+import thread
+import webbrowser
 
 root = Tk()
-Version="7.07 r" + "$Rev$"[6:-1]
+Version="9.02 r" + "$Rev$"[6:-1]
 print "******************************************************************"
 print "WSJT Version " + Version + ", by K1JT"
 print "Revision date: " + \
@@ -54,11 +56,10 @@ addpfx0=""
 first=1
 g.appdir=appdir
 isync=0
-isync441=2
-isync6m=-10
+isync441=1
+isync_iscat=-20
 isync65=1
 isync_save=0
-iclip=0
 itol=5                                       #Default tol=400 Hz
 ntol=(10,25,50,100,200,400,600)              #List of available tolerances
 idsec=0
@@ -72,6 +73,7 @@ font1='Helvetica'
 hiscall=""
 hisgrid=""
 isec0=-99
+jtol=IntVar()
 k2txb=IntVar()
 kb8rq=IntVar()
 loopall=0
@@ -82,9 +84,7 @@ MyCall0=""
 nafc=IntVar()
 naz=0
 ndepth=IntVar()
-ndwspr=IntVar()
 nel=0
-nblank=IntVar()
 ncall=0
 ncwtrperiod=120
 ndmiles=0
@@ -94,10 +94,14 @@ neme=IntVar()
 nfreeze=IntVar()
 nhotaz=0
 nhotabetter=0
+nmeas=0
+nmonitor=IntVar()
 nopen=0
-nosh441=IntVar()
+nshrx=IntVar()
 noshjt65=IntVar()
 noshjt65all=IntVar()
+nsync=IntVar()
+nzap=IntVar()
 qdecode=IntVar()
 setseq=IntVar()
 ShOK=IntVar()
@@ -107,6 +111,7 @@ ToRadio0=""
 tx6alt=""
 txsnrdb=99.
 TxFirst=IntVar()
+xypm=[]
 green=zeros(500,'f')
 im=Image.new('P',(500,120))
 im.putpalette(Colormap2Palette(colormapLinrad),"RGB")
@@ -188,39 +193,13 @@ def testmsgs():
     tx5.insert(0,"@1000")
     tx6.insert(0,"@2000")
 
-#------------------------------------------------------ msg6list
-def msg6list(event=NONE):
-    if mode.get()=='WSPR':
-        t="OP name 73 GL"
-        if options.myname.get()!="":
-            t1=options.myname.get().strip()
-            if t1!="name": t1=t1.upper()
-            t="OP " + t1 + " 73 GL"
-        tx6list=("73 DE call grid", "73 DE p/call", "TNX name 73 GL",
-             t, "pwr W gain dbd", "pwr W gain dbd 73 GL",
-             "pwr W DIPOLE", "pwr W VERTICAL", "PSE QSY freq KHZ",
-             "WX wx temp F wind", "WX wx temp C wind")
-        tx6dialog=Pmw.ComboBoxDialog(root, title="Message Tx6",
-            buttons=('OK','cancel'),defaultbutton='OK',
-            scrolledlist_items=tx6list,listbox_width=22)
-        tx6dialog.geometry(msgpos())
-        if g.Win32: tx6dialog.iconbitmap("wsjt.ico")
-        tx6dialog.tkraise()
-        t=tx6dialog.activate()
-        if t=='OK':
-            t=tx6dialog.get()
-            tx6.delete(0,99)
-            tx6.insert(0,t)
-
 #------------------------------------------------------ textsize
 def textsize():
     global textheight
     if textheight <= 9:
         textheight=21
     else:
-        if mode.get()[:4]=='JT65' or mode.get()=='WSPR' or \
-               mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4' \
-               or mode.get()[:4]=='JT64':
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4':
             textheight=7
         else:
             textheight=9
@@ -256,27 +235,44 @@ def stopmon(event=NONE):
 def dbl_click_text(event):
     t=text.get('1.0',END)           #Entire contents of text box
     t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
+    if mode.get()=='Diana':
+        report.delete(0,END)
+        report.insert(0,'OOO')
     dbl_click_call(t,t1,'OOO',event)
 
 #------------------------------------------------------ dbl_click3_text
 def dbl_click3_text(event):
-    if mode.get()[:4]=='JT65' or mode.get()=='WSPR' or \
-           mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4' \
-           or mode.get()[:4]=='JT64':
+    if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4':
         t=text.get('1.0',END)           #Entire contents of text box
         t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
         n=t1.rfind("\n")
         rpt=t1[n+12:n+15]
         if rpt[0:1] == " ": rpt=rpt[1:]
         if rpt[:1]=='-' and len(rpt)==2: rpt=rpt[0:1]+'0'+rpt[1:2]
-        if mode.get()=='WSPR' or mode.get()[:4]=='JT64':
-            i=int((int(rpt)+33)/3)
-            if i<1: i=1
-            if i>9: i=9
-            rpt="S%d" % (i,)
-            report.delete(0,END)
-            report.insert(0,rpt)
         dbl_click_call(t,t1,rpt,event)
+
+    elif mode.get()[:5]=='ISCAT' or mode.get()=='Diana':
+        t=text.get('1.0',END)           #Entire contents of text box
+        t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
+        n=t1.rfind("\n")
+        rpt=t1[n+9:n+12]
+        if mode.get()=='Diana':
+            rpt=t1[n+12:n+16]
+        if rpt[0:1] == " ": rpt=rpt[1:]
+        if rpt[:1]=='-' and len(rpt)==2: rpt=rpt[0:1]+'0'+rpt[1:2]
+        report.delete(0,END)
+        report.insert(0,rpt)
+        dbl_click_call(t,t1,rpt,event)
+
+    elif mode.get()=='FSK441' or mode.get()=='JTMS':
+        t=text.get('1.0',END)           #Entire contents of text box
+        t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
+        n=t1.rfind("\n")
+        rpt=t1[n+21:n+23]
+        report.delete(0,END)
+        report.insert(0,rpt)
+        dbl_click_call(t,t1,rpt,event)
+
 
 #------------------------------------------------------ dbl_click_ave
 def dbl_click_ave(event):
@@ -303,8 +299,8 @@ def dbl_click_call(t,t1,rpt,event):
         if setseq.get(): TxFirst.set((nsec/Audio.gcom1.trperiod)%2)
         lookup()
         GenStdMsgs()
-        if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-           mode.get()[:3]=='JT4') and rpt <> "OOO":
+        if (mode.get()[:4]=='JT65' or \
+                mode.get()[:3]=='JT4') and rpt <> "OOO":
             n=tx1.get().rfind(" ")
             t2=tx1.get()[0:n+1]
             tx2.delete(0,END)
@@ -315,8 +311,8 @@ def dbl_click_call(t,t1,rpt,event):
             tx4.insert(0,t2+"RRR")
             tx5.delete(0,END)
             tx5.insert(0,t2+"73")
-        i3=t[:i1].strip().rfind(' ')+1
-        if t[i3:i1].strip() == 'CQ':
+
+        if t[i3:i1].find(' CQ ')>=0:
             ntx.set(1)
         else:
             ntx.set(2)
@@ -531,9 +527,9 @@ def addtodb():
             os.rename("CALL3.TXT","CALL3.OLD")
             os.rename("CALL3.TMP","CALL3.TXT")
 
-#------------------------------------------------------ clrrpt
-def clrrpt(event):
-    report.delete(0,END)
+#------------------------------------------------------ setrpt
+def setrpt(event):
+#    report.delete(0,END)
     report.focus_set()
 
 #-------------------------------------------------------- clrToRadio
@@ -586,22 +582,27 @@ def ModeFSK441(event=NONE):
         lab6.configure(bg="green")
         isync=isync441
         slabel="S      "
+        f5b1.grid(column=0,row=0,padx=2,sticky='EW')
         lsync.configure(text=slabel+str(isync))
         iframe4b.pack_forget()
         textheight=9
         text.configure(height=textheight)
-        bclravg.configure(state=DISABLED)
-        binclude.configure(state=DISABLED)
-        bexclude.configure(state=DISABLED)
-        cbnb.configure(state=NORMAL)
-        cbzap.configure(state=NORMAL)
-        cbfreeze.configure(state=DISABLED)
-        cbafc.configure(state=DISABLED)
+        bclravg.pack_forget()
+        binclude.pack_forget()
+        bexclude.pack_forget()
+        cbfreeze.grid_forget()
+        cbafc.grid_forget()
+        lsync.grid(column=0,row=0,padx=8,sticky='EW')
+        ltol.grid(column=0,row=1,padx=8,sticky='EW')
+        cbzap.grid(column=1,row=0,padx=2,sticky='W')
+        nfreeze.set(0)
+        shrx.grid(column=1,row=1,sticky='W',padx=2)
+        shmsg.grid(column=1,row=0,sticky='W',padx=2)
+        report.grid(column=1,row=1,sticky='W',padx=7)
+        labreport.grid(column=0,row=1,sticky='E',padx=0)
         if ltxdf: toggletxdf()
-        btxdf.configure(state=DISABLED)
-        report.configure(state=NORMAL)
-        shmsg.configure(state=NORMAL)
         graph2.configure(bg='black')
+        btxdf.grid_forget()
         report.delete(0,END)
         report.insert(0,'26')
         itol=4
@@ -623,18 +624,25 @@ def ModeJT65():
     text.configure(height=textheight)
     isync=isync65
     slabel="Sync   "
+    f5b1.grid(column=0,row=0,padx=2,sticky='EW')
     lsync.configure(text=slabel+str(isync))
-    bclravg.configure(state=NORMAL)
-    binclude.configure(state=NORMAL)
-    bexclude.configure(state=NORMAL)
-    cbnb.configure(state=NORMAL)
-    cbzap.configure(state=NORMAL)
-    cbfreeze.configure(state=NORMAL)
-    cbafc.configure(state=NORMAL)
+    lsync.grid(column=0,row=0,padx=2,sticky='EW')
+    ltol.grid(column=0,row=1,padx=2,sticky='EW')
+    cbzap.grid(column=1,row=0,padx=2,sticky='W')
+    btxstop.pack_forget()
+    bclravg.pack(side=LEFT,expand=1,fill=X)
+    binclude.pack(side=LEFT,expand=1,fill=X)
+    bexclude.pack(side=LEFT,expand=1,fill=X)
+    btxstop.pack(side=LEFT,expand=1,fill=X)
+
+    cbfreeze.grid(column=0,row=2,padx=2,sticky='W')
+    cbafc.grid(column=1,row=1,padx=2,sticky='W')
     if ltxdf: toggletxdf()
-    btxdf.configure(state=NORMAL)
-    report.configure(state=DISABLED)
-    shmsg.configure(state=DISABLED)
+    btxdf.grid_forget()
+    shmsg.grid_forget()
+    shrx.grid_forget()
+    report.grid_forget()
+    labreport.grid_forget()
     graph2.configure(bg='#66FFFF')
     itol=4
     inctol()
@@ -648,8 +656,10 @@ def ModeJT65():
 def ModeJT65A(event=NONE):
     if g.mode != "JT65A":
         if lauto: toggleauto()
-        mode.set("JT65A")
         ModeJT65()
+        mode.set("JT65A")
+        btxdf.grid(column=1,row=0,sticky='EW',padx=4)
+
 
 #------------------------------------------------------ ModeJT65B
 def ModeJT65B(event=NONE):
@@ -665,105 +675,82 @@ def ModeJT65C(event=NONE):
         mode.set("JT65C")
         ModeJT65()
 
-#------------------------------------------------------ ModeJT64A
-def ModeJT64A(event=NONE):
-    if g.mode != "JT64A":
+#------------------------------------------------------ ModeJTMS
+def ModeJTMS(event=NONE):
+    if g.mode != "JTMS":
         if lauto: toggleauto()
-    ModeJT65()
-    mode.set("JT64A")
-    report.configure(state=NORMAL)
-    report.delete(0,END)
-    report.insert(0,'S1')
-
-#------------------------------------------------------ ModeJT6M
-def ModeJT6M(event=NONE):
-    global slabel,isync,isync6m,itol
-    if g.mode != "JT6M":
+    ModeFSK441()
+    cbfreeze.grid(column=0,row=2,padx=4,sticky='W')
+    mode.set("JTMS")
+    
+#------------------------------------------------------ ModeISCAT
+def ModeISCAT(event=NONE):
+    global isync,isync_iscat
+    if g.mode != "ISCAT":
         if lauto: toggleauto()
         cleartext()
         ModeFSK441()
-        lab2.configure(text='FileID            T      Width      dB        DF')
-        mode.set("JT6M")
-        isync=isync6m
+
+        mode.set("ISCAT")
+        lab2.configure(text='FileID      Avg dB        DF')
+        isync=isync_iscat
         lsync.configure(text=slabel+str(isync))
-        shmsg.configure(state=DISABLED)
-        cbnb.configure(state=NORMAL)
-        cbzap.configure(state=NORMAL)
-        cbfreeze.configure(state=NORMAL)
+        cbfreeze.grid(column=1,row=1,padx=2,sticky='W')
         itol=3
         ltol.configure(text='Tol    '+str(ntol[itol]))
         inctol()
-        nfreeze.set(1)
+        nfreeze.set(0)
+        report.delete(0,END)
+        report.insert(0,'-15')
+        shrx.grid_forget()
+        shmsg.grid_forget()
         ntx.set(1)
         Audio.gcom2.mousedf=0
         GenStdMsgs()
-        erase()
-        
+        erase()        
+
+#------------------------------------------------------ ModeDiana
+def ModeDiana(event=NONE):
+    global isync,isync_iscat
+    if g.mode != "Diana":
+        if lauto: toggleauto()
+        ModeJT65()
+        Audio.gcom1.trperiod=30
+        mode.set("Diana")
+        isync=1
+        lsync.configure(text=slabel+str(isync))
+        report.delete(0,END)
+        report.insert(0,'-20')
 
 #------------------------------------------------------ ModeCW
 def ModeCW(event=NONE):
     if g.mode != "CW":
         if lauto: toggleauto()
         cleartext()
+        ModeJT65B()
         mode.set("CW")
         Audio.gcom1.trperiod=ncwtrperiod
         iframe4b.pack_forget()
         text.configure(height=9)
-        bclravg.configure(state=DISABLED)
-        binclude.configure(state=DISABLED)
-        bexclude.configure(state=DISABLED)
-        cbfreeze.configure(state=DISABLED)
-        cbafc.configure(state=DISABLED)
+        cbfreeze.grid_forget()
+        cbafc.grid_forget()
+        lsync.grid_forget()
+        ltol.grid_forget()
+        cbzap.grid_forget()
+        f5b1.grid_forget()
         if ltxdf: toggletxdf()
-        btxdf.configure(state=DISABLED)
-        report.configure(state=NORMAL)
         ntx.set(1)
         GenStdMsgs()
         erase()
-
-#------------------------------------------------------ ModeWSPR
-def ModeWSPR():
-    global slabel,isync,isync65,textheight,itol
-    ModeJT65()
-    mode.set("WSPR")
-    if lauto: toggleauto()
-    cleartext()
-    lab2.configure(text='FileID      Sync     dB       DT          DF  Drift')
-    Audio.gcom1.trperiod=120
-    iframe4b.pack_forget()
-    text.configure(height=9)
-    bclravg.configure(state=DISABLED)
-    binclude.configure(state=DISABLED)
-    bexclude.configure(state=DISABLED)
-    cbafc.configure(state=DISABLED)
-    cbnb.configure(state=DISABLED)
-    cbzap.configure(state=DISABLED)
-    lclip.configure(state=DISABLED)
-    nfreeze.set(1)
-    nzap.set(0)
-    cbfreeze.configure(state=DISABLED)
-##    btxdf.configure(state=DISABLED)
-
-    if ltxdf: toggletxdf()
-    report.configure(state=NORMAL)
-    report.delete(0,END)
-    report.insert(0,'S1')
-    itol=2
-    inctol()
-    ntx.set(1)
-    GenStdMsgs()
-    erase()
-
-#------------------------------------------------------ ModeJT2
-def ModeJT2():
-    global slabel,isync,isync65,textheight,itol
-    ModeJT65()
-    mode.set("JT2")
 
 #------------------------------------------------------ ModeJT4
 def ModeJT4():
     global slabel,isync,isync65,textheight,itol
     ModeJT65()
+    bclravg.pack_forget()
+    binclude.pack_forget()
+    bexclude.pack_forget()
+
 
 #------------------------------------------------------ ModeJT4A
 def ModeJT4A():
@@ -771,6 +758,7 @@ def ModeJT4A():
     ModeJT4()
     mode.set("JT4A")
     Audio.gcom2.mode4=1
+    btxdf.grid(column=1,row=0,sticky='EW',padx=4)
 
 #------------------------------------------------------ ModeJT4B
 def ModeJT4B():
@@ -815,10 +803,24 @@ def ModeJT4G():
     Audio.gcom2.mode4=72
 
 #------------------------------------------------------ ModeEcho
-#def ModeEcho(event=NONE):
-#    mode.set("Echo")
-#    stub()
-    
+def ModeEcho(event=NONE):
+    ModeCW()
+    mode.set("Echo")
+    if lauto: toggleauto()
+    lab2.configure(text='     N      Level         Sig              DF         Width      Q')
+    Audio.gcom1.trperiod=6
+    tx1.delete(0,99)
+    tx2.delete(0,99)
+    tx3.delete(0,99)
+    tx4.delete(0,99)
+    tx5.delete(0,99)
+    tx6.delete(0,99)
+
+#------------------------------------------------------ ModeMeasure
+def ModeMeasure(event=NONE):
+    ModeEcho()
+    mode.set("Measure")
+
 #------------------------------------------------------ msgpos
 def msgpos():
     g=root_geom[root_geom.index("+"):]
@@ -839,15 +841,15 @@ def about(event=NONE):
 WSJT is a weak signal communications program.  It supports
 these operating modes:
 
-  1. FSK441 - fast mode for meteor scatter
-  2. JT6M   - optimized for meteor and ionospheric scatter on 50 MHz
-  3. JT65   - for HF, EME, and troposcatter
-  4. CW     - 15 WPM Morse code, messages structured for EME
-  5. JT2    - for HF and EME
-  6. JT4    - for HF and EME
-  7. WSPR   - for HF and EME
+  1. FSK441 -  meteor scatter
+  2. ISCAT    -  for tropo- and iono-scatter, weak Es/F2 on 50 MHz
+                       (replaces JT6M)
+  3. JT65      -  for HF, EME, and troposcatter
+  4. JT4        -  HF, microwave beacons, 10 GHz EME and rainscatter
+  5. CW        -  15 WPM Morse code, messages structured for EME
+  6. Echo      -  EME Echo testing
 
-Copyright (c) 2001-2010 by Joseph H. Taylor, Jr., K1JT, with
+Copy (c) 2001-2010 by Joseph H. Taylor, Jr., K1JT, with
 contributions from additional authors.  WSJT is Open Source 
 software, licensed under the GNU General Public License (GPL).
 Source code and programming information may be found at 
@@ -869,7 +871,6 @@ F1	List keyboard shortcuts
 Shift+F1	List special mouse commands
 Ctrl+F1	About WSJT
 F2	Options
-Shift+F2   WSPR structured messages
 F3	Tx Mute
 F4	Clear "To Radio"
 Alt+F4      Exit program
@@ -877,50 +878,32 @@ F5	What message to send?
 Shift+F5	Examples of minimal JT65 QSOs
 F6	Open next file in directory
 Shift+F6	Decode all wave files in directory
-F7	Set FSK441 mode
-Shift+F7	Set JT6M mode
-F8	Set JT65A mode
-Shift+F8	Set JT65B mode
-Ctrl+F8	Set JT65C mode
-Shift+Ctrl+F8 Set CW mode
+F9	Online Supplement to User's Guide
 F10	Show SpecJT
 Shift+F10  Show astronomical data
 F11	Decrement Freeze DF
 F12	Increment Freeze DF
 Alt+1 to Alt+6  Tx1 to Tx6
 Alt+A	Toggle Auto On/Off
+Alt+C	Clear average
 Alt+D	Decode
 Ctrl+D	Force Decode 
 Shift+Ctrl+D  Force Decode, no JT65 shorthands 
 Alt+E	Erase
 Alt+F	Toggle Freeze
-Alt+G	Generate Standard Messages
-Ctrl+G	Generate Alternate JT65 Messages
+Alt+G	Generate standard messages
+Ctrl+G	Generate alternate JT65/JT4 Messages
 Alt+I	Include
 Alt+L	Lookup
 Ctrl+L	Lookup, then Generate Standard Messages
 Alt+M	Monitor
 Alt+O	Tx Stop
 Alt+Q	Log QSO
+Alt+R	Enter report
 Alt+S	Stop Monitoring or Decoding
 Alt+V	Save Last
 Alt+X	Exclude
 Alt+Z	Toggle Zap
-"""
-    Label(scwid,text=t,justify=LEFT).pack(padx=20)
-    scwid.focus_set()
-
-#------------------------------------------------------ wspr_msgs
-def wspr_msgs(event=NONE):
-    scwid=Toplevel(root)
-    scwid.geometry(msgpos())
-    if g.Win32: scwid.iconbitmap("wsjt.ico")
-    t="""
-Examples of "partially canned" message parameters
-
-wx:    CLEAR CLOUDY RAIN SNOW
-temp:  76 F    -5 C
-wind:  CALM BREEZES WINDY
 """
     Label(scwid,text=t,justify=LEFT).pack(padx=20)
     scwid.focus_set()
@@ -933,18 +916,18 @@ def mouse_commands(event=NONE):
     t="""
 Click on          Action
 --------------------------------------------------------
-Waterfall        FSK441/JT6M: click to decode ping
+Waterfall        FSK441, JTMS: click to decode region
                       JT65: Click to set DF for Freeze
                        Double-click to Freeze and Decode
 
-Main screen,     FSK441/JT6M: click to decode ping
+Main screen,     FSK441, JTMS, ISCAT: click to decode ping
 graphics area    JT65: Click to set DF for Freeze
                            Double-click to Freeze and Decode
 
 Main screen,     Double-click puts callsign in Tx messages
 text area           Right-double-click also sets Auto ON
 
-Sync, Clip,      Left/Right click to increase/decrease
+Sync, S,         Left/Right click to increase/decrease
 Tol, ...
 """
     Label(scwid,text=t,justify=LEFT).pack(padx=20)
@@ -961,7 +944,7 @@ use the following standard procedures and *do not* exchange pertinent
 information by other means (e.g., internet, telephone, ...) while the
 QSO is in progress!
 
-FSK441 or JT6M:   If you have received
+FSK441, JTMS, or ISCAT:   If you have received
     ... less than both calls from the other station, send both calls.
     ... both calls, send both calls and your signal report.
     ... both calls and signal report, send R and your report.
@@ -969,11 +952,11 @@ FSK441 or JT6M:   If you have received
     ... RRR, the QSO is complete.  However, the other station may not
 know this, so it is conventional to send 73 to signify that you are done.
 
-(Outside of North America, the customary procedures for FSK441
-and JT6M may be slightly different.)
+(Outside of North America, the customary procedures may be slightly
+different.)
 
 
-JT65:   If you have received
+JT65, JT4:   If you have received
     ... less than both calls, send both calls and your grid locator.
     ... both calls, send both calls, your grid locator, and OOO.
     ... both calls and OOO, send RO.
@@ -994,7 +977,7 @@ def minimal_qso(event=NONE):
     if g.Win32: screenf5s.iconbitmap("wsjt.ico")
     t="""
 The following are recommended sequences for  minimal QSOs
-using the standard JT65 messages:
+using the standard JT65/JT4 messages:
 
 Station #1                            Station #2
 ----------------------------------------------------------
@@ -1014,6 +997,21 @@ VK7ABC K1JT RRR
 """
     Label(screenf5s,text=t,justify=LEFT).pack(padx=20)
     screenf5s.focus_set()
+
+#------------------------------------------------------ usersguide
+def usersguide(event=NONE):
+    url='http://physics.princeton.edu/pulsar/K1JT/WSJT_User_600.pdf'
+    thread.start_new_thread(browser,(url,))
+
+#------------------------------------------------------ wsjt9supp
+def wsjt9supp(event=NONE):
+    url='http://physics.princeton.edu/pulsar/K1JT/WSJT_9.0_Supplement.pdf'
+    thread.start_new_thread(browser,(url,))
+
+#------------------------------------------------------- browser
+def browser(url):
+    webbrowser.open(url)
+
 #------------------------------------------------------ prefixes
 def prefixes(event=NONE):
     pfx=Toplevel(root)
@@ -1051,9 +1049,8 @@ def azdist():
         labHotAB.configure(text="",bg='gray85')
         labDist.configure(text="")
     else:
-        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4' or mode.get()[:2]=="CW" or \
-               mode.get()=='WSPR' or mode.get()[:4]=='JT64':
+        if mode.get()[:4]=='JT65' or \
+               mode.get()[:3]=='JT4' or mode.get()[:2]=="CW":
             labAz.configure(text="Az: %d" % (naz,))
             labHotAB.configure(text="",bg='gray85')
         else:
@@ -1081,28 +1078,11 @@ def decsync(event):
         isync=isync-1
         lsync.configure(text=slabel+str(isync))
 
-#------------------------------------------------------ incclip
-def incclip(event):
-    global iclip
-    if iclip<5:
-        iclip=iclip+1
-        if iclip==5: iclip=99
-        lclip.configure(text='Clip   '+str(iclip))
-
-#------------------------------------------------------ decclip
-def decclip(event):
-    global iclip
-    if iclip>-5:
-        iclip=iclip-1
-        if iclip==98: iclip=4
-        lclip.configure(text='Clip   '+str(iclip))
-
 #------------------------------------------------------ inctol
 def inctol(event=NONE):
     global itol
     maxitol=5
-    if mode.get()[:4]=='JT65' or mode.get()[:4]=='JT64': maxitol=6
-    if mode.get()=='WSPR': maxitol=3
+    if mode.get()[:4]=='JT65': maxitol=6
     if itol<maxitol: itol=itol+1
     ltol.configure(text='Tol    '+str(ntol[itol]))
 
@@ -1131,22 +1111,24 @@ def decdsec(event):
     Audio.gcom1.ndsec=idsec
 
 #------------------------------------------------------ toggle_shift
-def toggle_shift(event):
-    Audio.gcom2.nadd5=1-Audio.gcom2.nadd5
-    if Audio.gcom2.nadd5:
-        bg='red'
-        lshift.configure(text='Shift 5.0',bg=bg)
-    else:
-        bg='white'
-        lshift.configure(text='Shift 0.0',bg=bg)
+##def toggle_shift(event):
+##    Audio.gcom2.nadd5=1-Audio.gcom2.nadd5
+##    if Audio.gcom2.nadd5:
+##        bg='red'
+##        lshift.configure(text='Shift 5.0',bg=bg)
+##    else:
+##        bg='white'
+##        lshift.configure(text='Shift 0.0',bg=bg)
 
 #------------------------------------------------------ inctrperiod
 def inctrperiod(event):
     global ncwtrperiod
-    if mode.get()[:2]=="CW":
+    if mode.get()=="CW":
         if ncwtrperiod==120: ncwtrperiod=150
         if ncwtrperiod==60:  ncwtrperiod=120
         Audio.gcom1.trperiod=ncwtrperiod
+    elif mode.get()=="FSK441" or mode.get()=="JTMS" or mode.get()=="ISCAT":
+        if Audio.gcom1.trperiod==15: Audio.gcom1.trperiod=30
 
 #------------------------------------------------------ dectrperiod
 def dectrperiod(event):
@@ -1155,13 +1137,14 @@ def dectrperiod(event):
         if ncwtrperiod==120: ncwtrperiod=60
         if ncwtrperiod==150: ncwtrperiod=120
         Audio.gcom1.trperiod=ncwtrperiod
+    elif mode.get()=="FSK441" or mode.get()=="JTMS" or mode.get()=="ISCAT":
+        if Audio.gcom1.trperiod==30: Audio.gcom1.trperiod=15
 
 #------------------------------------------------------ erase
 def erase(event=NONE):
     graph1.delete(ALL)
     if mode.get()[:4]!="JT65" and mode.get()[:2]!="CW" and \
-            mode.get()!="WSPR" and mode.get()[:3]!='JT2' and \
-            mode.get()[:3]!='JT4' and mode.get()[:4]!='JT64':
+            mode.get()[:3]!='JT4' and mode.get()!='Diana':
         graph2.delete(ALL)
     text.configure(state=NORMAL)
     text.delete('1.0',END)
@@ -1182,22 +1165,18 @@ def clear_avg(event=NONE):
     Audio.gcom2.nclearave=1
 
 #------------------------------------------------------ defaults
-def defaults():
-    global slabel,isync,iclip,itol,idsec
-    isync=1
-    if g.mode=="FSK441": isync=2
-    iclip=0
-    lclip.configure(text='Clip   '+str(iclip))
-    itol=5
-    ltol.configure(text='Tol    '+str(ntol[itol]))
-    if g.mode=="JT6M":
-        isync=-10
-        itol=4
-        ltol.configure(text='Tol    '+str(ntol[itol]))
-    if g.mode=="WSPR":
-        itol=3
-        ltol.configure(text='Tol    '+str(ntol[itol]))
-    lsync.configure(text=slabel+str(isync))
+##def defaults():
+##    global slabel,isync,itol,idsec
+##    isync=1
+##    if g.mode=="FSK441" or g.mode=="JTMS": isync=2
+##    itol=5
+##    ltol.configure(text='Tol    '+str(ntol[itol]))
+##    if g.mode=="JT6M" or g.mode=="ISCAT":
+##        isync=-10
+##        if g.mode=="ISCAT": isync=-20
+##        itol=4
+##        ltol.configure(text='Tol    '+str(ntol[itol]))
+##    lsync.configure(text=slabel+str(isync))
 
 #------------------------------------------------------ delwav
 def delwav():
@@ -1224,13 +1203,13 @@ def toggleauto(event=NONE):
     global lauto
     lauto=1-lauto
     Audio.gcom2.lauto=lauto
-    if lauto:
+    if lauto and mode.get()!='Echo':
         monitor()
     else:
         Audio.gcom1.txok=0
         Audio.gcom2.mantx=0
     if lauto==0: auto.configure(text='Auto is OFF',bg='gray85',relief=RAISED)
-    if lauto==1: auto.configure(text='Auto is ON',bg='red',relief=SOLID)
+    if lauto==1: auto.configure(text='Auto is  ON',bg='red',relief=SOLID)
     
 #------------------------------------------------------ toggletxdf
 def toggletxdf(event=NONE):
@@ -1238,54 +1217,54 @@ def toggletxdf(event=NONE):
     ltxdf=1-ltxdf
     if ltxdf:
         Audio.gcom2.ntxdf=Audio.gcom2.mousedf
-        t="TxDF = %d" % (int(Audio.gcom2.mousedf),)
+        t="  TxDF =%4d" % (int(Audio.gcom2.mousedf),)
         btxdf.configure(text=t,bg='red',relief=SOLID)
     else:
         Audio.gcom2.ntxdf=0
-        btxdf.configure(text='TxDF = 0',bg='gray85',relief=RAISED)
+        t="  TxDF =%4d" % 0
+        btxdf.configure(text=t,bg='gray85',relief=RAISED)
     if Audio.gcom1.transmitting:
         txstop()
 
 #----------------------------------------------------- dtdf_change
 # Readout of graphical cursor location
 def dtdf_change(event):
-    if mode.get()[:4]!='JT65' and mode.get()[:3]!='JT2' and \
-               mode.get()[:3]!='JT4' and mode.get()[:4]!='WSPR' \
-               and mode.get()[:4]!='JT64':
-        t="%.1f" % (event.x*30.0/500.0,)
-        lab6.configure(text=t,bg='green')
-    else:
+    if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4' or mode.get()=='Diana':
         if event.y<40 and Audio.gcom2.nspecial==0:
             lab1.configure(text='Time (s)',bg="#33FFFF")   #light blue
-            t="%.1f" % (12.0*event.x/500.0-2.0,)
+            if mode.get()=='Diana':
+                t="%.1f" % (4.458*event.x/500.0-0.6,)
+            else:
+                t="%.1f" % (12.0*event.x/500.0-2.0,)
             lab6.configure(text=t,bg="#33FFFF")
         elif (event.y>=40 and event.y<95) or \
                  (event.y<95 and Audio.gcom2.nspecial>0):
             lab1.configure(text='DF (Hz)',bg='red')
             idf=Audio.gcom2.idf
-            if mode.get()[:4]=='WSPR':
-                t="%d" % int(0.7324*(event.x-250.0))
-            else:
-                t="%d" % int(idf+1200.0*event.x/500.0-600.0,)
+            t="%d" % int(idf+1200.0*event.x/500.0-600.0,)
             lab6.configure(text=t,bg="red")
         else:
             lab1.configure(text='Time (s)',bg='green')
-            if mode.get()=='WSPR':
-                t="%.1f" % (114.0*event.x/500.0,)
+            if mode.get()=='Diana':
+                t="%.1f" % (event.x*30.0/500.0,)
             else:
                 t="%.1f" % (53.0*event.x/500.0,)
             lab6.configure(text=t,bg="green")
+    elif mode.get()=='Echo':
+        lab1.configure(text='DF (Hz)',bg='red')
+##        t="%d" % int((event.x-250),)
+        t="%d" % int(0.3365*(event.x-250),)
+        lab6.configure(text=t,bg="red")
+    else:
+        t="%.1f" % (event.x*30.0/500.0,)
+        lab6.configure(text=t,bg='green')
 
 #---------------------------------------------------- mouse_click_g1
 def mouse_click_g1(event):
     global nopen
     if not nopen:
-        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4' or mode.get()[:4]=='JT64':
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4':
             Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)
-        elif mode.get()=='WSPR':
-# Fix this: ??  (idf dependence?)
-            Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*0.7324)
         else:
             if Audio.gcom2.ndecoding==0:              #If decoder is busy, ignore
                 Audio.gcom2.nagain=1
@@ -1299,9 +1278,8 @@ def mouse_click_g1(event):
 
 #------------------------------------------------------ double-click_g1
 def double_click_g1(event):
-    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-        mode.get()[:3]=='JT4' or mode.get()=='WSPR' \
-        or mode.get()[:4]=='JT64') and Audio.gcom2.ndecoding==0:
+    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4') and \
+        Audio.gcom2.ndecoding==0:
         g.freeze_decode=1
     
 #------------------------------------------------------ mouse_up_g1
@@ -1321,7 +1299,7 @@ def left_arrow(event=NONE):
     n=5*int(Audio.gcom2.mousedf/5)
     if n==Audio.gcom2.mousedf: n=n-5
     Audio.gcom2.mousedf=n
-    
+
 #------------------------------------------------------ GenStdMsgs
 def GenStdMsgs(event=NONE):
     global altmsg,MyCall0,addpfx0,ToRadio0
@@ -1332,7 +1310,8 @@ def GenStdMsgs(event=NONE):
     Audio.gcom2.hiscall=(ToRadio.get()+(' '*12))[:12]
     for m in (tx1, tx2, tx3, tx4, tx5, tx6):
         m.delete(0,99)
-    if mode.get()=="FSK441" or mode.get()=="JT6M":
+    if mode.get()=="FSK441" or mode.get()=="ISCAT" or \
+       mode.get()=='JTMS' or mode.get()=='Diana':
         r=report.get()
         tx1.insert(0,setmsg(options.tx1.get(),r))
         tx2.insert(0,setmsg(options.tx2.get(),r))
@@ -1340,8 +1319,10 @@ def GenStdMsgs(event=NONE):
         tx4.insert(0,setmsg(options.tx4.get(),r))
         tx5.insert(0,setmsg(options.tx5.get(),r))
         tx6.insert(0,setmsg(options.tx6.get(),r))
-    elif mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4':
+        if tx3.get()=='ROOO':
+            tx3.delete(0,END)
+            tx3.insert(0,'RO')
+    elif mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4':
         if options.MyCall.get()!= MyCall0 or \
                options.addpfx.get()!= addpfx0 or ToRadio.get()!=ToRadio0:
             MyCall0=options.MyCall.get()
@@ -1384,48 +1365,6 @@ def GenStdMsgs(event=NONE):
         tx4.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [RRR]")
         tx5.insert(0,ToRadio.get() + " " + options.MyCall.get()+" [73]")
         tx6.insert(0,"[CQ " + options.MyCall.get() + "]")
-    elif mode.get()=="WSPR" or mode.get()[:4]=='JT64':
-        if options.MyCall.get()!= MyCall0 or \
-               options.addpfx.get()!= addpfx0 or ToRadio.get()!=ToRadio0:
-            MyCall0=options.MyCall.get()
-            addpfx0=options.addpfx.get()
-            ToRadio0=ToRadio.get()
-            t0=("SM5BSZ "+options.MyCall.get()).upper()
-            Audio.gcom2.t0msg=(t0+' '*22)[:22]
-            nplain,naddon,ndiff=Audio.chkt0()
-            if nplain==1:
-                MsgBox("Bad 'MyCall' or bad prefix/suffix?\nPlease check on Setup | Options screen.")
-                options1()
-            t0=("SM5BSZ "+ToRadio0).upper()
-            Audio.gcom2.t0msg=(t0+' '*22)[:22]
-            nplain,naddon,ndiff=Audio.chkt0()
-            if nplain==1:
-                MsgBox("Bad callsign in 'To Radio'?\nPlease check.")
-            
-        t0=("<" + ToRadio.get() + "> "+options.MyCall.get()).upper()
-        Audio.gcom2.t0msg=(t0+' '*22)[:22]
-##        nplain,naddon,ndiff=Audio.chkt0()
-##        if nplain==0 and naddon==0 and ndiff==0:
-##            t0=t0 + " "+options.MyGrid.get()[:4]
-        tx1.insert(0,t0.upper())
-        r=report.get()
-        t2=(ToRadio.get() + " <"+options.MyCall.get() + "> " + r).upper()
-        Audio.gcom2.t0msg=(t0+' '*22)[:22]
-        tx2.insert(0,t2)
-        t3=(ToRadio.get() + " <"+options.MyCall.get() + "> R " + r).upper()
-        tx3.insert(0,t3)
-        t4=("<" + ToRadio.get() + "> " + options.MyCall.get() + " RRR").upper()
-        tx4.insert(0,t4)
-        t5=("73 DE "+options.MyCall.get()+ " "+options.MyGrid.get()[:4]).upper()
-        tx5.insert(0,t5)
-
-        t0="CQ " + options.MyCall.get().upper()
-        Audio.gcom2.t0msg=(t0+' '*22)[:22]
-        nplain,naddon,ndiff=Audio.chkt0()
-        if nplain==0 and naddon==0 and ndiff==0:
-            t0=t0 + " "+options.MyGrid.get()[:4]
-        tx6.insert(0,t0.upper())
-        altmsg=0
     
 #------------------------------------------------------ GenAltMsgs
 def GenAltMsgs(event=NONE):
@@ -1435,7 +1374,7 @@ def GenAltMsgs(event=NONE):
     ToRadio.insert(0,t)
     if k2txb.get()!=0: ntx.set(1)
     Audio.gcom2.hiscall=(ToRadio.get()+(' '*12))[:12]
-    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
+    if (mode.get()[:4]=='JT65' or mode.get()=='Diana' or \
         mode.get()[:3]=='JT4') and ToRadio.get().find("/") == -1 and \
                options.MyCall.get().find("/") == -1:
         for m in (tx1, tx2, tx3, tx4, tx5, tx6):
@@ -1452,6 +1391,20 @@ def GenAltMsgs(event=NONE):
 #------------------------------------------------------ setmsg
 def setmsg(template,r):
     msg=""
+    t=options.MyCall.get()
+    n=len(t)
+    MySuffix=t[n-3:]
+    n2=MySuffix.find('/')
+    if(n2>=0): MySuffix=t[n-5:n-2]
+    if MySuffix[0:1].isdigit()or MySuffix[1:2].isdigit():
+        MySuffix=MySuffix[1:]
+    t=ToRadio.get()
+    n=len(t)
+    HisSuffix=t[n-3:]
+    n2=HisSuffix.find('/')
+    if(n2>=0): HisSuffix=t[n-5:n-2]
+    if HisSuffix[0:1].isdigit()or HisSuffix[1:2].isdigit():
+        HisSuffix=HisSuffix[1:]
     npct=0
     for i in range(len(template)):
         if npct:
@@ -1460,6 +1413,8 @@ def setmsg(template,r):
             if template[i]=="R": msg=msg+r
             if template[i]=="G": msg=msg+options.MyGrid.get()[:4]
             if template[i]=="L": msg=msg+options.MyGrid.get()
+            if template[i]=="S": msg=msg+MySuffix
+            if template[i]=="H": msg=msg+HisSuffix
             npct=0
         else:
             npct=0
@@ -1468,13 +1423,55 @@ def setmsg(template,r):
             else:
                 msg=msg+template[i]            
     return msg.upper()
-    
+
+#------------------------------------------------------ plot_echo
+def plot_echo():
+    "Plot red and blue curves for Echo mode."
+    graph1.delete(ALL)
+    y1=[]
+    y2=[]
+    for i in range(446):        #Find ymax for magenta/orange curves
+        ss1=Audio.gcom2.ss1[i+1]
+        y1.append(ss1)
+        ss2=Audio.gcom2.ss2[i+1]
+        y2.append(ss2)
+    ymax=max(y1+y2)
+    yfac=0.5
+    if ymax>80.0/yfac: yfac=80.0/ymax
+    xy1=[]
+    xy2=[]
+    fac=500.0/446.0
+    for i in range(446):        #Make xy list for magenta/orange curves
+        x=i*fac
+        ss1=Audio.gcom2.ss1[i+1]
+        n=int(90.0-yfac*ss1) + 20
+        xy1.append(x)
+        xy1.append(n)
+        ss2=Audio.gcom2.ss2[i+1]
+        n=int(90.0-yfac*ss2)
+        xy2.append(x)
+        xy2.append(n)
+    graph1.create_line(xy1,fill='#33FFFF')            #Light blue
+    graph1.create_line(xy2,fill="red")
+
+#------------------------------------------------------ plot_meas
+def plot_meas(nmeas,db):
+    global xypm
+    graph1.delete(ALL)
+    if nmeas<2:
+        xypm=[]
+    xypm.append(nmeas)
+    n=int(60.0-3.0*db)
+    xypm.append(n)
+    if nmeas>=2:
+        graph1.create_line(xypm,fill="green")
+
 #------------------------------------------------------ plot_large
 def plot_large():
     "Plot the green, red, and blue curves."
+    ngreen=Audio.gcom2.ngreen
     graph1.delete(ALL)
     y=[]
-    ngreen=Audio.gcom2.ngreen
     if ngreen>0:
         for i in range(ngreen):             #Find ymax for green curve
             green=Audio.gcom2.green[i]
@@ -1487,12 +1484,14 @@ def plot_large():
         for i in range(ngreen):             #Make xy list for green curve
             green=Audio.gcom2.green[i]
             n=int(105.0-yfac*green)
-            xy.append(i)
+            if mode.get()=='Diana':
+                xy.append(2*i)
+            else:
+                xy.append(i)
             xy.append(n)
         graph1.create_line(xy,fill="green")
 
-        if Audio.gcom2.nspecial==0 or mode.get()[:3]=='JT2' or \
-                mode.get()[:3]=='JT4':
+        if Audio.gcom2.nspecial==0 or mode.get()[:3]=='JT4':
             y=[]
             for i in range(446):                #Find ymax for red curve
                 psavg=Audio.gcom2.psavg[i+1]
@@ -1504,10 +1503,8 @@ def plot_large():
             fac=500.0/446.0
             for i in range(446):                #Make xy list for red curve
                 x=i*fac
-                if mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
+                if mode.get()[:3]=='JT4':
                     x=i*500.0/548.571 + 47                      #empirical
-                if mode.get()[:4]=='WSPR':
-                    x=(i-224) + 250                #empirical
                 psavg=Audio.gcom2.psavg[i+1]
                 n=int(90.0-yfac*psavg)
                 xy.append(x)
@@ -1551,18 +1548,21 @@ def plot_large():
 
         if Audio.gcom2.ccf[0] != -9999.0:
             y=[]
-            for i in range(65):             #Find ymax for blue curve
+            iz=65
+            if mode.get()=='Diana':
+                iz=96
+            fac=500.0/iz
+            for i in range(iz):             #Find ymax for blue curve
                 ccf=Audio.gcom2.ccf[i]
                 y.append(ccf)
             ymax=max(y)
             yfac=40.0
             if ymax>55.0/yfac: yfac=55.0/ymax
             xy2=[]
-            fac=500.0/64.6
-            for i in range(65):             #Make xy list for blue curve
+            for i in range(iz):             #Make xy list for blue curve
                 x=(i+0.5)*fac
-                if mode.get()[:3]=='JT2' or mode.get()[:3]=='JT4':
-                    x=(i+0.5)*500.0/105.0 + 15     #15 is empirical
+                if mode.get()[:3]=='JT4':
+                    x=(i+0.5)*500.0/105.0 + 15      #15 is empirical
                 ccf=Audio.gcom2.ccf[i]
                 n=int(60.0-yfac*ccf)
                 xy2.append(x)
@@ -1584,7 +1584,7 @@ def plot_large():
                 graph1.create_line([x,0,x,125-j2],fill="red")
 
 #------------------------------------------------------ plot_small
-def plot_small():        
+def plot_small():
     graph2.delete(ALL)
     xy=[]
     xy2=[]
@@ -1594,18 +1594,15 @@ def plot_small():
         x=int(i*df*fac)
         xy.append(x)
         psavg=Audio.gcom2.psavg[i]
-        if mode.get()=="JT6M": psavg=psavg + 27.959
         n=int(150.0-2*psavg)
         xy.append(n)
-        if mode.get()=='FSK441':    
+        if mode.get()=='FSK441' or mode.get()=="JTMS":
             ps0=Audio.gcom2.ps0[i]
             n=int(150.0-2*ps0)
             xy2.append(x)
             xy2.append(n)
     graph2.create_line(xy,fill="magenta")
-    if mode.get()=='JT6M':
-        plot_yellow()
-    elif mode.get()=='FSK441':
+    if mode.get()=='FSK441' or mode.get()=="JTMS":
         graph2.create_line(xy2,fill="red")
         for i in range(4):
             x=(i+2)*441*fac
@@ -1616,31 +1613,31 @@ def plot_small():
         if i%2: ytop=115
         graph2.create_line([x,120,x,ytop],fill="white")
 
-#------------------------------------------------------ plot_yellow
-def plot_yellow():
-    nz=int(Audio.gcom2.ps0[215])
-    if nz>10:
-        y=[]
-        for i in range(nz):             #Find ymax for yellow curve
-            n=Audio.gcom2.ps0[i]
-            y.append(n)
-        ymax=max(y)
-        fac=1.0
-        if ymax>60: fac=60.0/ymax
-        xy2=[]
-        for i in range(nz):
-            x=int(2.34*i)
-            y=fac*Audio.gcom2.ps0[i] + 8
-            n=int(85.0-y)
-            xy2.append(x)
-            xy2.append(n)
-        graph1.create_line(xy2,fill="yellow")
+###------------------------------------------------------ plot_yellow
+##def plot_yellow():
+##    nz=int(Audio.gcom2.ps0[215])
+##    if nz>10:
+##        y=[]
+##        for i in range(nz):             #Find ymax for yellow curve
+##            n=Audio.gcom2.ps0[i]
+##            y.append(n)
+##        ymax=max(y)
+##        fac=1.0
+##        if ymax>60: fac=60.0/ymax
+##        xy2=[]
+##        for i in range(nz):
+##            x=int(2.34*i)
+##            y=fac*Audio.gcom2.ps0[i] + 8
+##            n=int(85.0-y)
+##            xy2.append(x)
+##            xy2.append(n)
+##        graph1.create_line(xy2,fill="yellow")
 
 #------------------------------------------------------ update
 def update():
     global root_geom,isec0,naz,nel,ndmiles,ndkm,nhotaz,nhotabetter,nopen, \
-           im,pim,cmap0,isync,isync441,isync6m,isync65,isync_save,idsec, \
-           first,itol,txsnrdb,tx6alt
+           im,pim,cmap0,isync,isync441,isync_iscat,isync65,       \
+           isync_save,idsec,first,itol,txsnrdb,tx6alt,nmeas
     
     utc=time.gmtime(time.time()+0.1*idsec)
     isec=utc[5]
@@ -1662,14 +1659,26 @@ def update():
             options.MyGrid.get().upper(),HisGrid.get().upper(),utchours)
         azdist()
         g.nfreq=nfreq.get()
+
+        if tx1.get()[0:2]=='GO' and mode.get()=='Echo':
+            try:
+                nmin=int(tx1.get()[3:5])
+            except:
+                nmin=10
+            if isec==0 and (utc[4]%nmin)==0 and lauto==0:
+                toggleauto()
+            if isec==4 and (utc[4]%nmin)==1 and lauto==1:
+                toggleauto()
+                Audio.gcom2.nsumecho=0
         
         if Audio.gcom2.ndecoding==0:
             g.AzSun,g.ElSun,g.AzMoon,g.ElMoon,g.AzMoonB,g.ElMoonB,g.ntsky, \
                 g.ndop,g.ndop00,g.dbMoon,g.RAMoon,g.DecMoon,g.HA8,g.Dgrd,  \
                 g.sd,g.poloffset,g.MaxNR,g.dfdt,g.dfdt0,g.RaAux,g.DecAux, \
-                g.AzAux,g.ElAux = Audio.astro0(utc[0],utc[1],utc[2],  \
-                utchours,nfreq.get(),options.MyGrid.get().upper(), \
-                    options.auxra.get()+(' '*9)[:9],     \
+                g.AzAux,g.ElAux,g.w1,g.w2,g.w501,g.w502,g.xlst = Audio.astro0( \
+                    utc[0],utc[1],utc[2],utchours,nfreq.get(),            \
+                    options.MyGrid.get().upper(),       \
+                    options.auxra.get()+(' '*9)[:9],    \
                     options.auxdec.get()+(' '*9)[:9])
 
             if len(HisGrid.get().strip())<4:
@@ -1681,9 +1690,9 @@ def update():
             else:
                 Audio.gcom2.ntx2=0
 
-        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-               mode.get()[:3]=='JT4' or mode.get()[:2]=='CW' or \
-               mode.get()=='WSPR' or mode.get()[:4]=='JT64':
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4'\
+               or mode.get()[:2]=='CW' or mode.get()=='Echo' \
+               or mode.get()=='Diana' or mode.get()=='Measure':
             graph2.delete(ALL)
             graph2.create_text(80,13,anchor=CENTER,text="Moon",font=g2font)
             graph2.create_text(13,37,anchor=W, text="Az: %6.2f" % g.AzMoon,font=g2font)
@@ -1691,9 +1700,20 @@ def update():
             graph2.create_text(13,85,anchor=W, text="Dop:%6d" % g.ndop,font=g2font)
             graph2.create_text(13,109,anchor=W,text="Dgrd:%5.1f" % g.Dgrd,font=g2font)
 
-    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-        mode.get()[:3]=='JT4' or mode.get()=='WSPR' \
-        or mode.get()[:4]=='JT64') and g.freeze_decode:
+        if mode.get()=='Measure' and Audio.gcom2.monitoring:
+            nmeas=nmeas+1
+            if nmeas>500: nmeas=1
+            db=20.0*log10(g.rms/770.0+0.01)
+            t="%5d  %6.1f\n" % (nmeas,db,)
+            text.configure(state=NORMAL)
+            text.insert(END,t)
+            text.see(END)
+            plot_meas(nmeas,db)
+        else:
+            nmeas=0
+
+    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4' \
+        or mode.get()=='Diana') and g.freeze_decode:
         itol=2
         ltol.configure(text='Tol    '+str(50))
         Audio.gcom2.dftolerance=50
@@ -1729,23 +1749,27 @@ def update():
             msg2.configure(bg='#FFFF00')
         elif mode.get()[:4]=="JT65":
             msg2.configure(bg='#00FFFF')
-        elif mode.get()=="JT6M":
-            msg2.configure(bg='#FF00FF')
         elif mode.get()=="CW":
             msg2.configure(bg='#00FF00')
-        elif mode.get()=="WSPR":
-            msg2.configure(bg='#FF8888')
-        elif mode.get()[:4]=="JT64":
+        elif mode.get()[:5]=="ISCAT":
             msg2.configure(bg='#CCFFFF')
-        elif mode.get()=="JT2":
-            msg2.configure(bg='#8888FF')
+        elif mode.get()[:5]=="Diana":
+            msg2.configure(bg='#CCFF00')
+        elif mode.get()[:4]=="JTMS":
+            msg2.configure(bg='#CC4444')
         elif mode.get()[:3]=="JT4":
             msg2.configure(bg='#88FF88')
-#        elif mode.get()=="Echo":
-#            msg2.configure(bg='#FF0000')
+        elif mode.get()=="Echo":
+            msg2.configure(bg='#FF0000')
+        elif mode.get()=="Measure":
+            msg2.configure(bg='#FF8800')
         g.mode=mode.get()
-        if first: GenStdMsgs()
+        if first and mode.get()!='Echo': GenStdMsgs()
         first=0
+
+    if options.genmsg.get():
+        GenStdMsgs()
+        options.genmsg.set(0)
 
     samfac_in=Audio.gcom1.mfsample/110250.0
     samfac_out=Audio.gcom1.mfsample2/110250.0
@@ -1764,7 +1788,8 @@ def update():
         pass
 
     msg1.configure(text="%6.4f %6.4f" % (samfac_in,samfac_out))
-    msg2.configure(text=mode.get())
+    t=mode.get()
+    msg2.configure(text=t)
     t="Freeze DF:%4d" % (int(Audio.gcom2.mousedf),)
     if abs(int(Audio.gcom2.mousedf))>600:
         msg3.configure(text=t,fg='black',bg='red')
@@ -1777,21 +1802,25 @@ def update():
         bdecode.configure(bg='#66FFFF',activebackground='#66FFFF')
         if (sys.platform == 'darwin'):
            bdecode.configure(text='*Decode*')
-    if mode.get()[:2]=="CW":
-        msg5.configure(text="TR Period: %d s" % (Audio.gcom1.trperiod,), \
-                       bg='white')
+    msg5.configure(text="T/R Period: %d s" % (Audio.gcom1.trperiod,))
+    if mode.get()=="CW": color='white'
+    elif mode.get()=='FSK441' or mode.get()=='JTMS' or mode.get()=='ISCAT':
+        if(Audio.gcom1.trperiod==15): color='yellow'
+        else: color='white'
     else:
-        msg5.configure(text="TR Period: %d s" % (Audio.gcom1.trperiod,), \
-                       bg='gray85')
-    t="%d" % (int(Audio.mtxcom.mtxstate),)
-    msg6.configure(text=t)
+        color='gray85'
+    msg5.configure(bg=color)
 
     tx1.configure(bg='white')
     tx2.configure(bg='white')
     tx3.configure(bg='white')
     tx4.configure(bg='white')
     tx5.configure(bg='white')
-    if len(tx5.get())>13: tx5.configure(bg='pink')
+    if len(tx5.get())>13 and \
+            (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4'):
+        Audio.gcom2.t0msg=(tx5.get()+' '*22)[:22]
+        nplain,naddon,ndiff=Audio.chkt0()
+        if nplain==1: tx5.configure(bg='pink')
     tx6.configure(bg='white')
     if tx6.get()[:1]=='#':
         try:
@@ -1815,6 +1844,10 @@ def update():
     if Audio.gcom1.transmitting:
         nmsg=int(Audio.gcom2.nmsg)
         t=g.ftnstr(Audio.gcom2.sending)
+        if mode.get()=='Echo':
+            t='ECHO TEST'
+            nmsg=9
+            Audio.gcom2.ntxnow=0
         t="Txing:  "+t[:nmsg]
         bgcolor='yellow'
         if Audio.gcom2.sendingsh==1:  bgcolor='#66FFFF'    #Shorthand (lt blue)
@@ -1826,7 +1859,7 @@ def update():
         elif Audio.gcom2.ntxnow==3: tx3.configure(bg=bgcolor)
         elif Audio.gcom2.ntxnow==4: tx4.configure(bg=bgcolor)
         elif Audio.gcom2.ntxnow==5: tx5.configure(bg=bgcolor)
-        else: tx6.configure(bg=bgcolor)
+        elif Audio.gcom2.ntxnow==6: tx6.configure(bg=bgcolor)
     else:
         bgcolor='green'
         t='Receiving'
@@ -1869,11 +1902,12 @@ def update():
             im.putpalette(g.palette)
             cmap0=g.cmap
 
-        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT2' or \
-                mode.get()[:3]=='JT4' or mode.get()=='WSPR' \
-                or mode.get()[:4]=='JT64':
+        if mode.get()=='Echo':
+            plot_echo()
+        elif mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4' or \
+                 mode.get()=='Diana':
             plot_large()
-        else:    
+        else:
             im.putdata(Audio.gcom2.b)
             pim=ImageTk.PhotoImage(im)          #Convert Image to PhotoImage
             graph1.delete(ALL)
@@ -1888,8 +1922,8 @@ def update():
 # Save some parameters
     g.mode=mode.get()
     g.report=report.get()
-    if mode.get()=='FSK441': isync441=isync
-    elif mode.get()=='JT6M': isync6m=isync
+    if mode.get()=='FSK441' or mode.get()=='JTMS': isync441=isync
+    elif mode.get()=="ISCAT": isync_iscat=isync
     elif mode.get()[:4]=='JT65': isync65=isync
     Audio.gcom1.txfirst=TxFirst.get()
     try:
@@ -1903,7 +1937,11 @@ def update():
 #    if Audio.gcom1.samfacin>1.01: Audio.gcom1.samfacin=1.01
 # ... etc.
     Audio.gcom2.mycall=(options.MyCall.get()+(' '*12))[:12]
-    Audio.gcom2.hiscall=(ToRadio.get()+(' '*12))[:12]
+    try:
+        Audio.gcom2.hiscall=(ToRadio.get()+(' '*12))[:12]
+    except:
+        MsgBox("Bad callsign: "+ToRadio.get()+".\nPlease re-enter.")
+        clrToRadio(None)
     Audio.gcom2.hisgrid=(HisGrid.get()+(' '*6))[:6]
     Audio.gcom4.addpfx=(options.addpfx.get().lstrip().upper()+(' '*8))[:8]
     Audio.gcom2.ntxreq=ntx.get()
@@ -1915,23 +1953,21 @@ def update():
     Audio.gcom2.nzap=nzap.get()
     Audio.gcom2.ndebug=ndebug.get()
     Audio.gcom2.minsigdb=isync
-    Audio.gcom2.nclip=iclip
-    Audio.gcom2.nblank=nblank.get()
     Audio.gcom2.nafc=nafc.get()
     Audio.gcom2.nfreeze=nfreeze.get()
     Audio.gcom2.dftolerance=ntol[itol]
     Audio.gcom2.neme=neme.get()
     Audio.gcom2.ndepth=ndepth.get()
-    Audio.gcom2.ndwspr=ndwspr.get()
+    Audio.gcom2.ndtr=options.ndtr.get()
     if mode.get()=='CW':
         Audio.gcom2.ntdecode=56
-    elif mode.get()=='WSPR':
-        Audio.gcom2.ntdecode=114
     else:
         if qdecode.get():
             Audio.gcom2.ntdecode=48
         else:
             Audio.gcom2.ntdecode=52
+##    if mode.get()=='Diana':
+##        Audio.gcom2.ntdecode=26
 
     try:
         Audio.gcom2.idinterval=options.IDinterval.get()
@@ -1940,13 +1976,31 @@ def update():
 #    Audio.gcom1.rxdelay=float('0'+options.RxDelay.get())
 #    Audio.gcom1.txdelay=float('0'+options.TxDelay.get())
     Audio.gcom2.nslim2=isync-4
-    if nosh441.get()==1 and mode.get()=='FSK441': Audio.gcom2.nslim2=99
+    if nshrx.get()==0 and (mode.get()=='FSK441' or mode.get()=='JTMS'):
+            Audio.gcom2.nslim2=99
     try:
         Audio.gcom2.nport=int(options.PttPort.get())
     except:
         Audio.gcom2.nport=0
 
     Audio.gcom2.pttport=(options.PttPort.get() + (' '*80))[:80]
+
+    try:
+        Audio.gcom2.ntc=options.ntc.get()
+        if int(options.ntc.get()<=0): Audio.gcom2.ntc=1
+        Audio.gcom2.nfrit=options.fRIT.get()
+        Audio.gcom2.ndither=options.dither.get()
+##        Audio.gcom2.necho=options.necho.get()
+##        Audio.gcom2.dlatency=options.dlatency.get()
+    except:
+        pass
+
+    if options.iregion.get():
+        options.cb1.configure(state=DISABLED)
+        options.cb2.configure(state=DISABLED)
+    else:
+        options.cb1.configure(state=NORMAL)
+        options.cb2.configure(state=NORMAL)
 
     if altmsg: tx6alt=tx6.get()    
 # Queue up the next update
@@ -2008,10 +2062,11 @@ setupmenu.add_separator()
 setupmenu.add_checkbutton(label = 'F4 sets Tx6',variable=kb8rq)
 setupmenu.add_checkbutton(label = 'Double-click on callsign sets TxFirst',
                           variable=setseq)
-setupmenu.add_checkbutton(label = 'GenStdMsgs sets Tx1',variable=k2txb)
+setupmenu.add_checkbutton(label = 'Gen Msgs sets Tx1',variable=k2txb)
+setupmenu.add_separator()
+setupmenu.add_checkbutton(label = 'Monitor ON at startup',variable=nmonitor)
 setupmenu.add_separator()
 setupmenu.add_checkbutton(label = 'Enable diagnostics',variable=ndebug)
-
 if (sys.platform == 'darwin'):
     mbar.add_cascade(label="Setup", menu=setupmenu)
 
@@ -2045,23 +2100,11 @@ else:
 # Can use the following to retrieve the state:
 # state=modemenu.entrycget(0,"state")
 
-if (sys.platform=='darwin') :
-    # accelerators break radiobutton behaviour in Darwin
-    modemenu.add_radiobutton(label = 'FSK441', variable=mode,command = ModeFSK441, state=NORMAL)
-    modemenu.add_radiobutton(label = 'JT6M', variable=mode, command = ModeJT6M)
-    modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A)
-    modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B)
-    modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C)
-    modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW)
-else:
-    modemenu.add_radiobutton(label = 'FSK441', variable=mode,command = ModeFSK441, state=NORMAL, accelerator='F7')
-    modemenu.add_radiobutton(label = 'JT6M', variable=mode, command = ModeJT6M,accelerator='Shift+F7')
-    modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A,accelerator='F8')
-    modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B,accelerator='Shift+F8')
-    modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C,accelerator='Ctrl+F8')
-    modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW,accelerator='Shift+Ctrl+F8')
-
-modemenu.add_radiobutton(label = 'JT2', variable=mode, command = ModeJT2)
+modemenu.add_radiobutton(label = 'FSK441', variable=mode,command = ModeFSK441, state=NORMAL)
+modemenu.add_radiobutton(label = 'ISCAT', variable=mode, command = ModeISCAT)
+modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A)
+modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B)
+modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C)
 modemenu.add_radiobutton(label = 'JT4A', variable=mode, command = ModeJT4A)
 modemenu.add_radiobutton(label = 'JT4B', variable=mode, command = ModeJT4B)
 modemenu.add_radiobutton(label = 'JT4C', variable=mode, command = ModeJT4C)
@@ -2069,10 +2112,23 @@ modemenu.add_radiobutton(label = 'JT4D', variable=mode, command = ModeJT4D)
 modemenu.add_radiobutton(label = 'JT4E', variable=mode, command = ModeJT4E)
 modemenu.add_radiobutton(label = 'JT4F', variable=mode, command = ModeJT4F)
 modemenu.add_radiobutton(label = 'JT4G', variable=mode, command = ModeJT4G)
-modemenu.add_radiobutton(label = 'WSPR', variable=mode, command = ModeWSPR)
-modemenu.add_radiobutton(label = 'JT64A', variable=mode, command = ModeJT64A)
-#modemenu.add_radiobutton(label = 'Echo', variable=mode, command = ModeEcho,
-#                         state=DISABLED)
+modemenu.add_radiobutton(label = 'CW', variable=mode, command = ModeCW)
+modemenu.add_radiobutton(label = 'Echo', variable=mode, command = ModeEcho)
+modemenu.add_radiobutton(label = 'Measure', variable=mode, command = ModeMeasure)
+
+try:
+    f=open(appdir+'/experimental','r')
+    modemenu.add_separator()
+    modemenu.add_radiobutton(label = 'JTMS', variable=mode, command = ModeJTMS)
+    modemenu.add_radiobutton(label = 'Diana', variable=mode, command = ModeDiana)
+except:
+    pass
+
+try:
+    f=open(appdir+'/txboth','r')
+    Audio.gcom2.ntxboth=1
+except:
+    Audio.gcom2.ntxboth=0
 
 if (sys.platform == 'darwin'):
     mbar.add_cascade(label="Mode", menu=modemenu)
@@ -2085,8 +2141,8 @@ if (sys.platform != 'darwin'):
     decodebutton['menu'] = decodemenu
 else:    
     decodemenu = Menu(mbar, tearoff=use_tearoff)
-decodemenu.FSK441=Menu(decodemenu,tearoff=0)
-decodemenu.FSK441.add_checkbutton(label='No shorthands',variable=nosh441)
+##decodemenu.FSK441=Menu(decodemenu,tearoff=0)
+##decodemenu.FSK441.add_checkbutton(label='No shorthands',variable=nosh441)
 decodemenu.JT65=Menu(decodemenu,tearoff=0)
 decodemenu.JT65.add_checkbutton(label='Only EME calls in Deep Search',variable=neme)
 decodemenu.JT65.add_checkbutton(label='No Shorthand decodes',variable=noshjt65all)
@@ -2102,13 +2158,8 @@ decodemenu.JT65.add_radiobutton(label = 'Aggressive Deep Search',
 decodemenu.JT65.add_radiobutton(label ='Include Average in Aggressive Deep Search',
                                 variable=ndepth, value=3)
 
-decodemenu.WSPR=Menu(decodemenu,tearoff=0)
-decodemenu.WSPR.add_radiobutton(label='Quick decode',variable=ndwspr, value=0)
-decodemenu.WSPR.add_radiobutton(label='Deepest decode',variable=ndwspr, value=1)
-
-decodemenu.add_cascade(label = 'FSK441',menu=decodemenu.FSK441)
+##decodemenu.add_cascade(label = 'FSK441',menu=decodemenu.FSK441)
 decodemenu.add_cascade(label = 'JT65',menu=decodemenu.JT65)
-decodemenu.add_cascade(label = 'WSPR',menu=decodemenu.WSPR)
 
 if (sys.platform == 'darwin'):
     mbar.add_cascade(label="Decode", menu=decodemenu)
@@ -2150,6 +2201,7 @@ bandmenu.add_radiobutton(label = '21', variable=nfreq,value=21)
 bandmenu.add_radiobutton(label = '24', variable=nfreq,value=24)
 bandmenu.add_radiobutton(label = '28', variable=nfreq,value=28)
 bandmenu.add_radiobutton(label = '50', variable=nfreq,value=50)
+bandmenu.add_radiobutton(label = '70', variable=nfreq,value=70)
 bandmenu.add_radiobutton(label = '144', variable=nfreq,value=144)
 bandmenu.add_radiobutton(label = '222', variable=nfreq,value=222)
 bandmenu.add_radiobutton(label = '432', variable=nfreq,value=432)
@@ -2171,6 +2223,9 @@ if (sys.platform != 'darwin'):
    helpbutton['menu'] = helpmenu
 else:   
    helpmenu = Menu(mbar, tearoff=0)
+helpmenu.add('command',label="Online User's Guide",command=usersguide)
+helpmenu.add('command',label="Online WSJT9 Supplement", \
+             command=wsjt9supp,accelerator='F9')
 helpmenu.add('command', label = 'Keyboard shortcuts', command = shortcuts, \
              accelerator='F1')
 helpmenu.add('command', label = 'Special mouse commands', \
@@ -2235,7 +2290,6 @@ root.bind_all('<F1>', shortcuts)
 root.bind_all('<Shift-F1>', mouse_commands)
 root.bind_all('<Control-F1>', about)
 root.bind_all('<F2>', options1)
-root.bind_all('<Shift-F2>',wspr_msgs)
 root.bind_all('<F3>', txmute)
 root.bind_all('<F4>', clrToRadio)
 root.bind_all('<Alt-F4>', quit)
@@ -2243,18 +2297,11 @@ root.bind_all('<F5>', what2send)
 root.bind_all('<Shift-F5>', minimal_qso)
 root.bind_all('<F6>', opennext)
 root.bind_all('<Shift-F6>', decodeall)
-root.bind_all('<F7>', ModeFSK441)
-root.bind_all('<F8>', ModeJT65A)
-root.bind_all('<Shift-F8>', ModeJT65B)
-root.bind_all('<Control-F8>', ModeJT65C)
-root.bind_all('<Shift-F7>', ModeJT6M)
-root.bind_all('<Shift-Control-F8>', ModeCW)
-#root.bind_all('<F9>', ModeEcho)
+root.bind_all('<F9>', wsjt9supp)
 root.bind_all('<F10>', showspecjt)
 root.bind_all('<Shift-F10>', astro1)
 root.bind_all('<F11>', left_arrow)
 root.bind_all('<F12>', right_arrow)
-
 
 root.bind_all('<Alt-Key-1>',btx1)
 root.bind_all('<Alt-Key-2>',btx2)
@@ -2283,6 +2330,8 @@ root.bind_all('<Alt-i>',decode_include)
 root.bind_all('<Alt-I>',decode_include)
 root.bind_all('<Alt-l>',lookup)
 root.bind_all('<Alt-L>',lookup)
+root.bind_all('<Control-l>',lookup_gen)
+root.bind_all('<Control-L>',lookup_gen)
 root.bind_all('<Alt-m>',monitor)
 root.bind_all('<Alt-M>',monitor)
 root.bind_all('<Alt-o>',txstop)
@@ -2291,8 +2340,8 @@ root.bind_all('<Control-o>',openfile)
 root.bind_all('<Control-O>',openfile)
 root.bind_all('<Alt-q>',logqso)
 root.bind_all('<Alt-Q>',logqso)
-root.bind_all('<Alt-r>',clrrpt)
-root.bind_all('<Alt-R>',clrrpt)
+root.bind_all('<Alt-r>',setrpt)
+root.bind_all('<Alt-R>',setrpt)
 root.bind_all('<Alt-s>',stopmon)
 root.bind_all('<Alt-S>',stopmon)
 root.bind_all('<Alt-v>',savelast)
@@ -2301,8 +2350,6 @@ root.bind_all('<Alt-x>',decode_exclude)
 root.bind_all('<Alt-X>',decode_exclude)
 root.bind_all('<Alt-z>',toggle_zap)
 root.bind_all('<Alt-Z>',toggle_zap)
-root.bind_all('<Control-l>',lookup_gen)
-root.bind_all('<Control-L>',lookup_gen)
 
 text.pack(side=LEFT, fill=X, padx=1)
 sb = Scrollbar(iframe4, orient=VERTICAL, command=text.yview)
@@ -2324,8 +2371,8 @@ bstop=Button(iframe4c, text='Stop',underline=0,command=stopmon,
                 padx=1,pady=1)
 bmonitor=Button(iframe4c, text='Monitor',underline=0,command=monitor,
                 padx=1,pady=1)
-bsavelast=Button(iframe4c, text='Save',underline=2,command=savelast,
-                padx=1,pady=1)
+##bsavelast=Button(iframe4c, text='Save',underline=2,command=savelast,
+##                padx=1,pady=1)
 bdecode=Button(iframe4c, text='Decode',underline=0,command=decode,
                 padx=1,pady=1)
 berase=Button(iframe4c, text='Erase',underline=0,command=erase,
@@ -2340,10 +2387,9 @@ btxstop=Button(iframe4c,text='TxStop',underline=4,command=txstop,
                 padx=1,pady=1)
 
 blogqso.pack(side=LEFT,expand=1,fill=X)
-#bplay.pack(side=LEFT,expand=1,fill=X)
 bstop.pack(side=LEFT,expand=1,fill=X)
 bmonitor.pack(side=LEFT,expand=1,fill=X)
-bsavelast.pack(side=LEFT,expand=1,fill=X)
+##bsavelast.pack(side=LEFT,expand=1,fill=X)
 bdecode.pack(side=LEFT,expand=1,fill=X)
 berase.pack(side=LEFT,expand=1,fill=X)
 bclravg.pack(side=LEFT,expand=1,fill=X)
@@ -2359,7 +2405,7 @@ iframe5 = Frame(frame, bd=1, relief=FLAT,height=180)
 f5a=Frame(iframe5,height=170,bd=2,relief=GROOVE)
 labToRadio=Label(f5a,text='To radio:', width=9, relief=FLAT)
 labToRadio.grid(column=0,row=0)
-ToRadio=Entry(f5a,width=9)
+ToRadio=Entry(f5a,width=12)
 ToRadio.insert(0,'W8WN')
 ToRadio.grid(column=1,row=0,pady=3)
 ToRadio.bind('<Return>',lookup)
@@ -2367,14 +2413,14 @@ bLookup=Button(f5a, text='Lookup',underline=0,command=lookup,padx=1,pady=1)
 bLookup.grid(column=2,row=0,sticky='EW',padx=4)
 labGrid=Label(f5a,text='Grid:', width=9, relief=FLAT)
 labGrid.grid(column=0,row=1)
-HisGrid=Entry(f5a,width=9)
+HisGrid=Entry(f5a,width=12)
 HisGrid.grid(column=1,row=1,pady=1)
 bAdd=Button(f5a, text='Add',command=addtodb,padx=1,pady=1)
 bAdd.grid(column=2,row=1,sticky='EW',padx=4)
-labAz=Label(f5a,text='Az 257  El 15',width=11)
-labAz.grid(column=1,row=2)
 labHotAB=Label(f5a,bg='#FFCCFF',text='HotA: 247')
 labHotAB.grid(column=0,row=2,sticky='EW',padx=4,pady=3)
+labAz=Label(f5a,text='Az 257  El 15',width=11)
+labAz.grid(column=1,row=2)
 labDist=Label(f5a,text='16753 km')
 labDist.grid(column=2,row=2)
 
@@ -2382,114 +2428,124 @@ labDist.grid(column=2,row=2)
 ldate=Label(f5a, bg='black', fg='yellow', width=11, bd=4,
         text='2005 Apr 22\n01:23:45', relief=RIDGE,
         justify=CENTER, font=(font1,16))
-ldate.grid(column=0,columnspan=3,row=3,rowspan=2,pady=2)
+ldate.grid(column=0,columnspan=2,row=3,rowspan=2,padx=2,pady=2)
+
+ldsec=Label(f5a, bg='white', fg='black', text='Dsec  0.0', width=8, relief=RIDGE)
+ldsec.grid(column=2,row=4,ipadx=3,padx=2,pady=0)
+
 f5a.pack(side=LEFT,expand=1,fill=BOTH)
 
-#------------------------------------------------------ Receiving parameters
-f5b=Frame(iframe5,bd=2,relief=GROOVE)
-lsync=Label(f5b, bg='white', fg='black', text='Sync   1', width=8, relief=RIDGE)
-lsync.grid(column=0,row=0,padx=2,pady=1,sticky='EW')
+#------------------------------------------------------ Rx parameters
+f5b=Frame(iframe5,bd=0)
+f5b1=Frame(f5b,bd=2,relief=GROOVE)
+f5b1.grid(column=0,row=0,padx=2,sticky='EW')
+
+lsync=Label(f5b1, bg='white', fg='black', text='Sync   1', width=8, relief=RIDGE)
+lsync.grid(column=0,row=0,padx=2,sticky='EW')
 Widget.bind(lsync,'<Button-1>',incsync)
 Widget.bind(lsync,'<Button-3>',decsync)
-nzap=IntVar()
-cbzap=Checkbutton(f5b,text='Zap',underline=0,variable=nzap)
-cbzap.grid(column=1,row=0,padx=2,pady=1,sticky='W')
-cbnb=Checkbutton(f5b,text='NB',variable=nblank)
-cbnb.grid(column=1,row=1,padx=2,pady=1,sticky='W')
-cbfreeze=Checkbutton(f5b,text='Freeze',underline=0,variable=nfreeze)
-cbfreeze.grid(column=1,row=2,padx=2,sticky='W')
-cbafc=Checkbutton(f5b,text='AFC',variable=nafc)
-cbafc.grid(column=1,row=3,padx=2,pady=1,sticky='W')
-lclip=Label(f5b, bg='white', fg='black', text='Clip   0', width=8, relief=RIDGE)
-lclip.grid(column=0,row=1,padx=2,sticky='EW')
-Widget.bind(lclip,'<Button-1>',incclip)
-Widget.bind(lclip,'<Button-3>',decclip)
-ltol=Label(f5b, bg='white', fg='black', text='Tol    400', width=8, relief=RIDGE)
-ltol.grid(column=0,row=2,padx=2,pady=1,sticky='EW')
+cbzap=Checkbutton(f5b1,text='Zap',underline=0,variable=nzap)
+cbzap.grid(column=1,row=0,padx=2,sticky='W')
+shrx=Checkbutton(f5b1,text='Rx ST',variable=nshrx,command=restart2)
+shrx.grid(column=1,row=2,sticky='W',padx=2)
+cbfreeze=Checkbutton(f5b1,text='Freeze',underline=0,variable=nfreeze)
+cbfreeze.grid(column=0,row=2,padx=2,sticky='W')
+cbafc=Checkbutton(f5b1,text='AFC',variable=nafc)
+cbafc.grid(column=1,row=1,padx=2,sticky='W')
+##lspace=Label(f5b1, text='')
+##lspace.grid(column=0,row=5,padx=2,pady=5,sticky='W')
+ltol=Label(f5b1, bg='white', fg='black', text='Tol    400', width=8, relief=RIDGE)
+ltol.grid(column=0,row=1,padx=2,sticky='EW')
+##sbsync=Spinbox(f5b,from_=-20,to=10,bg='white',width=4,textvariable=nsync)
+##sbsync.grid(column=0,row=4)
+##nsync.set(1)
+##sbtol=Spinbox(f5b,values=(10,20,50,100,200,500,1000),bg='white', \
+##    width=4,textvariable=jtol)
+##sbtol.grid(column=0,row=5)
+##jtol.set(200)
 Widget.bind(ltol,'<Button-1>',inctol)
 Widget.bind(ltol,'<Button-3>',dectol)
-Button(f5b,text='Defaults',command=defaults,padx=1,pady=1).grid(column=0,
-                              row=3,sticky='EW')
-ldsec=Label(f5b, bg='white', fg='black', text='Dsec  0.0', width=8, relief=RIDGE)
-ldsec.grid(column=0,row=4,ipadx=3,padx=2,pady=5,sticky='EW')
-lshift=Label(f5b, bg='white', fg='black', text='Shift 0.0', width=8, relief=RIDGE)
-lshift.grid(column=1,row=4,ipadx=3,padx=2,pady=5,sticky='EW')
 Widget.bind(ldsec,'<Button-1>',incdsec)
 Widget.bind(ldsec,'<Button-3>',decdsec)
-Widget.bind(lshift,'<Button-1>',toggle_shift)
+
+#------------------------------------------------------ Tx parameters
+f5b2=Frame(f5b,bd=2,relief=GROOVE)
+f5b2.grid(column=0,row=1,padx=2,sticky='EW')
+txfirst=Checkbutton(f5b2,text='Tx First',justify=RIGHT,variable=TxFirst)
+txfirst.grid(column=0,row=0,sticky='W',padx=2)
+shmsg=Checkbutton(f5b2,text='Tx ST',justify=RIGHT,variable=ShOK,
+            command=restart2)
+shmsg.grid(column=1,row=0,sticky='W',padx=2)
+
+report=Entry(f5b2, width=4)
+report.insert(0,'26')
+report.grid(column=1,row=1,sticky='W',padx=7)
+report.bind('<Double-Button-1>',GenStdMsgs)
+labreport=Label(f5b2,text='Rpt:',width=4,underline=0)
+labreport.grid(column=0,row=1,sticky='E',padx=0)
+
+btxdf=Button(f5b2,text='  TxDF = 0  ',command=toggletxdf,padx=1,pady=1)
+btxdf.grid(column=1,row=0,sticky='EW',padx=2)
+
+f5b3=Frame(f5b,bd=2,relief=GROOVE)
+f5b3.grid(column=0,row=2,padx=2,sticky='EW')
+genmsg=Button(f5b3,text=' Gen Msgs ',underline=1,command=GenStdMsgs,
+            padx=1,pady=2)
+genmsg.grid(column=0,row=0,sticky='W',padx=2)
+auto=Button(f5b3,text='Auto is Off',underline=0,command=toggleauto,
+            padx=2,pady=2)
+auto.focus_set()
+auto.grid(column=1,row=0,sticky='EW',padx=2)
 
 f5b.pack(side=LEFT,expand=0,fill=BOTH)
 
 #------------------------------------------------------ Tx params and msgs
 f5c=Frame(iframe5,bd=2,relief=GROOVE)
-txfirst=Checkbutton(f5c,text='Tx First',justify=RIGHT,variable=TxFirst)
-f5c2=Frame(f5c,bd=0)
-labreport=Label(f5c2,text='Rpt',width=4)
-report=Entry(f5c2, width=4)
-report.insert(0,'26')
-labreport.pack(side=RIGHT,expand=1,fill=BOTH)
-report.pack(side=RIGHT,expand=1,fill=BOTH)
-shmsg=Checkbutton(f5c,text='Sh Msg',justify=RIGHT,variable=ShOK,
-            command=restart2)
-btxdf=Button(f5c,text='TxDF = 0',command=toggletxdf,
-            padx=1,pady=1)
-genmsg=Button(f5c,text='GenStdMsgs',underline=0,command=GenStdMsgs,
-            padx=1,pady=1)
-auto=Button(f5c,text='Auto is Off',underline=0,command=toggleauto,
-            padx=1,pady=1)
-auto.focus_set()
-
-txfirst.grid(column=0,row=0,sticky='W',padx=4)
-f5c2.grid(column=0,row=1,sticky='W',padx=4)
-shmsg.grid(column=0,row=2,sticky='W',padx=4)
-btxdf.grid(column=0,row=3,sticky='EW',padx=4)
-genmsg.grid(column=0,row=4,sticky='W',padx=4)
-auto.grid(column=0,row=5,sticky='EW',padx=4)
-#txstop.grid(column=0,row=6,sticky='EW',padx=4)
+##f5c2=Frame(f5c,bd=0)
+##f5c2.grid(column=0,row=1,sticky='W',padx=8)
 
 ntx=IntVar()
-tx1=Entry(f5c,width=24)
+tx1=Entry(f5c,width=32)
 rb1=Radiobutton(f5c,value=1,variable=ntx)
 b1=Button(f5c, text='Tx1',underline=2,command=btx1,padx=1,pady=1)
 tx1.grid(column=1,row=0)
 rb1.grid(column=2,row=0)
 b1.grid(column=3,row=0)
 
-tx2=Entry(f5c,width=24)
+tx2=Entry(f5c,width=32)
 rb2=Radiobutton(f5c,value=2,variable=ntx)
 b2=Button(f5c, text='Tx2',underline=2,command=btx2,padx=1,pady=1)
 tx2.grid(column=1,row=1)
 rb2.grid(column=2,row=1)
 b2.grid(column=3,row=1)
 
-tx3=Entry(f5c,width=24)
+tx3=Entry(f5c,width=32)
 rb3=Radiobutton(f5c,value=3,variable=ntx)
 b3=Button(f5c, text='Tx3',underline=2,command=btx3,padx=1,pady=1)
 tx3.grid(column=1,row=2)
 rb3.grid(column=2,row=2)
 b3.grid(column=3,row=2)
 
-tx4=Entry(f5c,width=24)
+tx4=Entry(f5c,width=32)
 rb4=Radiobutton(f5c,value=4,variable=ntx)
 b4=Button(f5c, text='Tx4',underline=2,command=btx4,padx=1,pady=1)
 tx4.grid(column=1,row=3)
 rb4.grid(column=2,row=3)
 b4.grid(column=3,row=3)
 
-tx5=Entry(f5c,width=24)
+tx5=Entry(f5c,width=32)
 rb5=Radiobutton(f5c,value=5,variable=ntx)
 b5=Button(f5c, text='Tx5',underline=2,command=btx5,padx=1,pady=1)
 tx5.grid(column=1,row=4)
 rb5.grid(column=2,row=4)
 b5.grid(column=3,row=4)
 
-tx6=Entry(f5c,width=24)
+tx6=Entry(f5c,width=32)
 rb6=Radiobutton(f5c,value=6,variable=ntx)
 b6=Button(f5c, text='Tx6',underline=2,command=btx6,padx=1,pady=1)
 tx6.grid(column=1,row=5)
 rb6.grid(column=2,row=5)
 b6.grid(column=3,row=5)
-Widget.bind(tx6,'<Button-3>',msg6list)
 
 f5c.pack(side=LEFT,fill=BOTH)
 iframe5.pack(expand=1, fill=X, padx=4)
@@ -2506,8 +2562,8 @@ msg4=Message(iframe6, text='Message #4', width=300,relief=SUNKEN)
 msg4.pack(side=LEFT, fill=X, padx=1)
 msg5=Message(iframe6, text='Message #5', width=300,relief=SUNKEN)
 msg5.pack(side=LEFT, fill=X, padx=1)
-msg6=Message(iframe6, text='', width=300,relief=SUNKEN)
-msg6.pack(side=LEFT, fill=X, padx=1)
+##msg6=Message(iframe6, text='', width=300,relief=SUNKEN)
+##msg6.pack(side=LEFT, fill=X, padx=1)
 Widget.bind(msg5,'<Button-1>',inctrperiod)
 Widget.bind(msg5,'<Button-3>',dectrperiod)
 msg7=Message(iframe6, text='                        ', width=300,relief=SUNKEN)
@@ -2521,7 +2577,6 @@ lauto=0
 isync=1
 ntx.set(1)
 ndepth.set(0)
-ndwspr.set(0)
 from WsjtMod import options
 options.defaults()
 ModeFSK441()
@@ -2558,18 +2613,20 @@ try:
                 ModeJT65B()
             elif value=='JT65C':
                 ModeJT65C()
-            elif value=='JT6M':
-                ModeJT6M()
             elif value=='CW':
                 ModeCW()
-            elif value=='WSPR':
-                ModeWSPR()
-            elif value=='JT64A':
-                ModeJT64A()
-            elif value=='JT2':
-                ModeJT2()
+            elif value=='ISCAT':
+                ModeISCAT()
+            elif value=='Diana':
+                ModeDiana()
+            elif value=='JTMS':
+                ModeJTMS()
             elif value[:3]=='JT4':
                 ModeJT4()
+            elif value=='Echo':
+                ModeEcho()
+            elif value=='Measure':
+                ModeMeasure()
         elif key == 'MyCall': options.MyCall.set(value)
         elif key == 'MyGrid': options.MyGrid.set(value)
         elif key == 'HisCall':
@@ -2601,6 +2658,7 @@ try:
                 Audio.gcom2.nport=0
             Audio.gcom2.pttport=(options.PttPort.get()+(' '*80))[:80]
         elif key == 'Mileskm': options.mileskm.set(value)
+        elif key == 'nDTR': options.ndtr.set(value)
         elif key == 'MsgStyle': options.ireport.set(value)
         elif key == 'Region': options.iregion.set(value)
         elif key == 'AudioIn':
@@ -2638,6 +2696,11 @@ try:
 		os.stat(options.azeldir.get())
 	    except:
 		options.azeldir.set(os.getcwd())
+        elif key == 'Ntc': options.ntc.set(value)
+        elif key == 'fRIT': options.fRIT.set(value)
+        elif key == 'Dither': options.dither.set(value)
+##        elif key == 'Necho': options.necho.set(value)
+##        elif key == 'Dlatency': options.dlatency.set(value)
         elif key == 'MyName': options.myname.set(value)
         elif key == 'HighPri': options.HighPri.set(value)
         elif key == 'TxFirst': TxFirst.set(value)
@@ -2645,26 +2708,24 @@ try:
         elif key == 'K2TXB': k2txb.set(value)
         elif key == 'SetSeq': setseq.set(value)
         elif key == 'Report':
-            report.delete(0,99)
+            report.delete(0,END)
             report.insert(0,value)
         elif key == 'ShOK': ShOK.set(value)
         elif key == 'Nsave': nsave.set(value)
         elif key == 'Band': nfreq.set(value)
         elif key == 'S441': isync441=int(value)
-        elif key == 'S6m': isync6m=int(value)
+        elif key == 'Siscat': isync_iscat=int(value)
         elif key == 'Sync': isync65=int(value)
-        elif key == 'Clip': iclip=int(value)
         elif key == 'Zap': nzap.set(value)
-        elif key == 'NB': nblank.set(value)
         elif key == 'NAFC': nafc.set(value)
-        elif key == 'NoSh441': nosh441.set(value)
+        elif key == 'nshrx': nshrx.set(value)
         elif key == 'NoShJT65all': noshjt65all.set(value)
         elif key == 'NoShJT65': noshjt65.set(value)
         elif key == 'QDecode': qdecode.set(value)
         elif key == 'NEME': neme.set(value)
         elif key == 'NDepth': ndepth.set(value)
-        elif key == 'Ndwspr': ndwspr.set(value)
         elif key == 'Debug': ndebug.set(value)
+        elif key == 'Monitor': nmonitor.set(value)
         elif key == 'HisCall':
             Audio.gcom2.hiscall=(value+' '*12)[:12]
             ToRadio.delete(0,99)
@@ -2681,8 +2742,8 @@ except:
     print key,value
 
 g.mode=mode.get()
-if mode.get()=='FSK441': isync=isync441
-elif mode.get()=='JT6M': isync=isync6m
+if mode.get()=='FSK441' or mode.get()=='JTMS': isync=isync441
+elif mode.get()=="ISCAT": isync=isync_iscat
 elif mode.get()[:4]=='JT65': isync=isync65
 elif mode.get()[:3]=='JT4':
     if mode.get()[3:4]=='A': Audio.gcom2.mode4=1
@@ -2694,15 +2755,17 @@ elif mode.get()[:3]=='JT4':
     if mode.get()[3:4]=='G': Audio.gcom2.mode4=72
 
 lsync.configure(text=slabel+str(isync))
-lclip.configure(text='Clip   '+str(iclip))
 Audio.gcom2.azeldir=(options.azeldir.get()+' '*80)[:80]
 Audio.gcom2.ndepth=ndepth.get()
-Audio.gcom2.ndwspr=ndwspr.get()
 Audio.gcom2.nhighpri=options.HighPri.get()
 Audio.gcom4.addpfx=(options.addpfx.get().lstrip()+(' '*8))[:8]
-stopmon()
+
+if nmonitor.get():
+    monitor()
+else:
+    stopmon()
 if g.Win32: root.iconbitmap("wsjt.ico")
-root.title('  WSJT 7     by K1JT')
+root.title('  WSJT 9.02     by K1JT')
 from WsjtMod import astro
 from WsjtMod import specjt
 
@@ -2727,6 +2790,7 @@ f.write("HisGrid " + t + "\n")
 f.write("IDinterval " + str(options.IDinterval.get()) + "\n")
 f.write("PttPort " + str(options.PttPort.get()) + "\n")
 f.write("Mileskm " + str(options.mileskm.get()) + "\n")
+f.write("nDTR " + str(options.ndtr.get()) + "\n")
 f.write("MsgStyle " + str(options.ireport.get()) + "\n")
 f.write("Region " + str(options.iregion.get()) + "\n")
 f.write("AudioIn " + options.DevinName.get() + "\n")
@@ -2747,9 +2811,11 @@ if options.auxdec.get()=="": options.auxdec.set("0")
 f.write("AuxRA " + options.auxra.get() + "\n")
 f.write("AuxDEC " + options.auxdec.get() + "\n")
 f.write("AzElDir " + str(options.azeldir.get()).replace(" ","#") + "\n")
-if options.myname.get()=="":
-    options.myname.set("name")
-f.write("MyName " + options.myname.get() + "\n")
+f.write("Ntc " + str(options.ntc.get()) + "\n")
+f.write("fRIT " + str(options.fRIT.get()) + "\n")
+f.write("Dither " + str(options.dither.get()) + "\n")
+##f.write("Necho " + str(options.necho.get()) + "\n")
+##f.write("Dlatency " + str(options.dlatency.get()) + "\n")
 f.write("HighPri " + str(options.HighPri.get()) + "\n")
 f.write("TxFirst " + str(TxFirst.get()) + "\n")
 f.write("KB8RQ " + str(kb8rq.get()) + "\n")
@@ -2760,24 +2826,23 @@ f.write("ShOK " + str(ShOK.get()) + "\n")
 f.write("Nsave " + str(nsave.get()) + "\n")
 f.write("Band " + str(nfreq.get()) + "\n")
 f.write("S441 " + str(isync441) + "\n")
-f.write("S6m " + str(isync6m) + "\n")
+f.write("Siscat " + str(isync_iscat) + "\n")
 f.write("Sync " + str(isync65) + "\n")
-f.write("Clip " + str(iclip) + "\n")
 f.write("Zap " + str(nzap.get()) + "\n")
-f.write("NB " + str(nblank.get()) + "\n")
 f.write("NAFC " + str(nafc.get()) + "\n")
-f.write("NoSh441 " + str(nosh441.get()) + "\n")
+f.write("nshrx " + str(nshrx.get()) + "\n")
 f.write("NoShJT65all " + str(noshjt65all.get()) + "\n")
 f.write("NoShJT65 " + str(noshjt65.get()) + "\n")
 f.write("QDecode " + str(qdecode.get()) + "\n")
 f.write("NEME " + str(neme.get()) + "\n")
 f.write("NDepth " + str(ndepth.get()) + "\n")
-f.write("Ndwspr " + str(ndwspr.get()) + "\n")
 f.write("Debug " + str(ndebug.get()) + "\n")
+f.write("Monitor " + str(nmonitor.get()) + "\n")
 #f.write("TRPeriod " + str(Audio.gcom1.trperiod) + "\n")
 mrudir2=mrudir.replace(" ","#")
 f.write("MRUDir " + mrudir2 + "\n")
-if g.astro_geom[:7]=="200x200": g.astro_geom="316x373" + g.astro_geom[7:]
+if g.astro_geom[:7]=="200x200":
+    g.astro_geom="316x416" + g.astro_geom[7:]
 f.write("AstroGeometry " + g.astro_geom + "\n")
 f.write("CWTRPeriod " + str(ncwtrperiod) + "\n")
 f.close()

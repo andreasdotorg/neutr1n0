@@ -1,7 +1,6 @@
       subroutine interleave24(id,ndir)
       integer*1 id(0:205),itmp(0:205)
       integer j0(0:205)
-      character*8 c0,c1
       logical first
       data first/.true./
       save first,j0

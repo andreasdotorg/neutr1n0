@@ -19,15 +19,17 @@ CPPFLAGS += ${DEFS} -I.
 
 Audio:	WsjtMod/Audio.so
 
-# The default rules
-.c.o:
-	${CC} ${CPPFLAGS} ${CFLAGS} -c -o ${<:.c=.o} $<
-
-.f.o:
-	${FC} ${CPPFLAGS} ${FFLAGS} -c -o ${<:.f=.o} $<
-
-.F90.o:
-	${FC} ${CPPFLAGS} ${FFLAGS} -c -o ${<:.F90=.o} $<
+# Default rules
+%.o: %.c
+	${CC} ${CFLAGS} -c $<
+%.o: %.f
+	${FC} ${FFLAGS} -c $<
+%.o: %.F
+	${FC} ${FFLAGS} -c $<
+%.o: %.f90
+	${FC} ${FFLAGS} -c $<
+%.o: %.F90
+	${FC} ${FFLAGS} -c $<
 
 OS=@OS@
 FC=@FC@
@@ -48,17 +50,32 @@ OBJS1 = JT65code.o nchar.o grid2deg.o packmsg.o packtext.o \
 	igray.o init_rs_int.o encode_rs_int.o decode_rs_int.o \
 	wrapkarn.o cutil.o
 
+OBJS4	= t74.o diana.o analytic.o four2a.o db.o pctile.o \
+	sort.o ssort.o thnix_stub.o tweak1.o smooth.o smo.o
+
+t74:	$(OBJS4)
+	$(FC) -o t74 $(OBJS4) -lfftw3f
+
+
+OBJS5 = t72.o analytic.o four2a.o smooth.o pctile.o db.o \
+	thnix_stub.o sort.o ssort.o gen441.o abc441.o ping441.o \
+	indexx.o ping.o smo.o tweak1.o enc441.o dec441.o \
+	token.o msgtrim.o
+
 F2PYONLY = ftn_init ftn_quit audio_init spec getfile azdist0 astro0 chkt0
 
-SRCS2F90 = abc441.F90 astro0.F90 audio_init.F90 azdist0.f90 \
-	blanker.f90 decode1.F90 decode2.f90 decode3.F90 ftn_init.F90 \
-	ftn_quit.f90 get_fname.F90 getfile.F90 horizspec.f90 hscroll.f90 \
-	pix2d.f90 pix2d65.f90 rfile.f90 savedata.F90 spec.f90 \
-	wsjtgen.F90 runqqq.F90 fivehz.F90 chkt0.f90 \
-	genwspr.f90 wqencode.f90 wqdecode.f90 packpfx.f90 unpackpfx.f90 \
-	packname.f90 unpackname.f90 packtext2.f90 unpacktext2.f90 \
-	packprop.f90 unpackprop.f90 hash.f90 wsjtwspr.f90 gen64.f90 \
-	thnix.f90
+SRCS2F90 = abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
+	decode1.f90 decode2.f90 decode3.f90 ftn_init.f90 \
+	ftn_quit.f90 get_fname.f90 getfile.f90 horizspec.f90 hscroll.f90 \
+	pix2d.f90 pix2d65.f90 rfile.f90 savedata.f90 spec.f90 match.f90 \
+	wsjtgen.f90 fivehz.f90 chkt0.f90 gran.f90 makepings.f90 \
+	packpfx.f90 unpackpfx.f90 genms.f90 decodems.f90 setupms.f90 \
+	thnix.f90 tweak1.f90 smo.f90 analytic.f90 \
+	geniscat.f90 iscat.f90 four2a.f90 hipass.f90 \
+	msdf.f90 syncms.f90 lenms.f90 jtms.f90 foldms.f90 avecho.f90 \
+	echogen.f90 alignmsg.f90 chk441.f90 gen441.f90 tm2.f90 \
+	gendiana.f90 diana.f90 specdiana.f90 syncdiana.f90 \
+	decdiana.f90
 
 OBJS2F90 = ${SRCS2F90:.f90=.o}
 
@@ -68,11 +85,11 @@ SRCS2F77 = wsjt1.f astro.f azdist.f coord.f dcoord.f deg2grid.f \
         avesp2.f bzap.f spec441.f spec2d.f mtdecode.f stdecode.f \
         indexx.f s2shape.f flat2.f gen65.f gen24.f entail.f genmet.f \
 	wsjt24.f sync24.f ps24.f xcor24.f decode24.f \
-	chkmsg.f gen6m.f gentone.f interleave24.f \
-        syncf0.f syncf1.f synct.f decode6m.f avemsg6m.f \
+	chkmsg.f gentone.f interleave24.f \
+        syncf0.f syncf1.f synct.f avemsg6m.f \
         set.f flatten.f db.f pctile.f sort.f ssort.f ps.f smooth.f \
         ping.f longx.f peakup.f sync.f detect.f avemsg65.f decode65.f \
-        demod64a.f encode65.f extract.f chkhist.f flat1.f four2a.f \
+        demod64a.f encode65.f extract.f chkhist.f flat1.f \
         gencw.f gencwid.f msgtype.f \
 	getpfx1.f getpfx2.f getsnr.f graycode.f grid2k.f \
         interleave63.f k2grid.f limit.f lpf1.f morse.f \
@@ -80,24 +97,25 @@ SRCS2F77 = wsjt1.f astro.f azdist.f coord.f dcoord.f deg2grid.f \
         short65.f slope.f spec2d65.f sync65.f unpackcall.f \
         unpackgrid.f unpackmsg.f unpacktext.f xcor.f xfft.f xfft2.f wsjt65.f \
 	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f \
-	rfile2.f encode232.f inter_mept.f pack50.f unpack50.f \
-	filbig2.F mept162a.f twkfreq.f sync162.f decode162.f \
-	ps162.f fchisq.f fano232.f ccf2.f wsjt64.f sync64.f 
+	rfile2.f encode232.f 
 
 OBJS2F77 = ${SRCS2F77:.f=.o} deep65.o
 
 SRCS2C	= init_rs.c encode_rs.c decode_rs.c fano.c tab.c nhash.c \
-	cutil.c fthread.c
+	cutil.c fthread.c tmoonsub.c
 OBJS2C  = ${SRCS2C:.c=.o}
 
 SRCS3C	= ptt_unix.c igray.c wrapkarn.c
 OBJS3C  = ${SRCS3C:.c=.o}
 AUDIOSRCS =	a2d.f90 jtaudio.c start_threads.c resample.c
 
-all:	WsjtMod/Audio.so wsjt7 JT65code
+all:	WsjtMod/Audio.so wsjt9 JT65code
 
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
+
+t72:	$(OBJS5)
+	$(FC) -o t72 $(OBJS5) -lfftw3f
 
 build:	WsjtMod/Audio.so
 
@@ -111,15 +129,15 @@ WsjtMod/Audio.so: $(OBJS2C) $(OBJS3C) $(OBJS2F77) $(SRCS2F90) $(AUDIOSRCS)
 	${SRCS3C} ${AUDIOSRCS}
 	${MV} Audio.so WsjtMod
 
-wsjt7:  WsjtMod/Audio.so wsjt7.spec
-	python /home/joe/temp/pyinstaller-1.3/Build.py wsjt7.spec
+wsjt9:  WsjtMod/Audio.so wsjt9.spec
+	python /home/joe/temp/pyinstaller-1.3/Build.py wsjt9.spec
 
-wsjt7.spec: wsjt7.py WsjtMod/astro.py WsjtMod/g.py WsjtMod/options.py \
+wsjt9.spec: wsjt9.py WsjtMod/astro.py WsjtMod/g.py WsjtMod/options.py \
 	WsjtMod/palettes.py WsjtMod/smeter.py WsjtMod/specjt.py
 	python /home/joe/temp/pyinstaller-1.3/Makespec.py --icon wsjt.ico \
-	--tk --onefile wsjt7.py
-wsjt7.py: wsjt.py
-	cp wsjt.py wsjt7.py
+	--tk --onefile wsjt9.py
+wsjt9.py: wsjt.py
+	cp wsjt.py wsjt9.py
 
 init_rs_int.o: init_rs.c
 	$(CC) $(CFLAGS) -c -DBIGSYM=1 -o init_rs_int.o init_rs.c
@@ -144,21 +162,20 @@ deb: wsjt.py WsjtMod/Audio.so WsjtMod/g.py WsjtMod/__init__.py \
 	WsjtMod/options.py WsjtMod/palettes.py WsjtMod/PmwBlt.py \
 	WsjtMod/PmwColor.py WsjtMod/Pmw.py WsjtMod/smeter.py \
 	WsjtMod/specjt.py WsjtMod/astro.py DEB/DEBIAN/control \
-	wsjtrc DEB/WSJT/wsjt
+	wsjtrc
 
 	cp wsjt.py wsjtrc CALL3.TXT dmet_10_-1_3.dat \
 	dmet_20_-2_2.dat kvasd.dat KVASD_g95 TSKY.DAT \
-	UpdateHistory.txt wsjt.ico WSJT_Quick_Reference.pdf \
-	WSJT_User_600.pdf WSPR_mode.pdf DEB/WSJT
+	wsjt.ico wsjt.jpg WSJT_Quick_Reference.pdf WSJT_User_600.pdf DEB/WSJT9
 
-	cp WsjtMod/Audio.so DEB/WSJT/WsjtMod
-	cp WsjtMod/*.py DEB/WSJT/WsjtMod
+	cp WsjtMod/Audio.so DEB/WSJT9/WsjtMod
+	cp WsjtMod/*.py DEB/WSJT9/WsjtMod
 	dpkg-deb --build DEB wsjt_ver_rev_i386.deb
 
 .PHONY : clean
 clean:
-	${RM} -f *.o *.pyc *.so *~ JT65code wsjt7 WsjtMod/*.pyc WsjtMod/*.pyc \
-		WsjtMod/*.so wsjt7.py wsjt7.spec
+	${RM} -f *.o *.pyc *.so *~ JT65code wsjt9 WsjtMod/*.pyc WsjtMod/*.pyc \
+		WsjtMod/*.so wsjt9.py wsjt9.spec
 	${RM} -rf build/
 
 distclean: clean

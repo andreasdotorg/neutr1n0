@@ -1,7 +1,6 @@
 #---------------------------------------------------- SpecJT
 # 2.2.08 Soundcontrol extended for Vista  DL3LST
 from Tkinter import *
-from tkMessageBox import showwarning
 import time
 import os
 import Pmw
@@ -10,6 +9,8 @@ import Audio
 import g
 import string
 import cPickle
+import tkMessageBox
+
 try:
     from numpy.oldnumeric import zeros, multiarray
 #    print "specjt importing from numpy"
@@ -105,33 +106,25 @@ def pal_AFMHot():
 def rx_volume():
     for path in string.split(os.environ["PATH"], os.pathsep):
         file = os.path.join(path, "sndvol32") + ".exe"
-        try:
-            return os.spawnv(os.P_NOWAIT, file, (file,) + (" -r",))
-        except os.error:
-            pass
-
-# Vista soundcontrol has no parameter to select the inputlevel !!   3LST
-# so we have no solution to call it
-    raise os.error, "Cannot find "+file
+        if os.path.exists(file):
+            os.spawnv(os.P_NOWAIT, file, (file,) + (" -r",))
+            return
+    t="WSJT cannot access mixer input control\non this platform.  Please invoke " + \
+       "system\nmixer directly."
+    tkMessageBox.showwarning(message=t)
 
 #--------------------------------------------------- tx_volume  ..extended for Vista
 def tx_volume():
     for path in string.split(os.environ["PATH"], os.pathsep):
+        print path
         file = os.path.join(path, "sndvol32") + ".exe"
-        try:
-            return os.spawnv(os.P_NOWAIT, file, (file,))
-        except os.error:
-            pass
-
-#Vista soundcontrol is now sndvol.exe and we try to open it           3LST
-    for path in string.split(os.environ["PATH"], os.pathsep):
+        if os.path.exists(file):
+            os.spawnv(os.P_NOWAIT, file, (file,))
+            return
         file = os.path.join(path, "sndvol") + ".exe"
-        try:
-            return os.spawnv(os.P_NOWAIT, file, (file,))
-        except os.error:
-            pass
-
-    raise os.error, "Cannot find "+file
+        if os.path.exists(file):
+            os.spawnv(os.P_NOWAIT, file, (file,))
+            return
 
 #---------------------------------------------------- fdf_change
 # Readout of graphical cursor location
@@ -140,7 +133,6 @@ def fdf_change(event):
         g.DFreq=df*(event.x-288.7) + fmid - 1500
         if nfr.get()==2: g.DFreq=2*df*(event.x-375.5) + fmid - 1270.5
         g.Freq=g.DFreq+1270.46
-        if g.mode=="WSPR": g.DFreq=g.DFreq+1270.46-1500.0
         t="Freq: %5d    DF: %5d  (Hz)" % (int(g.Freq),int(g.DFreq))
     else:
         g.PingTime=0.04*event.x
@@ -153,15 +145,13 @@ def fdf_change(event):
 
 #---------------------------------------------------- set_freezedf
 def set_freezedf(event):
-    if g.mode[:4]=='JT65' or g.mode[:3]=='JT2' or \
-       g.mode[:3]=='JT4' or g.mode=="WSPR" or g.mode[:4]=='JT64':
+    if g.mode[:4]=='JT65' or g.mode[:3]=='JT4' or g.mode=='Diana':
         n=int(df*(event.x-288.7) + fmid - 1500)
         if nfr.get()==2: n=int(2*df*(event.x-375.5) + fmid - 1270.5)
 #        if n<-600: n=-600
 #        if n>600:  n=600
         if n<-1270: n=-1270
         if n>3800: n=3800
-        if g.mode=="WSPR": n=n+1270-1500
         Audio.gcom2.mousedf=n
     else:
         decode_request(event)
@@ -181,22 +171,19 @@ def df_mark():
         if g.mode[4:5]=='B': fstep=2*fstep
         if g.mode[4:5]=='C': fstep=4*fstep
 
-
 # Mark sync tone and top JT65 tone (green) and shorthand tones (red)
         if(frange==2000):
             dx=288.7 + (1500-fmid)/df
-            if g.mode[:4]=="JT65" or g.mode[:3]=="JT2" or \
-               g.mode[:3]=="JT4" or g.mode=="WSPR" or g.mode[:4]=='JT64':
+            if g.mode[:4]=="JT65" or g.mode[:3]=="JT4" or g.mode=='Diana':
                 color='green'
                 n=1
-                if g.mode[:4]=="JT65" or g.mode[:4]=='JT64':
+                if g.mode[:4]=="JT65":
                     n=5
                     x1=(Audio.gcom2.mousedf + 6.6*fstep)/df + dx
                     c.create_line(x1-0.5,25,x1-0.5,12,fill=color)
                     c.create_line(x1+0.5,25,x1+0.5,12,fill=color)
                 for i in range(n):
                     mdf=Audio.gcom2.mousedf
-                    if g.mode=="WSPR": mdf=mdf-1270+1500
                     x1=(mdf + i*fstep)/df + dx
                     j=12
                     if i>0: j=15
@@ -205,18 +192,16 @@ def df_mark():
                     color='red'
         if(frange==4000):
             dx=375 + (1270.5-fmid)/(2*df)
-            if g.mode[:4]=="JT65" or g.mode[:3]=="JT2" or \
-               g.mode[:3]=="JT4" or g.mode=="WSPR" or g.mode[:4]=='JT64':
+            if g.mode[:4]=="JT65" or g.mode[:3]=="JT4" or g.mode=='Diana':
                 color='green'
                 n=1
-                if g.mode[:4]=="JT65" or g.mode[:4]=='JT64':
+                if g.mode[:4]=="JT65":
                     n=5
                     x1=(Audio.gcom2.mousedf + 6.6*fstep)/(2*df) + dx
                     c.create_line(x1-0.5,25,x1-0.5,12,fill=color)
                     c.create_line(x1+0.5,25,x1+0.5,12,fill=color)
                 for i in range(n):
                     mdf=Audio.gcom2.mousedf
-                    if g.mode=="WSPR": mdf=mdf-1270+1500
                     x1=(mdf + i*fstep)/(2*df) + dx
                     j=12
                     if i>0: j=15
@@ -255,18 +240,9 @@ def freq_range(event):
 def set_frange():
     nfr.set(3-nfr.get())
 
-#---------------------------------------------------- freq_center
-##def freq_center(event):
-### Move clicked location to center of frequency scale
-##    global fmid,frange
-##    n=100*int(0.01*df*(event.x-375))
-##    fmid = fmid + n
-##    if fmid<1000: fmid=1000
-##    if fmid>1700: fmid=1700
-
 #---------------------------------------------------- decode_request
 def decode_request(event):
-    if (g.mode=='FSK441' or g.mode=='JT6M') and nspeed0.get()>5:
+    if (g.mode=='FSK441' or g.mode=='JTMS') and nspeed0.get()>5:
 # If decoder is busy or we are not monitoring, ignore request
         if Audio.gcom2.ndecoding==0 and Audio.gcom2.monitoring:
             Audio.gcom2.mousebutton=event.num       #Left=1, Right=3
@@ -276,10 +252,18 @@ def decode_request(event):
             else:
                 Audio.gcom2.ndecoding=3             #Mouse pick, bottom half
 
+    elif g.mode=='ISCAT' and nspeed0.get()>5 and \
+          Audio.gcom2.ndecoding==0 and Audio.gcom2.monitoring:
+        Audio.gcom2.mousebutton=event.num       #Left=1, Right=3
+        Audio.gcom2.npingtime=int(40*event.x)   #Time (ms) of selected ping
+        if event.y <= 150:
+            Audio.gcom2.ndecoding=2             #Mouse pick, top half
+        else:
+            Audio.gcom2.ndecoding=3             #Mouse pick, bottom half
+
 #---------------------------------------------------- freeze_decode
 def freeze_decode(event):
-    if (g.mode[:4]=='JT65' or g.mode[:3]=='JT2' or
-        g.mode[:3]=='JT4' or g.mode=="WSPR" or g.mode[:4]=='JT64') \
+    if (g.mode[:4]=='JT65' or g.mode[:3]=='JT4' or g.mode=='Diana') \
        and nspeed0.get()<6:
 # If decoder is busy or we are not monitoring, ignore request
         if Audio.gcom2.ndecoding==0 or Audio.gcom2.monitoring==0:
@@ -302,7 +286,7 @@ def update():
         root_geom=root.geometry()
         g.rms=Audio.gcom1.rms
         if isec==0: nscroll=0
-        if isec==59 and (g.mode!='WSPR' or utc[4]%2==1): newMinute=1
+        if isec==59: newMinute=1
 
     if g.showspecjt==1:
         showspecjt()
@@ -348,7 +332,7 @@ def update():
         if Audio.gcom2.monitoring:
             if minsep.get() and newMinute:
                 draw.line((0,0,749,0),fill=128)     #Draw the minute separator
-            if nscroll == 13 and (g.mode!='WSPR' or utc[4]%2==0):
+            if nscroll == 13:
                 draw.text((5,2),t0[0:5],fill=253)   #Insert time label
         else:
             if minsep.get():
@@ -371,8 +355,8 @@ def update():
         newMinute=0
 
     if (Audio.gcom2.mousedf != mousedf0 or Audio.gcom2.dftolerance != tol0) \
-            and (g.mode[:4]=='JT65' or g.mode[:3]=='JT2' or \
-                 g.mode[:3]=='JT4' or g.mode=="WSPR" or g.mode[:4]=='JT64'):
+            and (g.mode[:4]=='JT65' or g.mode[:3]=='JT4' \
+            or g.mode=='Diana'):
         df_mark()
         
 # The following int() calls are to ensure that the values copied to
@@ -386,11 +370,12 @@ def update():
         nfreeze0=int(Audio.gcom2.nfreeze)
 
     if g.mode!=mode0:
-        if (g.mode[:4]=="JT65" or g.mode[:3]=="JT2" or \
-            g.mode[:3]=="JT4" or g.mode=="WSPR" or g.mode[:4]=='JT64') \
+        if (g.mode[:4]=="JT65" or g.mode[:3]=="JT4" or g.mode=='Diana') \
            and nspeed0.get()>5: nspeed0.set(3)
-        if g.mode=="FSK441" and nspeed0.get()<6: nspeed0.set(6)
-        if g.mode=="JT6M" and nspeed0.get()<6: nspeed0.set(6)
+        if g.mode=="FSK441" and nspeed0.get()<6: nspeed0.set(7)
+        if g.mode=="JTMS" and nspeed0.get()<6: nspeed0.set(7)
+        if g.mode=="ISCAT" and nspeed0.get()<6: nspeed0.set(7)
+        if g.mode=="Echo" and nspeed0.get()>5: nspeed0.set(3)
         draw_axis()
         mode0=g.mode
 
@@ -418,10 +403,7 @@ def update():
 def draw_axis():
     xmid=fmid
     if naxis.get():
-        if g.mode=='WSPR':
-            xmid=xmid-1500
-        else:
-            xmid=xmid-1270.46
+        xmid=xmid-1270.46
     c.delete(ALL)
     if nspeed0.get()<6:
 # Draw the frequency or DF tick marks
@@ -449,8 +431,7 @@ def draw_axis():
                     c.create_text(x,y,text=str(ix))
                 c.create_line(i,25,i,j,fill='black')
                 
-        if g.mode[:4]=="JT65" or g.mode[:3]=="JT2" or \
-           g.mode[:3]=="JT4" or g.mode=="WSPR" or g.mode[:4]=='JT64':
+        if g.mode[:4]=="JT65" or g.mode[:3]=="JT4" or g.mode=='Diana':
             dx=288.7 + (1500-fmid)/df
             dff=df
             if frange==4000:
@@ -462,7 +443,6 @@ def draw_axis():
             else:
                 tol=Audio.gcom2.dftolerance
                 mdf=Audio.gcom2.mousedf
-                if g.mode=="WSPR": mdf=mdf-1270+1500
                 x1=(mdf-tol)/dff + dx
                 x2=(mdf+tol)/dff + dx
             c.create_line(x1,25,x2,25,fill='green',width=2)
@@ -535,6 +515,7 @@ setupmenu.palettes.add_radiobutton(label='Hot',command=pal_Hot,
 setupmenu.palettes.add_radiobutton(label='AFMHot',command=pal_AFMHot,
             value=5,variable=npal)
 setupmenu.add_cascade(label = 'Palette',menu=setupmenu.palettes)
+setupmenu.add_checkbutton(label='Logarithmic scale',variable=logmap)
 
 if (sys.platform == 'darwin'):
    mbar.add_cascade(label="Options", menu=setupmenu)
@@ -567,7 +548,7 @@ for i in (7, 6, 5, 4, 3, 2, 1):
     if i==6: t="H1"
     if i==7: t="H2"
     Radiobutton(sbar,text=t,value=i,variable=nspeed0).pack(side=RIGHT)
-nspeed0.set(6)
+nspeed0.set(7)
 lab2=Label(sbar,text='Speed: ',bd=0)
 lab2.pack(side=RIGHT)
 #------------------------------------------------- Graphics frame
@@ -577,14 +558,11 @@ c.pack(side=TOP)
 Widget.bind(c,"<Shift-Button-1>",freq_range)
 Widget.bind(c,"<Shift-Button-2>",freq_range)
 Widget.bind(c,"<Shift-Button-3>",freq_range)
-#Widget.bind(c,"<Control-Button-1>",freq_center)
-
 graph1=Canvas(iframe1, bg='black', width=750, height=300,bd=0,cursor='crosshair')
 graph1.pack(side=TOP)
 Widget.bind(graph1,"<Motion>",fdf_change)
-#Widget.bind(graph1,"<Button-1>",decode_request)
-Widget.bind(graph1,"<Button-3>",decode_request)
 Widget.bind(graph1,"<Button-1>",set_freezedf)
+Widget.bind(graph1,"<Button-3>",decode_request)
 Widget.bind(graph1,"<Double-Button-1>",freeze_decode)
 iframe1.pack(expand=1, fill=X)
 

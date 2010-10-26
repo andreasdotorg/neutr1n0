@@ -18,7 +18,7 @@ the current directory as "."<br>
 <b>Step 1. </b>You need to install the Mac Developer Tool - Xcode.   Visit 
 <a href="http://developer.apple.com/support/mac/tools">http://developer.apple.com/support/mac/tools</a>  and create a (free) ADC account
 then visit the Developer Tools in the downloads section and get the latest release
-of Xcode Developer Tools.  This must be the version for Snow Leopard and will  3.2.1 or later.  You will need  Fortran.<br><br>
+of Xcode Developer Tools.  This must be the version for Snow Leopard and will  3.2.3 or later.  You will need  Fortran.<br><br>
 <b>Step 2. </b>There are several versions that are available but I recommend 
 <a href="http://r.research.att.com/tools">http://r.research.att.com/tools</a>.   At the time of writing the latest version is
 gfortran-4.2-5646.pkg for Snow Leopard.   Download this and install.<br> <br>
@@ -66,6 +66,7 @@ cd Imaging-1.1.7<br> python setup.py build<br>sudo python setup.py install <br><
 and download libsamplerate-0.1.7.tar.gz.  Untar this file and then remove the CC and LDFLAGS parameters: <br>
 unsetenv CC<br>
 unsetenv LDFLAGS<br>
+setenv CFLAGS "-arch i386"<br>
 cd libsamplerate-0.1.7<br>configure<br>make<br>sudo make install <br><br>
 <em>portaudio</em> Change back to the Installation directory and visit <a href="http://www.portaudio.com/archives/">http://www.portaudio.com/archives/</a> 
 and download pa_snapshot_v19.tar.gz which is the version I use.   There is another v19 issue at http://www.portaudio.com/download.html but I havn't tested this. Untar this file and then:<br> 

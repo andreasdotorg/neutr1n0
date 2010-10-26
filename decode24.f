@@ -1,11 +1,12 @@
       subroutine decode24(dat,npts,dtx,dfx,flip,mode,mode4,
-     +  decoded,ncount,deepmsg,qual)
+     +  decoded,ncount,deepmsg,qual,submode)
 
 C  Decodes JT65 data, assuming that DT and DF have already been determined.
 
       real dat(npts)                        !Raw data
       character decoded*22,deepmsg*22
       character*72 c72
+      character submode*1
       real*8 dt,df,phi,f0,dphi,twopi,phi1,dphi1
       complex*16 cz,cz1,c0,c1
       integer*1 symbol(207)
@@ -52,85 +53,6 @@ C  Compute soft symbols using differential BPSK demodulation
       phi=0.d0
       phi1=0.d0
       ang0=0.
-
-      if(mode.eq.6) then                   !JT2
-         nhmax=0
-         do idf=-20,20,2
-            c0=amp
-            k=istart
-            phi=0.d0
-            nh=0
-            do j=1,nsym+1
-               if(flip.gt.0.0) then
-                  f0=1270.46 + dfx + npr2(j)*df
-               else
-                  f0=1270.46 + dfx + (1-npr2(j))*df
-               endif
-               f0=f0 + 0.1*idf
-               dphi=twopi*dt*f0
-               c1=0.
-               do i=1,1260
-                  k=k+1
-                  phi=phi+dphi
-                  cz=dcmplx(cos(phi),-sin(phi))
-                  if(k.le.npts) c1=c1 + dat(k)*cz
-               enddo
-               rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
-               ang=atan2(aimag(c1),real(c1))
-               ndang=nint(57.1957795131d0*(ang-ang0))
-               ang0=ang
-               if(ndang.le.-180) ndang=ndang+360
-               if(ndang.gt.180) ndang=ndang-360
-               if(ndang.lt.-90) ndang=ndang+180
-               if(ndang.gt. 90) ndang=ndang-180
-               if(rsym.ge.0.05 .and. abs(ndang).lt.20)nh=nh+1
-            enddo
-            if(nh.gt.nhmax) then
-               nhmax=nh
-               idfbest=idf
-            endif
-         enddo
-
-         c0=0
-         k=istart
-         phi=0.d0
-         do j=1,nsym+1
-            if(flip.gt.0.0) then
-               f0=1270.46 + dfx + npr2(j)*df
-            else
-               f0=1270.46 + dfx + (1-npr2(j))*df
-            endif
-            f0=f0 + 0.1*idfbest
-            dphi=twopi*dt*f0
-            c1=0.
-            do i=1,1260
-               k=k+1
-               phi=phi+dphi
-               cz=dcmplx(cos(phi),-sin(phi))
-               if(k.le.npts) c1=c1 + dat(k)*cz
-            enddo
-            c1=fac*c1
-            rsym=amp*(real(c1)*real(c0) + aimag(c1)*aimag(c0))
-
-C  NB: It may be possible to track phase.  In that case, remove the 
-C  average phase and then use:
-!            rsym=amp*real(c1)*real(c0)
-
-            ang=atan2(aimag(c1),real(c1))
-            ndang=nint(57.1957795131d0*(ang-ang0))
-            if(ndang.le.-180) ndang=ndang+360
-            if(ndang.gt.180) ndang=ndang-360
-            c0=c1
-            r=rsym+128.
-            if(r.gt.255.0) r=255.0
-            if(r.lt.0.0) r=0.0
-            i4=nint(r)
-            if(i4.gt.127) i4=i4-256
-            if(j.ge.1) symbol(j)=i4
-            ang0=ang
-         enddo
-         go to 50
-      endif
 
 ! JT4 mode
       ich=0
@@ -183,29 +105,15 @@ C  average phase and then use:
          if(j.ge.1) symbol(j)=i4
       enddo
 
- 50   nbits=72+31
+      nbits=72+31
       delta=100
       limit=100000
       ncycles=0
       call interleave24(symbol(2),-1)         !Remove the interleaving
 
-C  This is a kludge:
-      iters=1
-      if(mode.eq.6) iters=2
-      do iter=1,iters
-         if(iter.eq.2) then
-            do i=2,207
-               i4=symbol(i)
-               if(i4.lt.0) i4=i4+256
-               i4=255-i4
-               if(i4.gt.127) i4=i4-256
-               symbol(i)=i4
-            enddo
-         endif
-         ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
-     +        delta,limit)
-         if(ncount.ge.0) go to 100
-      enddo
+      ncount=fano(metric,ncycles,data1,symbol(2),nbits,mettab,
+     +     delta,limit)
+      if(ncount.ge.0) go to 100
       if(mode.eq.7 .and. nchips.lt.mode4) go to 40
 
  100  do i=1,9
@@ -221,7 +129,11 @@ C  This is a kludge:
       call cs_unlock
 
       decoded='                      '
-      if(ncount.ge.0) call unpackmsg(data4,decoded)
+      submode=' '
+      if(ncount.ge.0) then
+         call unpackmsg(data4,decoded)
+         submode=char(ichar('A')+ich-1)
+      endif
       if(decoded(1:6).eq.'000AAA') then
          decoded='***WRONG MODE?***'
          ncount=-1

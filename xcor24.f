@@ -1,4 +1,4 @@
-      subroutine xcor24(s2,ipk,nsteps,nsym,lag1,lag2,mode,mode4,
+      subroutine xcor24(s2,ipk,nsteps,nsym,lag1,lag2,mode4,
      +  ccf,ccf0,lagpk,flip)
 
 C  Computes ccf of a row of s2 and the pseudo-random array pr2.  Returns
@@ -14,7 +14,6 @@ C  the "OOO" message.
       integer npr2(207)
       real pr2(207)
       logical first
-      common/clipcom/ nclip
       data lagmin/0/                    !Silence g77 warning
       data first/.true./
       data npr2/
@@ -35,34 +34,30 @@ C  the "OOO" message.
       endif
 
       do j=1,nsteps
-         if(mode.eq.6) then
-            a(j)=s2(ipk+2,j) - s2(ipk,j)             !JT2
-         else                                        !JT4
-            n=2*mode4
-            if(mode4.eq.1) then
-               a(j)=max(s2(ipk+n,j),s2(ipk+3*n,j)) - 
-     +              max(s2(ipk  ,j),s2(ipk+2*n,j))
-            else
-               kz=mode4/2
-               ss0=0.
-               ss1=0.
-               ss2=0.
-               ss3=0.
-               wsum=0.
-               do k=-kz+1,kz-1
-                  w=float(kz-iabs(k))/mode4
-                  wsum=wsum+w
-                  if(ipk+k.lt.1 .or. ipk+3*n+k.gt.1260) then
-                     print*,'xcor24:',ipk,n,k
-                  else
-                     ss0=ss0 + w*s2(ipk    +k,j)
-                     ss1=ss1 + w*s2(ipk+  n+k,j)
-                     ss2=ss2 + w*s2(ipk+2*n+k,j)
-                     ss3=ss3 + w*s2(ipk+3*n+k,j)
-                  endif
-               enddo
-               a(j)=(max(ss1,ss3) - max(ss0,ss2))/sqrt(wsum)
-            endif
+         n=2*mode4
+         if(mode4.eq.1) then
+            a(j)=max(s2(ipk+n,j),s2(ipk+3*n,j)) - 
+     +           max(s2(ipk  ,j),s2(ipk+2*n,j))
+         else
+            kz=mode4/2
+            ss0=0.
+            ss1=0.
+            ss2=0.
+            ss3=0.
+            wsum=0.
+            do k=-kz+1,kz-1
+               w=float(kz-iabs(k))/mode4
+               wsum=wsum+w
+               if(ipk+k.lt.1 .or. ipk+3*n+k.gt.1260) then
+                  print*,'xcor24:',ipk,n,k
+               else
+                  ss0=ss0 + w*s2(ipk    +k,j)
+                  ss1=ss1 + w*s2(ipk+  n+k,j)
+                  ss2=ss2 + w*s2(ipk+2*n+k,j)
+                  ss3=ss3 + w*s2(ipk+3*n+k,j)
+               endif
+            enddo
+            a(j)=(max(ss1,ss3) - max(ss0,ss2))/sqrt(wsum)
          endif
       enddo
 

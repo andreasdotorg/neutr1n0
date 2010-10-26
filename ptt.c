@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 
-int ptt_(int *nport, char *unused, int *ntx, int *iptt)
+int ptt_(int *nport, char *unused, int *ntx, int *ndtr, int *iptt)
 {
   static HANDLE hFile;
   static int open=0, nhold=0;
@@ -35,15 +35,19 @@ int ptt_(int *nport, char *unused, int *ntx, int *iptt)
   }
 
   if(*ntx && open) {
-    EscapeCommFunction(hFile,3);
-    EscapeCommFunction(hFile,5);
+    if(*ndtr) 
+      EscapeCommFunction(hFile,5);              //set DTR
+    else
+      EscapeCommFunction(hFile,3);              //set RTS
     *iptt=1;
   }
 
   else {
-    EscapeCommFunction(hFile,4);
-    EscapeCommFunction(hFile,6);
-    EscapeCommFunction(hFile,9);
+    if(*ndtr) 
+      EscapeCommFunction(hFile,6);              //clear DTR
+    else
+      EscapeCommFunction(hFile,4);              //clear RTS
+    EscapeCommFunction(hFile,9);              //clear BREAK
     if(nhold==0)  {
       i00=CloseHandle(hFile);
       open=0;

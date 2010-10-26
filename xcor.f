@@ -12,7 +12,6 @@ C  the "OOO" message.
       real a(NSMAX),a2(NSMAX)
       real ccf(-5:540)
       include 'prcom.h'
-      common/clipcom/ nclip
       data lagmin/0/                              !Silence g77 warning
       save
 
@@ -24,30 +23,6 @@ C  the "OOO" message.
          ii=nint((j-nsteps/2)*fdot*fac)+ipk
          a(j)=s2(ii,j)
       enddo
-
-C  If requested, clip the spectrum that will be cross correlated.
-      nclip=0                               !Turn it off
-      if(nclip.gt.0) then
-         call pctile(a,a2,nsteps,50,base)
-         alow=a2(nint(nsteps*0.16))
-         ahigh=a2(nint(nsteps*0.84))
-         rms=min(base-alow,ahigh-base)
-         clip=4.0-nclip
-         atop=base+clip*rms
-         abot=base-clip*rms
-         do i=1,nsteps
-            if(nclip.lt.4) then
-               a(i)=min(a(i),atop)
-               a(i)=max(a(i),abot)
-            else
-               if(a(i).ge.base) then
-                  a(i)=1.0
-               else
-                  a(i)=-1.0
-               endif
-            endif
-         enddo 
-      endif
 
       ccfmax=0.
       ccfmin=0.

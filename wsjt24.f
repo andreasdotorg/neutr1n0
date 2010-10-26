@@ -2,7 +2,7 @@
      +  DFTolerance,NFreeze,mode,mode4,Nseg,MouseDF,NAgain,
      +  idf,lumsg,lcum,nspecial,ndf,NSyncOK,ccfblue,ccfred,ndiag)
 
-C  Orchestrates the process of decoding JT2 and JT4 messages, using 
+C  Orchestrates the process of decoding JT4 messages, using 
 C  data that have been 2x downsampled.  
 
       real dat(npts)                        !Raw data
@@ -11,11 +11,12 @@ C  data that have been 2x downsampled.
       logical lcum
       character decoded*22,cfile6*6,special*5,cooo*3
       character*22 avemsg1,avemsg2,deepmsg
-      character*67 line,ave1,ave2
+      character*69 line,ave1,ave2
       character*1 csync,c1
       character*12 mycall
       character*12 hiscall
       character*6 hisgrid
+      character submode*1
       real ccfblue(-5:540),ccfred(-224:224)
       include 'avecom.h'
       data first/.true./,ns10/0/,ns20/0/
@@ -86,7 +87,8 @@ C  If we get here, we have achieved sync!
       endif
 
       call decode24(dat,npts,dtx,dfx,flip,mode,mode4,decoded,
-     +   ncount,deepmsg,qual)
+     +   ncount,deepmsg,qual,submode)
+
  200  kvqual=0
       if(ncount.ge.0) kvqual=1
       nqual=qual
@@ -104,15 +106,15 @@ C  If we get here, we have achieved sync!
       jdf=ndf+idf
 
       call cs_lock('wsjt24')
-      write(line,1010) cfile6,nsync,nsnr,dtx-1.0,jdf,
-     +    nint(width),csync,special,decoded(1:19),cooo,kvqual,nqual
- 1010 format(a6,i3,i5,f5.1,i5,i3,1x,a1,1x,a5,a19,1x,a3,i4,i4)
+      write(line,1010) cfile6,nsync,nsnr,dtx-1.0,jdf,nint(width),
+     +    csync,special,decoded(1:19),cooo,kvqual,nqual,submode
+ 1010 format(a6,i3,i5,f5.1,i5,i3,1x,a1,1x,a5,a19,1x,a3,i4,i4,1x,a1)
 
 C  Blank all end-of-line stuff if no decode
       if(line(31:40).eq.'          ') line=line(:30)
 
       if(lcum) write(21,1011) line
- 1011 format(a67)
+ 1011 format(a69)
 
 C  Write decoded msg unless this is an "Exclude" request:
       if(MinSigdB.lt.99) write(lumsg,1011) line
@@ -167,7 +169,7 @@ C  If Monitor segment #2 is available, write that line also
       if(ave2(31:40).eq.'          ') ave2=ave2(:30)
       write(12,1011) ave1
       write(12,1011) ave2
-      call flushqqq(12)
+      call flush(12)
  
       if(lumsg.ne.6) end file 11
       call cs_unlock

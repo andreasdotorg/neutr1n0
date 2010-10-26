@@ -1,14 +1,14 @@
-      subroutine mtdecode(dat,jz,nz,MinSigdB,MinWidth,
-     +    NQRN,DFTolerance,istart,pick,cfile6,ps0)
+      subroutine mtdecode(dat,jz,nz,MinSigdB,MinWidth,NFreeze,
+     +   DFTolerance,MouseDF,istart,pick,cfile6,mycall,hiscall,
+     +   mode,ps0)
 
 C  Decode Multi-Tone FSK441 mesages.
 
       real dat(jz)                !Raw audio data
-      integer NQRN
       integer DFTolerance
       logical pick
-      character*6 cfile6,cf*1
-
+      character*6 cfile6
+      character*12 mycall,hiscall
       real sigdb(3100)             !Detected signal in dB, sampled at 20 ms
       real work(3100)
       integer indx(3100)
@@ -59,7 +59,6 @@ C  Find signal power at suitable intervals to search for pings.
          enddo
       endif
 !##################################################################
-
       call smooth(sigdb,nz)
 
 C  Remove baseline and one dB for good measure.
@@ -72,12 +71,12 @@ C  Remove baseline and one dB for good measure.
 
 C  If this is a "mouse pick" and no ping was found, force a pseudo-ping 
 C  at center of data.
-        if(pick.and.nping.eq.0) then
-           if(nping.le.99) nping=nping+1
-           pingdat(1,nping)=0.5*jz*dt
-           pingdat(2,nping)=0.16
-           pingdat(3,nping)=1.0
-        endif
+      if(pick.and.nping.eq.0) then
+         if(nping.le.99) nping=nping+1
+         pingdat(1,nping)=0.5*jz*dt
+         pingdat(2,nping)=0.16
+         pingdat(3,nping)=1.0
+      endif
 
       bigpeak=0.
       do iping=1,nping
@@ -98,9 +97,6 @@ C  Decode the message.
          msg=' '
          call longx(dat(jj),jjz,ps,DFTolerance,noffset,msg,
      +     msglen,bauderr)
-         qrnlimit=4.4*1.5**(5.0-NQRN)
-         if(NQRN.eq.0) qrnlimit=99.
-         if(msglen.eq.0) go to 100
 
 C  Assemble a signal report:
          nwidth=0
@@ -111,17 +107,26 @@ C  Assemble a signal report:
          if(peak.ge.11.0) nstrength=7
          if(peak.ge.17.0) nstrength=8
          if(peak.ge.23.0) nstrength=9
+         npeak=peak
+         nrpt=10*nwidth + nstrength
+         t2=tstart + dt*(istart-1)
 
-!         if(peak.gt.5.0 .and.mswidth.ge.100) then
-!            call specsq(dat(jj),jjz,DFTolerance,0,noffset2)
-!            noffset=noffset2
-!         endif
+         if(mode.eq.8) then
+            jjzz=min(jjz,2*11025)       !Max data size 2 s 
+            call jtms(dat(jj),jjzz,cfile6,t2,mswidth,int(peak),
+     +           nrpt,nfreeze,DFTolerance,MouseDF,pick,mycall,hiscall)
+            go to 100
+         endif
+
+         call chk441(dat,jz,tstart,width,nfreeze,mousedf,
+     +               dftolerance,pick,nok)
+         if(msglen.eq.0 .or. nok.eq.0) go to 100
 
 C  Discard this ping if DF outside tolerance limits or bauderr too big.
 C  (However, if the ping was mouse-picked, proceed anyway.)
 
-         if(.not.pick .and. ((noffset.lt.nf1 .or. noffset.gt.nf2) .or.
-     +      (abs(bauderr).gt.qrnlimit))) goto 100
+         if(.not.pick .and. ((noffset.lt.nf1 .or. 
+     +       noffset.gt.nf2))) goto 100
 
 C  If it's the best ping yet, save the spectrum:
          if(peak.gt.bigpeak) then
@@ -130,17 +135,16 @@ C  If it's the best ping yet, save the spectrum:
                ps0(i)=ps(i)
             enddo
          endif
-   
-         tstart=tstart + dt*(istart-1)
-         cf=' '
+
          if(nline.le.99) nline=nline+1
-         tping(nline)=tstart
+         tping(nline)=t2
+
          call cs_lock('mtdecode')
-         write(line(nline),1050) cfile6,tstart,mswidth,int(peak),
-     +        nwidth,nstrength,noffset,msg3,msg,cf
- 1050    format(a6,f5.1,i5,i3,1x,2i1,i5,1x,a3,1x,a40,1x,a1)
+         write(line(nline),1050) cfile6,t2,mswidth,int(peak),
+     +        nrpt,noffset,msg3,msg
+ 1050    format(a6,f5.1,i5,i3,1x,i2.2,i5,1x,a3,1x,a40)
          call cs_unlock
- 100  continue
+ 100     continue
       enddo
 
       return

@@ -5,7 +5,6 @@
       real dat(nfft)
       real dat2(NMAX)
       real s(NHMAX)
-      real work(2*NMAX)
       complex c(0:NMAX)
       equivalence(dat2,c)
 

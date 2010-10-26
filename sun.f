@@ -1,4 +1,4 @@
-      subroutine sun(y,m,DD,UT,lon,lat,RA,Dec,LST,Az,El,mjd)
+      subroutine sun(y,m,DD,UT,lon,lat,RA,Dec,LST,Az,El,mjd,day)
 
       implicit none
 
@@ -35,6 +35,7 @@ C Equatorial coords of sun (geocentric)
       real xhor,yhor,zhor
       real Az,El
 
+      real day
       real rad
       data rad/57.2957795/
 
@@ -81,6 +82,7 @@ C  RA and Dec in degrees:
       zhor = xx*cos(lat/rad) + zz*sin(lat/rad)
       Az = mod(rad*atan2(yhor,xhor) + 180.0 + 360.0,360.0)
       El = rad*asin(zhor)
+      day=d-1.5
 
       return
       end

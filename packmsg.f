@@ -58,7 +58,7 @@ C  ... and if so, does it have a reply frequency?
       k=max(k1,k2)
       if(k.gt.0) then
          call k2grid(k,grid6)
-         c3=grid6(1:4) !XXX explicitly truncate this -db
+         c3=grid6(1:4)                     !Explicitly truncate to 4 chars
       endif
       call packgrid(c3,ng,text3)
       if((.not.text1) .and. (.not.text2) .and. (.not.text3)) go to 20

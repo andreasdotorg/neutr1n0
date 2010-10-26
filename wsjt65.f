@@ -209,10 +209,10 @@ C  If Monitor segment #2 is available, write that line also
       call cs_lock('wsjt65')
       write(12,1011) ave1
       write(12,1011) ave2
-      call flushqqq(12)
+      call flush(12)
       if(lumsg.ne.6) end file 11
       call cs_unlock
-
+ 
  900  continue
 
       return

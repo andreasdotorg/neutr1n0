@@ -1,6 +1,6 @@
       subroutine rfile2(fname,buf,n,nr)
 
-C  Write a wave file to disk.
+C  Read a wave file.
 
       integer RMODE
       parameter(RMODE=0)
@@ -18,6 +18,7 @@ C  Write a wave file to disk.
       enddo
 
  10   fname=fname(1:iz)//char(0)
+
       fd=open(fname,RMODE)                  !Open file for reading
       nr=read(fd,buf,n)
       i=close(fd)

@@ -5,6 +5,7 @@
       character decoded*22
       integer era(51),dat4(12),indx(64)
       integer mrsym(63),mr2sym(63),mrprob(63),mr2prob(63)
+      integer system
       logical first
       common/extcom/ntdecode
       data first/.true./,nsec1/0/
@@ -52,10 +53,10 @@
          call cs_lock('extract')
          write(22,rec=1) nsec1,xlambda,maxe,naddsynd,
      +        mrsym,mrprob,mr2sym,mr2prob
-         call flushqqq(22)
+         call flush(22)
          call cs_unlock
 
-         call runqqq('kvasd.exe','-q',iret)
+         iret=system('KVASD_g95 -q >devnull')
 
          call cs_lock('extract')
          if(iret.ne.0) then

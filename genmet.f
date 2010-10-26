@@ -10,10 +10,7 @@ C Metric table (RxSymbol,TxSymbol)
       call cs_lock('genmet')
       bias=0.5
       scale=10
-      if(mode.eq.6) then       !JT2, DBPSK
-         open(19,file='dmet_20_-2_2.dat',status='old')
-         scale=20
-      else if(mode.eq.7) then  !Non-coherent 2FSK
+      if(mode.eq.7) then  !Non-coherent 2FSK
          open(19,file='dmet_10_-1_3.dat',status='old')
       else
          print*,'Unsupported mode:',mode,' in genmet.'

@@ -9,12 +9,20 @@
 
 C  Test for numerical signal report, etc.
       if(grid(1:1).eq.'-') then
-         n=10*(ichar(grid(2:2))-48) + ichar(grid(3:3)) - 48
- 1       ng=NGBASE+1+n
+         if(grid(3:3).ne.' ') then
+            n=10*(ichar(grid(2:2))-48) + ichar(grid(3:3)) - 48
+         else
+            n=ichar(grid(2:2))-48
+         endif
+         ng=NGBASE+1+n
          go to 100
       else if(grid(1:2).eq.'R-') then
-         n=10*(ichar(grid(3:3))-48) + ichar(grid(4:4)) - 48
- 2       if(n.eq.0) go to 90
+         if(grid(4:4).ne.' ') then
+            n=10*(ichar(grid(3:3))-48) + ichar(grid(4:4)) - 48
+         else
+            n=ichar(grid(3:3))-48
+         endif
+         if(n.eq.0) go to 90
          ng=NGBASE+31+n
          go to 100
       else if(grid(1:2).eq.'RO') then
