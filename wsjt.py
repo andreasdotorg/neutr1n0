@@ -683,15 +683,20 @@ def ModeJTMS(event=NONE):
     cbfreeze.grid(column=0,row=2,padx=4,sticky='W')
     mode.set("JTMS")
     
-#------------------------------------------------------ ModeISCAT
-def ModeISCAT(event=NONE):
+#------------------------------------------------------ ModeISCAT_A
+def ModeISCAT_A(event=NONE):
+    ModeISCAT_B()
+    mode.set("ISCAT_A")
+    Audio.gcom2.mode4=1
+    
+#------------------------------------------------------ ModeISCAT_B
+def ModeISCAT_B(event=NONE):
     global isync,isync_iscat
-    if g.mode != "ISCAT":
+    if g.mode != "ISCAT_B":
         if lauto: toggleauto()
         cleartext()
         ModeFSK441()
-
-        mode.set("ISCAT")
+        mode.set("ISCAT_B")
         lab2.configure(text='FileID      Avg dB        DF')
         isync=isync_iscat
         lsync.configure(text=slabel+str(isync))
@@ -706,6 +711,7 @@ def ModeISCAT(event=NONE):
         shmsg.grid_forget()
         ntx.set(1)
         Audio.gcom2.mousedf=0
+        Audio.gcom2.mode4=2
         GenStdMsgs()
         erase()        
 
@@ -1127,7 +1133,7 @@ def inctrperiod(event):
         if ncwtrperiod==120: ncwtrperiod=150
         if ncwtrperiod==60:  ncwtrperiod=120
         Audio.gcom1.trperiod=ncwtrperiod
-    elif mode.get()=="FSK441" or mode.get()=="JTMS" or mode.get()=="ISCAT":
+    elif mode.get()=="FSK441" or mode.get()=="JTMS" or mode.get()[:5]=="ISCAT":
         if Audio.gcom1.trperiod==15: Audio.gcom1.trperiod=30
 
 #------------------------------------------------------ dectrperiod
@@ -1137,7 +1143,7 @@ def dectrperiod(event):
         if ncwtrperiod==120: ncwtrperiod=60
         if ncwtrperiod==150: ncwtrperiod=120
         Audio.gcom1.trperiod=ncwtrperiod
-    elif mode.get()=="FSK441" or mode.get()=="JTMS" or mode.get()=="ISCAT":
+    elif mode.get()=="FSK441" or mode.get()=="JTMS" or mode.get()[:5]=="ISCAT":
         if Audio.gcom1.trperiod==30: Audio.gcom1.trperiod=15
 
 #------------------------------------------------------ erase
@@ -1163,20 +1169,6 @@ def clear_avg(event=NONE):
     f.truncate(0)                           #Delete contents of decoded.ave
     f.close()
     Audio.gcom2.nclearave=1
-
-#------------------------------------------------------ defaults
-##def defaults():
-##    global slabel,isync,itol,idsec
-##    isync=1
-##    if g.mode=="FSK441" or g.mode=="JTMS": isync=2
-##    itol=5
-##    ltol.configure(text='Tol    '+str(ntol[itol]))
-##    if g.mode=="JT6M" or g.mode=="ISCAT":
-##        isync=-10
-##        if g.mode=="ISCAT": isync=-20
-##        itol=4
-##        ltol.configure(text='Tol    '+str(ntol[itol]))
-##    lsync.configure(text=slabel+str(isync))
 
 #------------------------------------------------------ delwav
 def delwav():
@@ -1310,7 +1302,7 @@ def GenStdMsgs(event=NONE):
     Audio.gcom2.hiscall=(ToRadio.get()+(' '*12))[:12]
     for m in (tx1, tx2, tx3, tx4, tx5, tx6):
         m.delete(0,99)
-    if mode.get()=="FSK441" or mode.get()=="ISCAT" or \
+    if mode.get()=="FSK441" or mode.get()[:5]=="ISCAT" or \
        mode.get()=='JTMS' or mode.get()=='Diana':
         r=report.get()
         tx1.insert(0,setmsg(options.tx1.get(),r))
@@ -1804,7 +1796,7 @@ def update():
            bdecode.configure(text='*Decode*')
     msg5.configure(text="T/R Period: %d s" % (Audio.gcom1.trperiod,))
     if mode.get()=="CW": color='white'
-    elif mode.get()=='FSK441' or mode.get()=='JTMS' or mode.get()=='ISCAT':
+    elif mode.get()=='FSK441' or mode.get()=='JTMS' or mode.get()[:5]=='ISCAT':
         if(Audio.gcom1.trperiod==15): color='yellow'
         else: color='white'
     else:
@@ -1923,7 +1915,7 @@ def update():
     g.mode=mode.get()
     g.report=report.get()
     if mode.get()=='FSK441' or mode.get()=='JTMS': isync441=isync
-    elif mode.get()=="ISCAT": isync_iscat=isync
+    elif mode.get()[:5]=="ISCAT": isync_iscat=isync
     elif mode.get()[:4]=='JT65': isync65=isync
     Audio.gcom1.txfirst=TxFirst.get()
     try:
@@ -2101,7 +2093,8 @@ else:
 # state=modemenu.entrycget(0,"state")
 
 modemenu.add_radiobutton(label = 'FSK441', variable=mode,command = ModeFSK441, state=NORMAL)
-modemenu.add_radiobutton(label = 'ISCAT', variable=mode, command = ModeISCAT)
+modemenu.add_radiobutton(label = 'ISCAT_A', variable=mode, command = ModeISCAT_A)
+modemenu.add_radiobutton(label = 'ISCAT_B', variable=mode, command = ModeISCAT_B)
 modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A)
 modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B)
 modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C)
@@ -2615,8 +2608,10 @@ try:
                 ModeJT65C()
             elif value=='CW':
                 ModeCW()
-            elif value=='ISCAT':
-                ModeISCAT()
+            elif value=='ISCAT_A':
+                ModeISCAT_A()
+            elif value=='ISCAT_B':
+                ModeISCAT_B()
             elif value=='Diana':
                 ModeDiana()
             elif value=='JTMS':
@@ -2743,7 +2738,10 @@ except:
 
 g.mode=mode.get()
 if mode.get()=='FSK441' or mode.get()=='JTMS': isync=isync441
-elif mode.get()=="ISCAT": isync=isync_iscat
+elif mode.get()[:5]=="ISCAT":
+    isync=isync_iscat
+    if mode.get()[6:7]=='A': Audio.gcom2.mode4=1
+    if mode.get()[6:7]=='B': Audio.gcom2.mode4=2
 elif mode.get()[:4]=='JT65': isync=isync65
 elif mode.get()[:3]=='JT4':
     if mode.get()[3:4]=='A': Audio.gcom2.mode4=1

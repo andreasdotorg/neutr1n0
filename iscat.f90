@@ -1,4 +1,5 @@
-subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,ccf,psavg)
+subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
+     mousebutton,mode4,ccf,psavg)
 
 ! Decode an ISCAT_2 signal
 
@@ -21,12 +22,13 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,ccf,psavg)
   integer icos(4)
   equivalence (x,c)
   data icos/0,1,3,2/
-  data nsps/256/,nsync/4/,nlen/2/,ndat/18/
+  data nsync/4/,nlen/2/,ndat/18/
   data c42/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /.?@-'/
-  
+
+  nsps=512/mode4
   nsym=npts/nsps
   nblk=nsync+nlen+ndat
-  nfft=512                             !FFTs at twice the symbol length
+  nfft=2*nsps                          !FFTs at twice the symbol length
   kstep=nsps/4                         !Step by 1/4 symbol
   nh=nfft/2
   nq=nfft/4
@@ -128,7 +130,12 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,ccf,psavg)
   nsig=nint(db(smax/ref - 1.0) -15.0)
   if(nsig.lt.-20) nsig=-20
   ndf0=nint((ipk-i0) * 11025.0/nfft)
-  if(nsig.lt.MinSigdB) go to 800
+  if(nsig.lt.MinSigdB) then
+     msglen=0
+     worst=1.
+     avg=1.
+     go to 800
+  endif
 
   if(ipk.gt.100 .or. jpk.gt.96) then
      print*,'ipk:',ipk,'   jpk:',jpk
@@ -199,11 +206,6 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,ccf,psavg)
   endif
 
 800 continue
-  if(nsig.lt.MinSigdB) then
-     msglen=0
-     worst=1.
-     avg=1.
-  endif
   nworst=10.0*(worst-1.0)
   navg=10.0*(avg-1.0)
   if(nworst.gt.10) nworst=10

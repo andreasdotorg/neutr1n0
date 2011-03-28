@@ -146,17 +146,19 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   rmspower=sqrt(sq/nz)
 
   pick=.false.
-  if(istart.gt.1) pick=.true. !This is a mouse-picked decoding
+  if(mousebutton.ne.0) pick=.true. !This is a mouse-picked decoding
   if(.not.pick .and. nforce.eq.0 .and.                                 &
           (basevb.lt.-15.0 .or. basevb.gt.20.0)) goto 900
   nchan=64                   !Save 64 spectral channels
   nstep=221                  !Set step size to ~20 ms
   nz=jz/nstep - 1            !# of spectra to compute
+
   if(.not.pick) then
      MouseButton=0
      jza=jz
      labdat=labdat+1
   endif
+
   tbest=0.
   NsyncOK=0
 
@@ -235,7 +237,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 !     write(74) jz,cfile6,(dat(j),j=1,jz)
      call spec2d(dat,jz,nstep,s2,nchan,nz,psavg,sigma)
      if(jz.ge.11025) call iscat(dat,jz,cfile6,MinSigdB,DFTolerance,     &
-          NFreeze,MouseDF,ccf,psavg)
+          NFreeze,MouseDF,mousebutton,mode4,ccf,psavg)
      psavg(65:)=0.
      go to 800
   endif
