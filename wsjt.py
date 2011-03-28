@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-------------------------------------------------------------------- WSJT
+#--------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -635,7 +635,7 @@ def ModeJT65():
     bexclude.pack(side=LEFT,expand=1,fill=X)
     btxstop.pack(side=LEFT,expand=1,fill=X)
 
-    cbfreeze.grid(column=1,row=2,padx=2,sticky='W')
+    cbfreeze.grid(column=0,row=2,padx=2,sticky='W')
     cbafc.grid(column=1,row=1,padx=2,sticky='W')
     if ltxdf: toggletxdf()
     btxdf.grid_forget()

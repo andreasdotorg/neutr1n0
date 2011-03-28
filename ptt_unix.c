@@ -90,7 +90,7 @@ int fd=-1;		/* Used for both serial and parallel */
 #define STATE_PORT_OPEN_SERIAL		2
 
 int
-ptt_(int *unused, char *ptt_port, int *ntx, int *iptt)
+ptt_(int *unused, char *ptt_port, int *ntx, int *ndtr, int *iptt)
 {
   static int state=0;
   char *p;
