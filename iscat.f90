@@ -10,14 +10,14 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   character c42*42
   character msg*28,msg1*28
   real x(NSZ),x2(NSZ)
-  complex c(0:512)
-  real s0(128,NSZ)
-  real fs0(128,108)                       !108 = 96 + 3*4
+  complex c(0:1024)
+  real s0(256,NSZ)
+  real fs0(256,108)                       !108 = 96 + 3*4
   real fs1(0:41,30)
-  real savg(128)
-  real b(128)
+  real savg(256)
+  real b(256)
   real ccf(-5:540)
-  real psavg(450)         !Average spectrum of the whole file
+  real psavg(64)                          !Average spectrum of whole file
   integer dftolerance
   integer icos(4)
   equivalence (x,c)
@@ -58,8 +58,12 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      call pctile(x,x2,jsym,30,b(i))
   enddo
   b(1:10)=b(11)
-  do i=1,nq/2
-     psavg(i)=2*db(savg(2*i)) + 10.0
+  do i=1,64
+     if(mode4.eq.1) then
+        psavg(i)=2*db(savg(4*i)+savg(4*i-1)+savg(4*i-2)+savg(4*i-3)) + 1.0
+     else
+        psavg(i)=2*db(savg(2*i)+savg(2*i-1)) + 7.0
+     endif
   enddo
 
   do j=1,jsym
@@ -69,47 +73,48 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   fs0=0.
   jb=(jsym-4*nblk+1)/4
   jb=4*jb
-  do j=1,jb                                  !Fold s0 modulo 4*nblk into fs0
+  do j=1,jb                                  !Fold s0 into fs0, modulo 4*nblk 
      k=mod(j-1,4*nblk)+1
      fs0(1:nq,k)=fs0(1:nq,k) + s0(1:nq,j)
   enddo
 
   do j=1,12
-     fs0(1:nq,96+j)=fs0(1:nq,j)
+     fs0(i:nq,96+j)=fs0(1:nq,j)
   enddo
 
   i0=2*13
+  if(mode4.eq.1) i0=2*47
   smax=0.
   ipk=1
   jpk=1
-  ia=-400/df
-  ib=400/df
+  ia=i0-400/df
+  ib=i0+400/df
   if(nfreeze.eq.1) then
-     ia=(mousedf-dftolerance)/df
-     ib=(mousedf+dftolerance)/df
+     ia=i0+(mousedf-dftolerance)/df
+     ib=i0+(mousedf+dftolerance)/df
   endif
-  if(i0+ia.lt.1) ia=1-i0
-  if(i0+ib+3.gt.128) ib=128-3-i0
+  if(ia.lt.1) ia=1
+  if(ib.gt.nq-3) ib=nq-3
 
   do j=0,4*nblk-1                            !Find sync pattern, lags 0-95
      do i=ia,ib
         ss=0.
         do n=1,4
            k=j+4*n-3
-           if(k.gt.4*nblk) k=k-4*nblk
-           ss=ss + fs0(i0+i+2*icos(n),k)
+!           if(k.gt.4*nblk) k=k-4*nblk
+           ss=ss + fs0(i+2*icos(n),k)
         enddo
         if(ss.gt.smax) then
            smax=ss
-           ipk=i0+i                          !Frequency offset, DF
+           ipk=i                             !Frequency offset, DF
            jpk=j+1                           !Time offset, DT
         endif
      enddo
   enddo
 
-  ref=fs0(ipk+2,jpk) + fs0(ipk+4,jpk) + fs0(ipk+6,jpk)  +        &
-      fs0(ipk,jpk+4) + fs0(ipk+4,jpk+4) + fs0(ipk+6,jpk+4) +     &
-      fs0(ipk,jpk+8) + fs0(ipk+2,jpk+8) + fs0(ipk+4,jpk+8) +     &
+  ref=fs0(ipk+2,jpk)  + fs0(ipk+4,jpk)    + fs0(ipk+6,jpk)   +     &
+      fs0(ipk,jpk+4)  + fs0(ipk+4,jpk+4)  + fs0(ipk+6,jpk+4) +     &
+      fs0(ipk,jpk+8)  + fs0(ipk+2,jpk+8)  + fs0(ipk+4,jpk+8) +     &
       fs0(ipk,jpk+12) + fs0(ipk+2,jpk+12) + fs0(ipk+6,jpk+12)
   ref=ref/3.0
 
@@ -118,7 +123,7 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      ss=0.
      do n=1,4
         k=j+4*n-3
-        if(k.gt.4*nblk) k=k-4*nblk
+!        if(k.gt.4*nblk) k=k-4*nblk
         ss=ss + fs0(ipk+2*icos(n),k)
      enddo
      kk=kk+1
@@ -128,8 +133,9 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   tping=jpk*kstep/11025.0
   xsync=smax/ref
   nsig=nint(db(smax/ref - 1.0) -15.0)
+  if(mode4.eq.1) nsig=nsig-5
   if(nsig.lt.-20) nsig=-20
-  ndf0=nint((ipk-i0) * 11025.0/nfft)
+  ndf0=nint(df*(ipk-i0))
   if(nsig.lt.MinSigdB) then
      msglen=0
      worst=1.
@@ -137,10 +143,6 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      go to 800
   endif
 
-  if(ipk.gt.100 .or. jpk.gt.96) then
-     print*,'ipk:',ipk,'   jpk:',jpk
-     go to 900
-  endif
   smax=0.
   ja=jpk+16
   if(ja.gt.4*nblk) ja=ja-4*nblk

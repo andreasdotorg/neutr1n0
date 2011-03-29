@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#--------------------------------------------------------------------- WSJT
+#-------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -26,7 +26,7 @@ import thread
 import webbrowser
 
 root = Tk()
-Version="9.02 r" + "$Rev$"[6:-1]
+Version="9.1 r" + "$Rev$"[6:-1]
 print "******************************************************************"
 print "WSJT Version " + Version + ", by K1JT"
 print "Revision date: " + \
@@ -635,7 +635,7 @@ def ModeJT65():
     bexclude.pack(side=LEFT,expand=1,fill=X)
     btxstop.pack(side=LEFT,expand=1,fill=X)
 
-    cbfreeze.grid(column=0,row=2,padx=2,sticky='W')
+    cbfreeze.grid(column=1,row=2,padx=2,sticky='W')
     cbafc.grid(column=1,row=1,padx=2,sticky='W')
     if ltxdf: toggletxdf()
     btxdf.grid_forget()
@@ -686,17 +686,17 @@ def ModeJTMS(event=NONE):
 #------------------------------------------------------ ModeISCAT_A
 def ModeISCAT_A(event=NONE):
     ModeISCAT_B()
-    mode.set("ISCAT_A")
+    mode.set("ISCAT-A")
     Audio.gcom2.mode4=1
     
 #------------------------------------------------------ ModeISCAT_B
 def ModeISCAT_B(event=NONE):
     global isync,isync_iscat
-    if g.mode != "ISCAT_B":
+    if g.mode != "ISCAT-B":
         if lauto: toggleauto()
         cleartext()
         ModeFSK441()
-        mode.set("ISCAT_B")
+        mode.set("ISCAT-B")
         lab2.configure(text='FileID      Avg dB        DF')
         isync=isync_iscat
         lsync.configure(text=slabel+str(isync))
@@ -2093,8 +2093,8 @@ else:
 # state=modemenu.entrycget(0,"state")
 
 modemenu.add_radiobutton(label = 'FSK441', variable=mode,command = ModeFSK441, state=NORMAL)
-modemenu.add_radiobutton(label = 'ISCAT_A', variable=mode, command = ModeISCAT_A)
-modemenu.add_radiobutton(label = 'ISCAT_B', variable=mode, command = ModeISCAT_B)
+modemenu.add_radiobutton(label = 'ISCAT-A', variable=mode, command = ModeISCAT_A)
+modemenu.add_radiobutton(label = 'ISCAT-B', variable=mode, command = ModeISCAT_B)
 modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A)
 modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B)
 modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C)
@@ -2608,9 +2608,9 @@ try:
                 ModeJT65C()
             elif value=='CW':
                 ModeCW()
-            elif value=='ISCAT_A':
+            elif value=='ISCAT-A':
                 ModeISCAT_A()
-            elif value=='ISCAT_B':
+            elif value=='ISCAT-B':
                 ModeISCAT_B()
             elif value=='Diana':
                 ModeDiana()
@@ -2763,7 +2763,7 @@ if nmonitor.get():
 else:
     stopmon()
 if g.Win32: root.iconbitmap("wsjt.ico")
-root.title('  WSJT 9.02     by K1JT')
+root.title('  WSJT 9.1     by K1JT')
 from WsjtMod import astro
 from WsjtMod import specjt
 
