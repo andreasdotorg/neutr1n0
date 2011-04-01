@@ -50,17 +50,21 @@ OBJS1 = JT65code.o nchar.o grid2deg.o packmsg.o packtext.o \
 	igray.o init_rs_int.o encode_rs_int.o decode_rs_int.o \
 	wrapkarn.o cutil.o
 
-OBJS4	= t74.o diana.o analytic.o four2a.o db.o pctile.o \
-	sort.o ssort.o thnix_stub.o tweak1.o smooth.o smo.o
+OBJS4	= t75.o iscat.o four2a.o db.o pctile.o match.o \
+	sort.o ssort.o thnix_stub.o geniscat.o tweak2.o
 
-t74:	$(OBJS4)
-	$(FC) -o t74 $(OBJS4) -lfftw3f
+t75:	$(OBJS4)
+	$(FC) -o t75 $(OBJS4) -lfftw3f
 
 
 OBJS5 = t72.o analytic.o four2a.o smooth.o pctile.o db.o \
 	thnix_stub.o sort.o ssort.o gen441.o abc441.o ping441.o \
 	indexx.o ping.o smo.o tweak1.o enc441.o dec441.o \
 	token.o msgtrim.o
+
+t72:	$(OBJS5)
+	$(FC) -o t72 $(OBJS5) -lfftw3f
+
 
 F2PYONLY = ftn_init ftn_quit audio_init spec getfile azdist0 astro0 chkt0
 
@@ -70,7 +74,7 @@ SRCS2F90 = abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	pix2d.f90 pix2d65.f90 rfile.f90 savedata.f90 spec.f90 match.f90 \
 	wsjtgen.f90 fivehz.f90 chkt0.f90 gran.f90 makepings.f90 \
 	packpfx.f90 unpackpfx.f90 genms.f90 decodems.f90 setupms.f90 \
-	thnix.f90 tweak1.f90 smo.f90 analytic.f90 \
+	thnix.f90 tweak1.f90 tweak2.f90 smo.f90 analytic.f90 \
 	geniscat.f90 iscat.f90 four2a.f90 hipass.f90 \
 	msdf.f90 syncms.f90 lenms.f90 jtms.f90 foldms.f90 avecho.f90 \
 	echogen.f90 alignmsg.f90 chk441.f90 gen441.f90 tm2.f90 \
@@ -113,9 +117,6 @@ all:	WsjtMod/Audio.so wsjt9 JT65code
 
 JT65code: $(OBJS1)
 	$(FC) -o JT65code $(OBJS1)
-
-t72:	$(OBJS5)
-	$(FC) -o t72 $(OBJS5) -lfftw3f
 
 build:	WsjtMod/Audio.so
 
@@ -175,7 +176,7 @@ deb: wsjt.py WsjtMod/Audio.so WsjtMod/g.py WsjtMod/__init__.py \
 .PHONY : clean
 clean:
 	${RM} -f *.o *.pyc *.so *~ JT65code wsjt9 WsjtMod/*.pyc WsjtMod/*.pyc \
-		WsjtMod/*.so wsjt9.py wsjt9.spec
+		WsjtMod/*.so wsjt9.py wsjt9.spec t75
 	${RM} -rf build/
 
 distclean: clean

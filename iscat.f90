@@ -1,64 +1,83 @@
-subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
+subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      mousebutton,mode4,ccf,psavg)
 
-! Decode an ISCAT_2 signal
+! Decode an ISCAT signal
 
-  parameter (NMAX=512*1024)
+  parameter (NMAX=34*11025)
   parameter (NSZ=4*1400)
   real dat(NMAX)                          !Raw signal, 30 s at 11025 sps
+  complex cdat(368640)
   character cfile6*6                      !File time
   character c42*42
-  character msg*28,msg1*28
+  character msg*29,msg1*29
   real x(NSZ),x2(NSZ)
-  complex c(0:1024)
-  real s0(256,NSZ)
-  real fs0(256,108)                       !108 = 96 + 3*4
+  complex c(288)
+  real s0(288,NSZ)
+  real fs0(288,108)                        !108 = 96 + 3*4
   real fs1(0:41,30)
-  real savg(256)
-  real b(256)
+  real savg(288)
+  real b(288)
   real ccf(-5:540)
-  real psavg(64)                          !Average spectrum of whole file
+  real psavg(72)                          !Average spectrum of whole file
   integer dftolerance
   integer icos(4)
-  equivalence (x,c)
   data icos/0,1,3,2/
   data nsync/4/,nlen/2/,ndat/18/
   data c42/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /.?@-'/
 
-  nsps=512/mode4
+  nfft1=184320
+  if(npts0.gt.nfft1) nfft1=2*nfft1
+  nfft2=9*nfft1/32
+  fac=2.0/nfft1
+  do i=1,npts0/2
+     cdat(i)=fac*cmplx(dat(2*i-1),dat(2*i))
+  enddo
+  cdat(npts0/2+1:nfft1/2)=0.
+  call four2a(cdat,nfft1,1,-1,0)               !Forward r2c FFT
+  call four2a(cdat,nfft2,1,1,1)                !Inverse c2c FFT
+! Now cdat() is the downsampled analytic signal.  
+! New sample rate = fsample = BW = 11025 * (9/32) = 3100.78125 Hz
+! NB: npts, nsps, etc., are all reduced by 9/32
+
+  npts=npts0*9.0/32.0
+  fsample=3100.78125
+  nsps=144/mode4
   nsym=npts/nsps
   nblk=nsync+nlen+ndat
   nfft=2*nsps                          !FFTs at twice the symbol length
   kstep=nsps/4                         !Step by 1/4 symbol
-  nh=nfft/2
-  nq=nfft/4
-  df=11025.0/nfft
-  fac=1.0/1000.0                      !Somewhat arbitrary
+  df=fsample/nfft
+  fac=1.0/1000.0                       !Somewhat arbitrary
   savg=0.
 
+!  f0=0.
+!  f1=0.
+!  call tweak2(cdat,npts,fsample,f0,f1,cdat)
+
   ia=1-kstep
-  do j=1,4*nsym
+  do j=1,4*nsym                                   !Compute symbol spectra
      ia=ia+kstep
      ib=ia+nsps-1
-     if(ib.gt.npts) go to 10
-     x(1:nsps)=fac*dat(ia:ib)
-     x(nsps+1:nfft)=0.
-     call four2a(x,nfft,1,-1,0)
-     do i=1,nq
+     if(ib.gt.npts) exit
+     c(1:nsps)=fac*cdat(ia:ib)
+     c(nsps+1:nfft)=0.
+     call four2a(c,nfft,1,-1,1)
+     do i=1,nfft
         s0(i,j)=real(c(i))**2 + aimag(c(i))**2
-        savg(i)=savg(i) + s0(i,j)
+        savg(i)=savg(i) + s0(i,j)                 !Also avg specrtum
      enddo
   enddo
 
-10 jsym=j-1
-
+  jsym=j-1
+  jh=jsym/2
   savg=savg/jsym
-  do i=1,nq
+  do i=1,nfft
      x(1:jsym)=s0(i,1:jsym)
-     call pctile(x,x2,jsym,30,b(i))
+     call pctile(x,x2,jsym,30,b(i))               !Baseline level for each freq bin
   enddo
   b(1:10)=b(11)
-  do i=1,64
+
+  do i=1,71                                       !Compute spectrum in dB, for plot
      if(mode4.eq.1) then
         psavg(i)=2*db(savg(4*i)+savg(4*i-1)+savg(4*i-2)+savg(4*i-3)) + 1.0
      else
@@ -66,8 +85,9 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      endif
   enddo
 
-  do j=1,jsym
-     s0(1:nq,j)=s0(1:nq,j)/b(1:nq)
+!### Not sure about this ? ###
+  do j=1,jsym                                    !Normalize the symbol spectra
+     s0(1:nfft,j)=s0(1:nfft,j)/b(1:nfft)
   enddo
 
   fs0=0.
@@ -75,33 +95,34 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   jb=4*jb
   do j=1,jb                                  !Fold s0 into fs0, modulo 4*nblk 
      k=mod(j-1,4*nblk)+1
-     fs0(1:nq,k)=fs0(1:nq,k) + s0(1:nq,j)
+     do i=1,nfft
+        fs0(i,k)=fs0(i,k) + s0(i,j)
+     enddo
   enddo
 
   do j=1,12
-     fs0(i:nq,96+j)=fs0(1:nq,j)
+     fs0(1:nfft,96+j)=fs0(1:nfft,j)
   enddo
 
-  i0=2*13
-  if(mode4.eq.1) i0=2*47
-  smax=0.
-  ipk=1
-  jpk=1
-  ia=i0-400/df
-  ib=i0+400/df
+  i0=27
+  if(mode4.eq.1) i0=95                      !i0 is bin of nominal lowest tone freq
+  ia=i0-600/df                              !Set search range in frequency...
+  ib=i0+600/df
   if(nfreeze.eq.1) then
      ia=i0+(mousedf-dftolerance)/df
      ib=i0+(mousedf+dftolerance)/df
   endif
   if(ia.lt.1) ia=1
-  if(ib.gt.nq-3) ib=nq-3
+  if(ib.gt.nfft-3) ib=nfft-3
 
-  do j=0,4*nblk-1                            !Find sync pattern, lags 0-95
-     do i=ia,ib
+  smax=0.
+  ipk=1
+  jpk=1
+  do j=0,4*nblk-1                            !Find the sync pattern: lags 0-95
+     do i=ia,ib                              !Search over specified frequency range
         ss=0.
-        do n=1,4
+        do n=1,4                             !Sum over 4 sync tones
            k=j+4*n-3
-!           if(k.gt.4*nblk) k=k-4*nblk
            ss=ss + fs0(i+2*icos(n),k)
         enddo
         if(ss.gt.smax) then
@@ -123,14 +144,12 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      ss=0.
      do n=1,4
         k=j+4*n-3
-!        if(k.gt.4*nblk) k=k-4*nblk
         ss=ss + fs0(ipk+2*icos(n),k)
      enddo
      kk=kk+1
      ccf(kk)=ss/ref
   enddo
 
-  tping=jpk*kstep/11025.0
   xsync=smax/ref
   nsig=nint(db(smax/ref - 1.0) -15.0)
   if(mode4.eq.1) nsig=nsig-5
@@ -157,7 +176,7 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   enddo
 
   msglen=(ipk2-ipk)/2
-  if(msglen.lt.1 .or. msglen.gt.28) msglen=2         !### tests only ###
+  if(msglen.lt.2 .or. msglen.gt.29) msglen=3
   fs1=0.
   jb=(jsym-4*nblk+1)/4
   jb=4*jb
@@ -212,15 +231,22 @@ subroutine iscat(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   navg=10.0*(avg-1.0)
   if(nworst.gt.10) nworst=10
   if(navg.gt.10) navg=10
-  xsync=xsync-0.3
   isync=xsync
   if(navg.le.0) msg=' '
 
   call cs_lock('iscat')
-  write(11,1020) cfile6,nsig,ndf0,msg        !,msglen,nworst,navg
-  write(21,1020) cfile6,nsig,ndf0,msg        !,msglen,nworst,navg
+  write(11,1020) cfile6,nsig,ndf0,msg,msglen,nworst,navg
+  write(21,1020) cfile6,nsig,ndf0,msg,msglen,nworst,navg
 1020 format(a6,i5,i5,6x,a28,i4,2i3)
+  call match('VK7MO',msg(1:msglen-1),nstart1,nmatch1)
+  call match('VK3HZ',msg(1:msglen-1),nstart2,nmatch2)
+
+  write(*,1021) cfile6,nsig,ndf0,msg,xsync,msglen,nworst,navg,       &
+       nmatch1,nmatch2
+1021 format(a6,i5,i5,2x,a28,f5.1,5i3)
   call cs_unlock
 
-900 return
+!  enddo
+
+  return
 end subroutine iscat
