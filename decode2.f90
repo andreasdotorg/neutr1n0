@@ -20,7 +20,12 @@ subroutine decode2
 
   lenpick=22050                !Length of FSK441 mouse-picked region
   istart=1.0 + 11025*0.001*npingtime - lenpick/2
+  if(npingtime2.ge.npingtime+1000) then
+     lenpick=11025*0.001*(npingtime2-npingtime)
+     istart=1.0 + 11025*0.001*npingtime
+  endif
   if(istart.lt.2) istart=2
+
   if(ndecoding.eq.1) then
 ! Normal decoding at end of Rx period (or at t=53s in JT65)
      istart=1

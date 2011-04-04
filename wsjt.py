@@ -634,7 +634,6 @@ def ModeJT65():
     binclude.pack(side=LEFT,expand=1,fill=X)
     bexclude.pack(side=LEFT,expand=1,fill=X)
     btxstop.pack(side=LEFT,expand=1,fill=X)
-
     cbfreeze.grid(column=1,row=2,padx=2,sticky='W')
     cbafc.grid(column=1,row=1,padx=2,sticky='W')
     if ltxdf: toggletxdf()
@@ -697,10 +696,11 @@ def ModeISCAT_B(event=NONE):
         cleartext()
         ModeFSK441()
         mode.set("ISCAT-B")
-        lab2.configure(text='FileID      Avg dB        DF')
+        lab2.configure(text='FileID      Avg dB       DF')
         isync=isync_iscat
         lsync.configure(text=slabel+str(isync))
-        cbfreeze.grid(column=1,row=1,padx=2,sticky='W')
+        cbafc.grid(column=1,row=1,padx=2,sticky='W')
+        cbfreeze.grid(column=1,row=2,padx=2,sticky='W')
         itol=3
         ltol.configure(text='Tol    '+str(ntol[itol]))
         inctol()
@@ -1262,10 +1262,11 @@ def mouse_click_g1(event):
                 Audio.gcom2.nagain=1
                 Audio.gcom2.mousebutton=event.num     #Left=1, Right=3
                 Audio.gcom2.npingtime=int(195+60*event.x) #Time (ms) of mouse-picked ping
-                if Audio.gcom2.ndecoding0==4:
-                    Audio.gcom2.ndecoding=4           #Decode from recorded file
-                elif Audio.gcom2.ndecoding0==1:
-                    Audio.gcom2.ndecoding=5        #Decode data in main screen
+                if mode.get()[:5]!='ISCAT' or event.num==3:
+                    if Audio.gcom2.ndecoding0==4:
+                        Audio.gcom2.ndecoding=4           #Decode from recorded file
+                    elif Audio.gcom2.ndecoding0==1:
+                        Audio.gcom2.ndecoding=5        #Decode data in main screen
     nopen=0
 
 #------------------------------------------------------ double-click_g1
@@ -1276,8 +1277,14 @@ def double_click_g1(event):
     
 #------------------------------------------------------ mouse_up_g1
 def mouse_up_g1(event):
-#    print event.x
-    pass
+    if mode.get()[:5]=='ISCAT' and Audio.gcom2.ndecoding==0:
+        Audio.gcom2.nagain=1
+        Audio.gcom2.mousebutton=event.num          #Left=1, Right=3
+        Audio.gcom2.npingtime2=int(195+60*event.x) #Time (ms) of mouse-picked ping
+        if Audio.gcom2.ndecoding0==4:
+            Audio.gcom2.ndecoding=4           #Decode from recorded file
+        elif Audio.gcom2.ndecoding0==1:
+            Audio.gcom2.ndecoding=5           #Decode data in main screen
 
 #------------------------------------------------------ right_arrow
 def right_arrow(event=NONE):
@@ -1628,7 +1635,7 @@ def plot_small():
 #------------------------------------------------------ update
 def update():
     global root_geom,isec0,naz,nel,ndmiles,ndkm,nhotaz,nhotabetter,nopen, \
-           im,pim,cmap0,isync,isync441,isync_iscat,isync65,       \
+           im,pim,cmap0,isync,isync441,isync_iscat,isync65,               \
            isync_save,idsec,first,itol,txsnrdb,tx6alt,nmeas
     
     utc=time.gmtime(time.time()+0.1*idsec)
@@ -1907,6 +1914,18 @@ def update():
             graph1.create_image(0,0,anchor='nw',image=pim)
             t=g.filetime(g.ftnstr(Audio.gcom2.decodedfile))
             graph1.create_text(100,80,anchor=W,text=t,fill="white")
+            if mode.get()[:5]=='ISCAT' and Audio.gcom2.npingtime>0:
+                if Audio.gcom2.npingtime2-Audio.gcom2.npingtime >= 1000:
+                    x1=(Audio.gcom2.npingtime - 195)/60.0
+                    x2=(Audio.gcom2.npingtime2 - 195)/60.0
+                else:
+                    x1=(Audio.gcom2.npingtime  - 195 - 1000)/60.0
+                    x2=(Audio.gcom2.npingtime2 - 195 + 1000)/60.0                    
+                graph1.create_line([x1,90,x2,90],fill="yellow")
+                graph1.create_line([x1,85,x1,95],fill="yellow")
+                graph1.create_line([x2,85,x2,95],fill="yellow")
+                Audio.gcom2.npingtime=0
+                Audio.gcom2.npingtime2=0
             plot_small()
         if loopall: opennext()
         nopen=0
@@ -2134,8 +2153,8 @@ if (sys.platform != 'darwin'):
     decodebutton['menu'] = decodemenu
 else:    
     decodemenu = Menu(mbar, tearoff=use_tearoff)
-##decodemenu.FSK441=Menu(decodemenu,tearoff=0)
-##decodemenu.FSK441.add_checkbutton(label='No shorthands',variable=nosh441)
+##decodemenu.ISCAT=Menu(decodemenu,tearoff=0)
+##decodemenu.ISCAT.add_checkbutton(label='Exhaustive',variable=iscat_ex)
 decodemenu.JT65=Menu(decodemenu,tearoff=0)
 decodemenu.JT65.add_checkbutton(label='Only EME calls in Deep Search',variable=neme)
 decodemenu.JT65.add_checkbutton(label='No Shorthand decodes',variable=noshjt65all)
@@ -2151,7 +2170,7 @@ decodemenu.JT65.add_radiobutton(label = 'Aggressive Deep Search',
 decodemenu.JT65.add_radiobutton(label ='Include Average in Aggressive Deep Search',
                                 variable=ndepth, value=3)
 
-##decodemenu.add_cascade(label = 'FSK441',menu=decodemenu.FSK441)
+##decodemenu.add_cascade(label = 'ISCAT',menu=decodemenu.ISCAT)
 decodemenu.add_cascade(label = 'JT65',menu=decodemenu.JT65)
 
 if (sys.platform == 'darwin'):

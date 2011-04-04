@@ -1,5 +1,5 @@
 subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
-     mousebutton,mode4,ccf,psavg)
+     mousebutton,mode4,nafc,psavg)
 
 ! Decode an ISCAT signal
 
@@ -7,9 +7,11 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   parameter (NSZ=4*1400)
   real dat(NMAX)                          !Raw signal, 30 s at 11025 sps
   complex cdat(368640)
+  complex cdat0(368640)
   character cfile6*6                      !File time
   character c42*42
   character msg*29,msg1*29
+  character csync*1
   real x(NSZ),x2(NSZ)
   complex c(288)
   real s0(288,NSZ)
@@ -17,7 +19,7 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   real fs1(0:41,30)
   real savg(288)
   real b(288)
-  real ccf(-5:540)
+  real ccf(1:96)
   real psavg(72)                          !Average spectrum of whole file
   integer dftolerance
   integer icos(4)
@@ -49,10 +51,12 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   df=fsample/nfft
   fac=1.0/1000.0                       !Somewhat arbitrary
   savg=0.
+  cdat0(:npts)=cdat(:npts)
 
-!  f0=0.
-!  f1=0.
-!  call tweak2(cdat,npts,fsample,f0,f1,cdat)
+!  do idf1=-3,3
+!     f0=0.
+!     f1=5.0*idf1
+!     call tweak2(cdat0,npts,fsample,f0,f1,cdat)
 
   ia=1-kstep
   do j=1,4*nsym                                   !Compute symbol spectra
@@ -73,11 +77,11 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   savg=savg/jsym
   do i=1,nfft
      x(1:jsym)=s0(i,1:jsym)
-     call pctile(x,x2,jsym,30,b(i))               !Baseline level for each freq bin
+     call pctile(x,x2,jsym,30,b(i))           !Baseline level for each freq bin
   enddo
   b(1:10)=b(11)
 
-  do i=1,71                                       !Compute spectrum in dB, for plot
+  do i=1,71                                   !Compute spectrum in dB, for plot
      if(mode4.eq.1) then
         psavg(i)=2*db(savg(4*i)+savg(4*i-1)+savg(4*i-2)+savg(4*i-3)) + 1.0
      else
@@ -105,8 +109,8 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   enddo
 
   i0=27
-  if(mode4.eq.1) i0=95                      !i0 is bin of nominal lowest tone freq
-  ia=i0-600/df                              !Set search range in frequency...
+  if(mode4.eq.1) i0=95                  !i0 is bin of nominal lowest tone freq
+  ia=i0-600/df                          !Set search range in frequency...
   ib=i0+600/df
   if(nfreeze.eq.1) then
      ia=i0+(mousedf-dftolerance)/df
@@ -233,17 +237,19 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   if(navg.gt.10) navg=10
   isync=xsync
   if(navg.le.0) msg=' '
+  csync=' '
+  if(isync.ge.1) csync='*'
 
   call cs_lock('iscat')
-  write(11,1020) cfile6,nsig,ndf0,msg,msglen,nworst,navg
-  write(21,1020) cfile6,nsig,ndf0,msg,msglen,nworst,navg
-1020 format(a6,i5,i5,6x,a28,i4,2i3)
+  write(11,1020) cfile6,nsig,ndf0,csync,msg,msglen,nworst,navg
+  write(21,1020) cfile6,nsig,ndf0,csync,msg,msglen,nworst,navg
+1020 format(a6,i5,i5,1x,a1,2x,a28,i4,2i3)
   call match('VK7MO',msg(1:msglen-1),nstart1,nmatch1)
   call match('VK3HZ',msg(1:msglen-1),nstart2,nmatch2)
 
-  write(*,1021) cfile6,nsig,ndf0,msg,xsync,msglen,nworst,navg,       &
+  write(*,1021) cfile6,nsig,ndf0,csync,msg,xsync,msglen,nworst,navg,       &
        nmatch1,nmatch2
-1021 format(a6,i5,i5,2x,a28,f5.1,5i3)
+1021 format(a6,i5,i5,1x,a1,2x,a28,f5.1,5i3)
   call cs_unlock
 
 !  enddo

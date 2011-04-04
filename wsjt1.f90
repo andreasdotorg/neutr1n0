@@ -237,7 +237,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 !     write(74) jz,cfile6,(dat(j),j=1,jz)
      call spec2d(dat,jz,nstep,s2,nchan,nz,psavg,sigma)
      if(jz.ge.11025) call iscat(dat,jz,cfile6,MinSigdB,DFTolerance,     &
-          NFreeze,MouseDF,mousebutton,mode4,ccf,psavg)
+          NFreeze,MouseDF,mousebutton,mode4,nafc,psavg)
      psavg(65:)=0.
      go to 800
   endif

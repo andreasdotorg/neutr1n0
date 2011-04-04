@@ -13,7 +13,6 @@ subroutine pix2d(d2,jz,mousebutton,mousedf,nfreeze,mode,s2,nchan,nz,b)
   tbest=s2(2,1)
   s2(1,1)=s2(3,1)
   s2(2,1)=s2(3,1)
-
   gain=100.
   offset=0.0
 
@@ -29,11 +28,7 @@ subroutine pix2d(d2,jz,mousebutton,mousedf,nfreeze,mode,s2,nchan,nz,b)
         enddo
         k=k+500-nz
      enddo
-     do i=k+1,60000
-        b(i)=0
-     enddo
-
-  else
+  else if(mode.eq.'FSK441') then
 ! This is a mouse-picked decode, so we compute the "zoomed" region.
      k=50*500
      do i=54,7,-1
@@ -47,6 +42,7 @@ subroutine pix2d(d2,jz,mousebutton,mousedf,nfreeze,mode,s2,nchan,nz,b)
         k=k+500-nz
      enddo
   endif
+  b(k+1:)=0
 
   if(mousebutton.eq.0) then
 ! Compute the green curve
