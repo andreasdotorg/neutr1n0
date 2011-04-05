@@ -41,22 +41,17 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
 ! New sample rate = fsample = BW = 11025 * (9/32) = 3100.78125 Hz
 ! NB: npts, nsps, etc., are all reduced by 9/32
 
-  npts=npts0*9.0/32.0
-  fsample=3100.78125
+  npts=npts0*9.0/32.0                  !Downsampled data length
+  fsample=3100.78125                   !New sample rate
   nsps=144/mode4
   nsym=npts/nsps
   nblk=nsync+nlen+ndat
-  nfft=2*nsps                          !FFTs at twice the symbol length
-  kstep=nsps/4                         !Step by 1/4 symbol
+  nfft=2*nsps                          !FFTs at twice the symbol length,
+  kstep=nsps/4                         !  stepped by 1/4 symbol
   df=fsample/nfft
   fac=1.0/1000.0                       !Somewhat arbitrary
   savg=0.
   cdat0(:npts)=cdat(:npts)
-
-!  do idf1=-3,3
-!     f0=0.
-!     f1=5.0*idf1
-!     call tweak2(cdat0,npts,fsample,f0,f1,cdat)
 
   ia=1-kstep
   do j=1,4*nsym                                   !Compute symbol spectra
@@ -68,7 +63,7 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      call four2a(c,nfft,1,-1,1)
      do i=1,nfft
         s0(i,j)=real(c(i))**2 + aimag(c(i))**2
-        savg(i)=savg(i) + s0(i,j)                 !Also avg specrtum
+        savg(i)=savg(i) + s0(i,j)                 !Accumulate avg spectrum
      enddo
   enddo
 
@@ -94,93 +89,138 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      s0(1:nfft,j)=s0(1:nfft,j)/b(1:nfft)
   enddo
 
-  fs0=0.
+!### Start of iscat_sync()
+  idfmax=0
+  idfstep=1
   jb=(jsym-4*nblk+1)/4
   jb=4*jb
-  do j=1,jb                                  !Fold s0 into fs0, modulo 4*nblk 
-     k=mod(j-1,4*nblk)+1
-     do i=1,nfft
-        fs0(i,k)=fs0(i,k) + s0(i,j)
-     enddo
-  enddo
-
-  do j=1,12
-     fs0(1:nfft,96+j)=fs0(1:nfft,j)
-  enddo
-
-  i0=27
-  if(mode4.eq.1) i0=95                  !i0 is bin of nominal lowest tone freq
-  ia=i0-600/df                          !Set search range in frequency...
-  ib=i0+600/df
-  if(nfreeze.eq.1) then
-     ia=i0+(mousedf-dftolerance)/df
-     ib=i0+(mousedf+dftolerance)/df
+  if(nafc.ne.0) then
+     idfmax=20
+     iimax=20*(jb/2)/2584.0
+     if(iimax.eq.0) then
+        idfmax=0
+     else
+        idfstep=nint(20.0/iimax)
+        idfmax=nint(20.0/idfstep)
+        idfmax=idfstep*idfmax
+     endif
   endif
-  if(ia.lt.1) ia=1
-  if(ib.gt.nfft-3) ib=nfft-3
-
-  smax=0.
-  ipk=1
-  jpk=1
-  do j=0,4*nblk-1                            !Find the sync pattern: lags 0-95
-     do i=ia,ib                              !Search over specified frequency range
-        ss=0.
-        do n=1,4                             !Sum over 4 sync tones
-           k=j+4*n-3
-           ss=ss + fs0(i+2*icos(n),k)
+  xsyncbest=0.
+  do idf=-idfmax,idfmax,idfstep
+     fs0=0.
+     do j=1,jb                             !Fold s0 into fs0, modulo 4*nblk 
+        k=mod(j-1,4*nblk)+1
+        ii=nint(idf*float(j-jb/2)/2584.0)
+        ia=max(1-ii,1)
+        ib=min(nfft-ii,nfft)
+        do i=ia,ib
+           fs0(i,k)=fs0(i,k) + s0(i+ii,j)
         enddo
+     enddo
+
+     do j=1,12
+        fs0(1:nfft,96+j)=fs0(1:nfft,j)
+     enddo
+
+     i0=27
+     if(mode4.eq.1) i0=95                  !bin of nominal lowest tone
+     ia=i0-600/df                          !Set search range in frequency...
+     ib=i0+600/df
+     if(nfreeze.eq.1) then
+        ia=i0+(mousedf-dftolerance)/df
+        ib=i0+(mousedf+dftolerance)/df
+     endif
+     if(ia.lt.1) ia=1
+     if(ib.gt.nfft-3) ib=nfft-3
+
+     smax=0.
+     ipk=1
+     jpk=1
+     do j=0,4*nblk-1                            !Find sync pattern: lags 0-95
+        do i=ia,ib                              !Search specified freq range
+           ss=0.
+           do n=1,4                             !Sum over 4 sync tones
+              k=j+4*n-3
+              ss=ss + fs0(i+2*icos(n),k)
+           enddo
+           if(ss.gt.smax) then
+              smax=ss
+              ipk=i                             !Frequency offset, DF
+              jpk=j+1                           !Time offset, DT
+           endif
+        enddo
+     enddo
+
+     ref=fs0(ipk+2,jpk)  + fs0(ipk+4,jpk)    + fs0(ipk+6,jpk)   +     &
+          fs0(ipk,jpk+4)  + fs0(ipk+4,jpk+4)  + fs0(ipk+6,jpk+4) +     &
+          fs0(ipk,jpk+8)  + fs0(ipk+2,jpk+8)  + fs0(ipk+4,jpk+8) +     &
+          fs0(ipk,jpk+12) + fs0(ipk+2,jpk+12) + fs0(ipk+6,jpk+12)
+     ref=ref/3.0
+
+     kk=0
+     do j=0,4*nblk-1
+        ss=0.
+        do n=1,4
+           k=j+4*n-3
+           ss=ss + fs0(ipk+2*icos(n),k)
+        enddo
+        kk=kk+1
+        ccf(kk)=ss/ref
+     enddo
+
+     xsync=smax/ref
+     nsig=nint(db(smax/ref - 1.0) -15.0)
+     if(mode4.eq.1) nsig=nsig-5
+     if(nsig.lt.-20) nsig=-20
+     ndf0=nint(df*(ipk-i0))
+     if(nsig.lt.MinSigdB) then
+        msglen=0
+        worst=1.
+        avg=1.
+        xsync=0.
+        ndf0=0
+        go to 800
+     endif
+
+     smax=0.
+     ja=jpk+16
+     if(ja.gt.4*nblk) ja=ja-4*nblk
+     jj=jpk+20
+     if(jj.gt.4*nblk) jj=jj-4*nblk
+     do i=ipk,ipk+60,2                         !Find User's message length
+        ss=fs0(i,ja) + fs0(i+10,jj)
         if(ss.gt.smax) then
            smax=ss
-           ipk=i                             !Frequency offset, DF
-           jpk=j+1                           !Time offset, DT
+           ipk2=i
         endif
      enddo
-  enddo
+     
+     msglen=(ipk2-ipk)/2
+     if(msglen.lt.2 .or. msglen.gt.29) msglen=3
 
-  ref=fs0(ipk+2,jpk)  + fs0(ipk+4,jpk)    + fs0(ipk+6,jpk)   +     &
-      fs0(ipk,jpk+4)  + fs0(ipk+4,jpk+4)  + fs0(ipk+6,jpk+4) +     &
-      fs0(ipk,jpk+8)  + fs0(ipk+2,jpk+8)  + fs0(ipk+4,jpk+8) +     &
-      fs0(ipk,jpk+12) + fs0(ipk+2,jpk+12) + fs0(ipk+6,jpk+12)
-  ref=ref/3.0
-
-  kk=0
-  do j=0,4*nblk-1
-     ss=0.
-     do n=1,4
-        k=j+4*n-3
-        ss=ss + fs0(ipk+2*icos(n),k)
-     enddo
-     kk=kk+1
-     ccf(kk)=ss/ref
-  enddo
-
-  xsync=smax/ref
-  nsig=nint(db(smax/ref - 1.0) -15.0)
-  if(mode4.eq.1) nsig=nsig-5
-  if(nsig.lt.-20) nsig=-20
-  ndf0=nint(df*(ipk-i0))
-  if(nsig.lt.MinSigdB) then
-     msglen=0
-     worst=1.
-     avg=1.
-     go to 800
-  endif
-
-  smax=0.
-  ja=jpk+16
-  if(ja.gt.4*nblk) ja=ja-4*nblk
-  jb=jpk+20
-  if(jb.gt.4*nblk) jb=jb-4*nblk
-  do i=ipk,ipk+60,2                         !Find User's message length
-     ss=fs0(i,ja) + fs0(i+10,jb)
-     if(ss.gt.smax) then
-        smax=ss
-        ipk2=i
+     if(xsync.gt.xsyncbest) then
+        xsyncbest=xsync
+        nsigbest=nsig
+        ndf0best=ndf0
+        msglenbest=msglen
+        ipkbest=ipk
+        jpkbest=jpk
+        idfbest=idf
      endif
+     fdot=idf*df/30.0
+!     write(*,3001) idf,fdot,xsync,nsig,ndf0,msglen
+!3001 format(i5,2f8.1,3i5)
   enddo
+!### End of iscat_sync()
 
-  msglen=(ipk2-ipk)/2
-  if(msglen.lt.2 .or. msglen.gt.29) msglen=3
+  xsync=xsyncbest
+  nsig=nsigbest
+  ndf0=ndf0best
+  msglen=msglenbest
+  ipk=ipkbest
+  jpk=jpkbest
+  idf=idfbest
+
   fs1=0.
   jb=(jsym-4*nblk+1)/4
   jb=4*jb
@@ -191,8 +231,9 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      if(mod(k-1,nblk)+1.gt.6) then
         n=n+1
         m=mod(n-1,msglen)+1
+        ii=nint(idf*float(j-jb/2)/2584.0)
         do i=0,41
-           fs1(i,m)=fs1(i,m) + s0(ipk+2*i,j)
+           fs1(i,m)=fs1(i,m) + s0(ii+ipk+2*i,j)
         enddo
      endif
   enddo
@@ -239,20 +280,16 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   if(navg.le.0) msg=' '
   csync=' '
   if(isync.ge.1) csync='*'
+  nfdot=nint(idf*df/30.0)
 
   call cs_lock('iscat')
-  write(11,1020) cfile6,nsig,ndf0,csync,msg,msglen,nworst,navg
-  write(21,1020) cfile6,nsig,ndf0,csync,msg,msglen,nworst,navg
-1020 format(a6,i5,i5,1x,a1,2x,a28,i4,2i3)
-  call match('VK7MO',msg(1:msglen-1),nstart1,nmatch1)
-  call match('VK3HZ',msg(1:msglen-1),nstart2,nmatch2)
+  write(11,1020) cfile6,isync,nsig,ndf0,nfdot,csync,msg,msglen,nworst,navg
+  write(21,1020) cfile6,isync,nsig,ndf0,nfdot,csync,msg,msglen,nworst,navg
+1020 format(a6,2i4,i5,i4,1x,a1,2x,a28,i4,2i3)
 
-  write(*,1021) cfile6,nsig,ndf0,csync,msg,xsync,msglen,nworst,navg,       &
-       nmatch1,nmatch2
-1021 format(a6,i5,i5,1x,a1,2x,a28,f5.1,5i3)
+!  write(*,1021) cfile6,isync,nsig,ndf0,nfdot,csync,msg,xsync,msglen,nworst,navg
+!1021 format(a6,2i4,i5,i4,1x,a1,2x,a28,f5.1,3i3)
   call cs_unlock
-
-!  enddo
 
   return
 end subroutine iscat

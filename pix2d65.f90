@@ -1,6 +1,6 @@
 subroutine pix2d65(d2,jz)
 
-! Compute data for green line in JT65 mode.
+! Compute data for green line in JT65 and JT4 modes.
 
   integer*2 d2(jz)            !Raw input data
   include 'gcom2.f90'

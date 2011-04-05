@@ -696,7 +696,7 @@ def ModeISCAT_B(event=NONE):
         cleartext()
         ModeFSK441()
         mode.set("ISCAT-B")
-        lab2.configure(text='FileID      Avg dB       DF')
+        lab2.configure(text='FileID       Sync     dB     DF       F1')
         isync=isync_iscat
         lsync.configure(text=slabel+str(isync))
         cbafc.grid(column=1,row=1,padx=2,sticky='W')

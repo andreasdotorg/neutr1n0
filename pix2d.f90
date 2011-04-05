@@ -17,6 +17,7 @@ subroutine pix2d(d2,jz,mousebutton,mousedf,nfreeze,mode,s2,nchan,nz,b)
   offset=0.0
 
   if(mousebutton.eq.0) then
+     b=0
      k=0
      do i=54,7,-1
         do j=1,nz
