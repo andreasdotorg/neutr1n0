@@ -105,8 +105,8 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   write(21,1020) cfile6,isync,nsig,ndf0,nfdot,csync,msg,msglen,nworst,navg
 1020 format(a6,2i4,i5,i4,1x,a1,2x,a28,i4,2i3)
 
-  write(*,1021) cfile6,isync,nsig,ndf0,nfdot,csync,msg,xsync,msglen,nworst,navg
-1021 format(a6,2i4,i5,i4,1x,a1,2x,a28,f5.1,3i3)
+!  write(*,1021) cfile6,isync,nsig,ndf0,nfdot,csync,msg,xsync,msglen,nworst,navg
+!1021 format(a6,2i4,i5,i4,1x,a1,2x,a28,f5.1,3i3)
   call cs_unlock
 
   return
