@@ -94,14 +94,15 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   idfstep=1
   jb=(jsym-4*nblk+1)/4
   jb=4*jb
+  idftop=60
   if(nafc.ne.0) then
-     idfmax=20
-     iimax=20*(jb/2)/2584.0
+     idfmax=idftop
+     iimax=idftop*(jb/2)/2584.0
      if(iimax.eq.0) then
         idfmax=0
      else
-        idfstep=nint(20.0/iimax)
-        idfmax=nint(20.0/idfstep)
+        idfstep=nint(float(idftop)/iimax)
+        idfmax=nint(float(idftop)/idfstep)
         idfmax=idfstep*idfmax
      endif
   endif
@@ -233,7 +234,8 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
         m=mod(n-1,msglen)+1
         ii=nint(idf*float(j-jb/2)/2584.0)
         do i=0,41
-           fs1(i,m)=fs1(i,m) + s0(ii+ipk+2*i,j)
+           iii=ii+ipk+2*i
+           if(iii.ge.1 .and. iii.le.288) fs1(i,m)=fs1(i,m) + s0(iii,j)
         enddo
      endif
   enddo
@@ -280,7 +282,7 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   if(navg.le.0) msg=' '
   csync=' '
   if(isync.ge.1) csync='*'
-  nfdot=nint(idf*df/30.0)
+  nfdot=nint(idf*df*mode4/30.0)
 
   call cs_lock('iscat')
   write(11,1020) cfile6,isync,nsig,ndf0,nfdot,csync,msg,msglen,nworst,navg

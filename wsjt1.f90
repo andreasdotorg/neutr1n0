@@ -234,6 +234,8 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   endif
 
   if(mode.eq.9) then                             !ISCAT mode
+      jz=min(jz,30*11025)
+      nz=jz/nstep - 1            !# of spectra to compute
 !     write(74) jz,cfile6,(dat(j),j=1,jz)
      call spec2d(dat,jz,nstep,s2,nchan,nz,psavg,sigma)
      if(jz.ge.11025) call iscat(dat,jz,cfile6,MinSigdB,DFTolerance,     &

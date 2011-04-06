@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#------------------------------------------------------------------- WSJT
+#-------------------------------------------------------------------- WSJT
 # $Date$ $Revision$
 #
 from Tkinter import *
@@ -255,11 +255,10 @@ def dbl_click3_text(event):
         t=text.get('1.0',END)           #Entire contents of text box
         t1=text.get('1.0',CURRENT)      #Contents from start to mouse pointer
         n=t1.rfind("\n")
-        rpt=t1[n+9:n+12]
+        rpt=t1[n+12:n+15]
         if mode.get()=='Diana':
             rpt=t1[n+12:n+16]
         if rpt[0:1] == " ": rpt=rpt[1:]
-        if rpt[:1]=='-' and len(rpt)==2: rpt=rpt[0:1]+'0'+rpt[1:2]
         report.delete(0,END)
         report.insert(0,rpt)
         dbl_click_call(t,t1,rpt,event)
