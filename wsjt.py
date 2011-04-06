@@ -812,7 +812,7 @@ def ModeEcho(event=NONE):
     ModeCW()
     mode.set("Echo")
     if lauto: toggleauto()
-    lab2.configure(text='     N      Level         Sig              DF         Width      Q')
+    lab2.configure(text='     N      Level         Sig              DF         Width     Az           El          Q')
     Audio.gcom1.trperiod=6
     tx1.delete(0,99)
     tx2.delete(0,99)

@@ -147,6 +147,7 @@ subroutine astro0(nyear,month,nday,uth8,nfreq,grid,cauxra,cauxdec,       &
             i5,',',f8.1,',',f8.2,',',f8.1,',',f8.2,',Doppler')
      close(14)
 800  isec0=isec
+     elmoon2=elmoon
      call cs_unlock
   endif
   return

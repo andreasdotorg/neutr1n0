@@ -1,5 +1,5 @@
       subroutine astro(nyear,month,nday,uth,nfreq,Mygrid,
-     +     NStation,mode,MoonDX,AzSun,ElSun,AzMoon,ElMoon0,
+     +     NStation,mode,MoonDX,AzSun,ElSun,AzMoon0,ElMoon0,
      +     ntsky,doppler00,doppler,dbMoon,RAMoon,DecMoon,HA,Dgrd,sd,
      +     poloffset,xnr,auxra,auxdec,azaux,elaux,day,lon,lat,LST)
 
@@ -13,7 +13,7 @@ C  NB: may want to smooth the Tsky map to 10 degrees or so.
       real ldeg
       integer*2 nsky
       common/sky/ nsky(360,180)
-      common/echo/xdop(2),techo,ElMoon,mjd
+      common/echo/xdop(2),techo,AzMoon,ElMoon,mjd
       data rad/57.2957795/
       save
 
@@ -72,7 +72,8 @@ C  Compute spatial polarization offset
       tsysmin=tskymin+tr
       tsys=tsky+tr
       dgrd=-10.0*log10(tsys/tsysmin) + dbMoon
- 900  ElMoon0=Elmoon
+ 900  AzMoon0=Azmoon
+      ElMoon0=Elmoon
       ntsky=nint(tsky)
 
       auxHA = 15.0*(LST-auxra)                       !HA in degrees

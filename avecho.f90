@@ -17,7 +17,7 @@ subroutine avecho(fname,ntime,y1,ibuf0,ntc,necho,nfrit,ndither,      &
   real x(32770)
   complex c(0:16384)
   equivalence (x,c)
-  common/echo/xdop(2),techo,ElMoon,mjd
+  common/echo/xdop(2),techo,AzMoon,ElMoon,mjd
   save s1,s2,dop0
 
   if(ibuf0.lt.1) print*,'IBUF0:',ibuf0
@@ -131,9 +131,9 @@ subroutine avecho(fname,ntime,y1,ibuf0,ntc,necho,nfrit,ndither,      &
 
   call cs_lock('avecho')
   rewind 11
-  write(11,1010) nsum,sigdB,echosig,echodop,width,NQual
-1010 format(i4,f6.1,f7.1,f8.1,f6.1,i4)
-  write(21,1010) nsum,sigdB,echosig,echodop,width,NQual
+  write(11,1010) nsum,sigdB,echosig,echodop,width,azmoon,elmoon,NQual
+1010 format(i4,f6.1,f7.1,f8.1,3f6.1,i4)
+  write(21,1010) nsum,sigdB,echosig,echodop,width,azmoon,elmoon,NQual
   call flush(11)
   call flush(21)
   call cs_unlock
