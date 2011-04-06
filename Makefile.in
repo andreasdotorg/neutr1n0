@@ -51,7 +51,7 @@ OBJS1 = JT65code.o nchar.o grid2deg.o packmsg.o packtext.o \
 	wrapkarn.o cutil.o
 
 OBJS4	= t75.o iscat.o four2a.o db.o pctile.o match.o \
-	sort.o ssort.o thnix_stub.o geniscat.o tweak2.o
+	sort.o ssort.o thnix_stub.o geniscat.o synciscat.o
 
 t75:	$(OBJS4)
 	$(FC) -o t75 $(OBJS4) -lfftw3f
@@ -75,7 +75,7 @@ SRCS2F90 = abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	wsjtgen.f90 fivehz.f90 chkt0.f90 gran.f90 makepings.f90 \
 	packpfx.f90 unpackpfx.f90 genms.f90 decodems.f90 setupms.f90 \
 	thnix.f90 tweak1.f90 tweak2.f90 smo.f90 analytic.f90 \
-	geniscat.f90 iscat.f90 four2a.f90 hipass.f90 \
+	geniscat.f90 iscat.f90 four2a.f90 hipass.f90 synciscat.f90 \
 	msdf.f90 syncms.f90 lenms.f90 jtms.f90 foldms.f90 avecho.f90 \
 	echogen.f90 alignmsg.f90 chk441.f90 gen441.f90 tm2.f90 \
 	gendiana.f90 diana.f90 specdiana.f90 syncdiana.f90 \
