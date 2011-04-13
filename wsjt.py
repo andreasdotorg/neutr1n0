@@ -695,7 +695,7 @@ def ModeISCAT_B(event=NONE):
         cleartext()
         ModeFSK441()
         mode.set("ISCAT-B")
-        lab2.configure(text='FileID       Sync     dB     DF       F1')
+        lab2.configure(text='FileID       Sync    dB      DT       DF       F1')
         isync=isync_iscat
         lsync.configure(text=slabel+str(isync))
         cbafc.grid(column=1,row=1,padx=2,sticky='W')
@@ -1918,8 +1918,12 @@ def update():
                     x1=(Audio.gcom2.npingtime - 195)/60.0
                     x2=(Audio.gcom2.npingtime2 - 195)/60.0
                 else:
-                    x1=(Audio.gcom2.npingtime  - 195 - 1000)/60.0
-                    x2=(Audio.gcom2.npingtime2 - 195 + 1000)/60.0                    
+                    if Audio.gcom2.mousebutton==3:
+                        x1=2
+                        x2=(Audio.gcom2.npingtime - 195)/60.0
+                    else:
+                        x1=(Audio.gcom2.npingtime  - 195 - 1000)/60.0
+                        x2=(Audio.gcom2.npingtime2 - 195 + 1000)/60.0
                 graph1.create_line([x1,90,x2,90],fill="yellow")
                 graph1.create_line([x1,85,x1,95],fill="yellow")
                 graph1.create_line([x2,85,x2,95],fill="yellow")

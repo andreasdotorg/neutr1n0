@@ -2,7 +2,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
      MinSigdB,DFTolerance,MouseButton,NClearAve,nforce,            &
      Mode,NFreeze,NAFC,NZap,mode65,mode4,idf,ntdecode0,            &
      MyCall,HisCall,HisGrid,neme,ntx2,s2,                          &
-     ps0,npkept,lumsg,basevb,rmspower,nslim2,psavg,ccf,Nseg,       &
+     ps0,npkept,lumsg,nslim2,psavg,ccf,Nseg,                       &
      MouseDF,NAgain,LDecoded,nspecial,ndf,ss1,ss2)
 
   parameter (NP2=120*11025)
@@ -19,7 +19,6 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   real ps0(431)           !Spectrum of best ping
   integer npkept          !Number of pings kept and decoded
   integer lumsg           !Logical unit for decoded.txt
-  real basevb             !Baseline signal level, dB
   integer nslim2          !Minimum strength for single-tone pings, dB
   real psavg(450)         !Average spectrum of the whole file
   integer Nseg            !First or second Tx sequence?
@@ -36,6 +35,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   real yellow(216)
   real yellow0(216)
   real fzap(200)
+  real sumsq(600)
   integer resample
   real*8 samfacin,samratio
   real dat2(NP2)
@@ -127,7 +127,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
      sq=sq + dat(j)**2
   enddo
   avesq=sq/jz
-  basevb=dB(avesq) - 44    !Base power level to send back to GUI
+  basevb=dB(avesq) - 44    !Base power level
   if(avesq.eq.0) go to 900
 
   nz=600
@@ -141,9 +141,9 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
         sum=sum+dat(k)**2
      enddo
      sum=sum/nstep
-     sq=sq + (sum-avesq)**2
+     sumsq(j)=sum
   enddo
-  rmspower=sqrt(sq/nz)
+
 
   pick=.false.
   if(mousebutton.ne.0) pick=.true. !This is a mouse-picked decoding
@@ -164,7 +164,6 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 
 ! If we're in JT65 mode, call the decode65 routines.
   if(mode.eq.2) then
-!          if(rmspower.gt.34000.0) go to 900     !Reject very noisy data
 ! Check for a JT65 shorthand message
      nstest=0
      if(ntx2.ne.1) call short65(dat,jz,NFreeze,MouseDF,              &
@@ -234,11 +233,14 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   endif
 
   if(mode.eq.9) then                             !ISCAT mode
-      jz=min(jz,30*11025)
-      nz=jz/nstep - 1            !# of spectra to compute
-!     write(74) jz,cfile6,(dat(j),j=1,jz)
+     nz=jz/nstep - 1            !# of spectra to compute
+!    write(74) jz,cfile6,(dat(j),j=1,jz)
      call spec2d(dat,jz,nstep,s2,nchan,nz,psavg,sigma)
-     if(jz.ge.11025) call iscat(dat,jz,cfile6,MinSigdB,DFTolerance,     &
+     call dtrim(dat,jz,dat2,jz2)
+     t2=0.
+     if(pick) t2=(istart+0.5*jz2)/11025.0 + 0.5           !### +0.5 is empirical
+     jz2=min(jz2,30*11025)
+     call iscat(dat2,jz2,t2,cfile6,MinSigdB,DFTolerance,     &
           NFreeze,MouseDF,mousebutton,mode4,nafc,psavg)
      psavg(65:)=0.
      go to 800
@@ -306,8 +308,8 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   endif
 
 800 continue
-  call s2shape(s2,nchan,nz,tbest)
-  
+  if(nz.ge.1) call s2shape(s2,nchan,nz,tbest)
+
 900 LDecoded = ((NSyncOK.gt.0) .or. npkept.gt.0)
   endfile 11
   call flush(11)

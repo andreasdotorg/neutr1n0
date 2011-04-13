@@ -1,5 +1,6 @@
 subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
-     MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,ipk,jpk,idf)
+     MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,         &
+     ipk,jpk,idf,df1)
 
 ! Synchronize an ISCAT signal
 
@@ -7,7 +8,7 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   parameter (NSZ=4*1400)
   real dat(NMAX)                          !Raw signal, 30 s at 11025 sps
   complex cdat(368640)
-  complex cdat0(368640)
+!  complex cdat0(368640)
   real x(NSZ),x2(NSZ)
   complex c(288)
   real s0(288,NSZ)
@@ -54,7 +55,7 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   df=fsample/nfft
   fac=1.0/1000.0                       !Somewhat arbitrary
   savg=0.
-  cdat0(:npts)=cdat(:npts)
+!  cdat0(:npts)=cdat(:npts)
 
   ia=1-kstep
   do j=1,4*nsym                                   !Compute symbol spectra
@@ -70,12 +71,11 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
      enddo
   enddo
 
-  jsym=j-1
-  jh=jsym/2
+  jsym=4*nsym
   savg=savg/jsym
   do i=1,nfft
      x(1:jsym)=s0(i,1:jsym)
-     call pctile(x,x2,jsym,30,b(i))           !Baseline level for each freq bin
+     call pctile(x,x2,jsym,50,b(i))           !Baseline level for each freq bin
   enddo
   b(1:10)=b(11)
 
@@ -87,43 +87,43 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
      endif
   enddo
 
-!### Not sure about this ? ###
-  do j=1,jsym                                    !Normalize the symbol spectra
-     s0(1:nfft,j)=s0(1:nfft,j)/b(1:nfft)
+  do i=1,nfft
+     fac=1.0/b(i)
+     do j=1,jsym                             !Normalize the symbol spectra
+        s0(i,j)=fac*s0(i,j)
+     enddo
   enddo
 
-  idfmax=0
-  idfstep=1
-  jb=(jsym-4*nblk+1)/4
-  jb=4*jb
-  idftop=60
-  if(nafc.ne.0) then
-     idfmax=idftop
-     iimax=idftop*(jb/2)/2584.0
-     if(iimax.eq.0) then
-        idfmax=0
-     else
-        idfstep=nint(float(idftop)/iimax)
-        idfmax=nint(float(idftop)/idfstep)
-        idfmax=idfstep*idfmax
-     endif
+!  print*,jsym,0.25*jsym*nsps/fsample
+  nfold=jsym/96
+  jb=96*nfold
+
+  ttot=npts/fsample                         !Length of record (s)
+  df1=df/ttot                               !Step size for f1=fdot
+  idf1=-25.0/df1
+  idf2=5.0/df1
+  if(nafc.eq.0) then
+     idf1=0
+     idf2=0
+  else if(mod(-idf1,2).eq.1) then
+     idf1=idf1-1
   endif
+  dts4=nsps/(4.0*fsample)
+
   xsyncbest=0.
-  do idf=-idfmax,idfmax,idfstep
+  do idf=idf1,idf2,2
      fs0=0.
      do j=1,jb                             !Fold s0 into fs0, modulo 4*nblk 
         k=mod(j-1,4*nblk)+1
-        ii=nint(idf*float(j-jb/2)/2584.0)
+        ii=nint(idf*float(j-jb/2)/float(jb))
         ia=max(1-ii,1)
         ib=min(nfft-ii,nfft)
         do i=ia,ib
            fs0(i,k)=fs0(i,k) + s0(i+ii,j)
         enddo
      enddo
-
-     do j=1,12
-        fs0(1:nfft,96+j)=fs0(1:nfft,j)
-     enddo
+!     ref=sum(fs0(ia:ib,1:96))/(24.0*(ib-ia+1))
+     ref=nfold*4
 
      i0=27
      if(mode4.eq.1) i0=95                  !bin of nominal lowest tone
@@ -154,29 +154,18 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
         enddo
      enddo
 
-     ref=fs0(ipk+2,jpk)  + fs0(ipk+4,jpk)    + fs0(ipk+6,jpk)   +     &
-          fs0(ipk,jpk+4)  + fs0(ipk+4,jpk+4)  + fs0(ipk+6,jpk+4) +     &
-          fs0(ipk,jpk+8)  + fs0(ipk+2,jpk+8)  + fs0(ipk+4,jpk+8) +     &
-          fs0(ipk,jpk+12) + fs0(ipk+2,jpk+12) + fs0(ipk+6,jpk+12)
-     ref=ref/3.0
+     xsync=smax/ref - 1.0
+     if(nfold.lt.26) xsync=xsync * sqrt(nfold/26.0)
+     xsync=xsync-0.5                           !Empirical
+     
+!     write(*,3001) idf,idf*df1,smax,ref,xsync,(ipk-i0)*df
+!     write(41,3001) idf,idf*df1,smax,ref,xsync,(ipk-i0)*df
+!3001 format(i3,f8.1,2f8.0,f8.3,f8.0)
 
-     kk=0
-     do j=0,4*nblk-1
-        ss=0.
-        do n=1,4
-           k=j+4*n-3
-           ss=ss + fs0(ipk+2*icos(n),k)
-        enddo
-        kk=kk+1
-        ccf(kk)=ss/ref
-     enddo
-
-     xsync=smax/ref
      nsig=nint(db(smax/ref - 1.0) -15.0)
      if(mode4.eq.1) nsig=nsig-5
      if(nsig.lt.-20) nsig=-20
      ndf0=nint(df*(ipk-i0))
-     if(nsig.lt.MinSigdB) go to 900
 
      smax=0.
      ja=jpk+16
@@ -203,9 +192,6 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
         jpkbest=jpk
         idfbest=idf
      endif
-     fdot=idf*df/30.0
-!     write(*,3001) idf,fdot,xsync,nsig,ndf0,msglen
-!3001 format(i5,2f8.1,3i5)
   enddo
 
   xsync=xsyncbest
@@ -215,6 +201,10 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   ipk=ipkbest
   jpk=jpkbest
   idf=idfbest
+
+!  print*,'A',idf,df1,idf*df1,nfold
+!  call flush(41)
+!  rewind 41
 
 900 return
 end subroutine synciscat

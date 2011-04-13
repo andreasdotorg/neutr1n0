@@ -1,23 +1,17 @@
-subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
-     mousebutton,mode4,nafc,psavg)
+subroutine iscat(dat,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
+     MouseDF,mousebutton,mode4,nafc,psavg)
 
 ! Decode an ISCAT signal
 
   parameter (NMAX=34*11025)
   parameter (NSZ=4*1400)
   real dat(NMAX)                          !Raw signal, 30 s at 11025 sps
-!  complex cdat(368640)
-!  complex cdat0(368640)
   character cfile6*6                      !File time
   character c42*42
   character msg*29,msg1*29
   character csync*1
-!  real x(NSZ),x2(NSZ)
-!  complex c(288)
   real s0(288,NSZ)
   real fs1(0:41,30)
-!  real savg(288)
-!  real ccf(1:96)
   real psavg(72)                          !Average spectrum of whole file
   integer dftolerance
   integer icos(4)
@@ -25,10 +19,12 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   data nsync/4/,nlen/2/,ndat/18/
   data c42/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /.?@-'/
 
-  call synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,MouseDF, &
-       mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,ipk,jpk,idf)
+! Compute symbol spectra and establish sync:
+  call synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,    &
+       MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,    &
+       ipk,jpk,idf,df1)
 
-  if(nsig.lt.MinSigdB) then
+  if(nsig.lt.MinSigdB .or. xsync.le.1.0) then
      msglen=0
      worst=1.
      avg=1.
@@ -49,7 +45,8 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
      if(mod(k-1,nblk)+1.gt.6) then
         n=n+1
         m=mod(n-1,msglen)+1
-        ii=nint(idf*float(j-jb/2)/2584.0)
+!        ii=nint(idf*float(j-jb/2)/2584.0)
+        ii=nint(idf*float(j-jb/2)/float(jb))
         do i=0,41
            iii=ii+ipk+2*i
            if(iii.ge.1 .and. iii.le.288) fs1(i,m)=fs1(i,m) + s0(iii,j)
@@ -98,15 +95,12 @@ subroutine iscat(dat,npts0,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,    &
   if(navg.le.0) msg=' '
   csync=' '
   if(isync.ge.1) csync='*'
-  nfdot=nint(idf*df*mode4/30.0)
+  nfdot=nint(idf*df1)
 
   call cs_lock('iscat')
-  write(11,1020) cfile6,isync,nsig,ndf0,nfdot,csync,msg,msglen,nworst,navg
-  write(21,1020) cfile6,isync,nsig,ndf0,nfdot,csync,msg,msglen,nworst,navg
-1020 format(a6,2i4,i5,i4,1x,a1,2x,a28,i4,2i3)
-
-!  write(*,1021) cfile6,isync,nsig,ndf0,nfdot,csync,msg,xsync,msglen,nworst,navg
-!1021 format(a6,2i4,i5,i4,1x,a1,2x,a28,f5.1,3i3)
+  write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,nworst,navg
+  write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,nworst,navg
+1020 format(a6,2i4,f5.1,i5,i4,1x,a1,2x,a28,i4,2i3)
   call cs_unlock
 
   return
