@@ -95,6 +95,8 @@ nfreeze=IntVar()
 nhotaz=0
 nhotabetter=0
 nmeas=0
+nlowbeacon=IntVar()
+nlowbeacon.set(0)
 nmonitor=IntVar()
 nopen=0
 nshrx=IntVar()
@@ -2016,7 +2018,8 @@ def update():
         options.cb1.configure(state=NORMAL)
         options.cb2.configure(state=NORMAL)
 
-    if altmsg: tx6alt=tx6.get()    
+    if altmsg: tx6alt=tx6.get()
+    Audio.gcom2.nlowbeacon=nlowbeacon.get()
 # Queue up the next update
     ldate.after(100,update)
     
@@ -2079,6 +2082,7 @@ setupmenu.add_checkbutton(label = 'Double-click on callsign sets TxFirst',
 setupmenu.add_checkbutton(label = 'Gen Msgs sets Tx1',variable=k2txb)
 setupmenu.add_separator()
 setupmenu.add_checkbutton(label = 'Monitor ON at startup',variable=nmonitor)
+setupmenu.add_checkbutton(label = 'Low-Duty Beacon Mode',variable=nlowbeacon)
 setupmenu.add_separator()
 setupmenu.add_checkbutton(label = 'Enable diagnostics',variable=ndebug)
 if (sys.platform == 'darwin'):
@@ -2742,6 +2746,7 @@ try:
         elif key == 'NEME': neme.set(value)
         elif key == 'NDepth': ndepth.set(value)
         elif key == 'Debug': ndebug.set(value)
+        elif key == 'LowBeacon': nlowbeacon.set(value)
         elif key == 'Monitor': nmonitor.set(value)
         elif key == 'HisCall':
             Audio.gcom2.hiscall=(value+' '*12)[:12]
@@ -2857,6 +2862,7 @@ f.write("QDecode " + str(qdecode.get()) + "\n")
 f.write("NEME " + str(neme.get()) + "\n")
 f.write("NDepth " + str(ndepth.get()) + "\n")
 f.write("Debug " + str(ndebug.get()) + "\n")
+f.write("LowBeacon " + str(nlowbeacon.get()) + "\n")
 f.write("Monitor " + str(nmonitor.get()) + "\n")
 #f.write("TRPeriod " + str(Audio.gcom1.trperiod) + "\n")
 mrudir2=mrudir.replace(" ","#")

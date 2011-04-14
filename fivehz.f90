@@ -157,6 +157,9 @@ subroutine fivehz
           (t.ge.tx1+trperiod .and. t.lt.tx2+trperiod)
   endif
 
+  n2a=mod(n2/900,2)
+  if(mode(1:4).eq.'JT65' .and. nlowbeacon.ne.0 .and. n2a.eq.1) txtime=.false.
+
 ! If we're transmitting, freeze the input buffer pointers where they were.
   receiving=1
   if(((txtime .and. (lauto.eq.1)) .or. TxOK.eq.1 .or. transmitting.eq.1) & 
