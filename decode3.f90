@@ -63,7 +63,6 @@ subroutine decode3(d2,jz,istart,filename)
   nforce=0
   ntx2=0
   close(23)
-  if(basevb.le.-98.0) go to 999
 
 ! See whether this file should be saved or erased from disk
   if(nsave.eq.1 .and. ldecoded) filetokilla=''
@@ -81,11 +80,11 @@ subroutine decode3(d2,jz,istart,filename)
      call pix2d65(d2d,jz)
   else if(mode.eq.'FSK441' .or. mode(1:4).eq.'JTMS') then
      nz=s2(1,1)
-     if(nz.gt.0) call pix2d(d2d,jz,mousebutton,MouseDF,NFreeze,mode,   &
+     if(nz.gt.0) call pix2d(d2d,jz,mb0,MouseDF,NFreeze,mode,   &
           s2,64,nz,b)
   else if(mode(1:5).eq.'ISCAT' .and. mb0.le.1) then
      nz=s2(1,1)
-     if(nz.gt.0) call pix2d(d2d,jz,mousebutton,MouseDF,NFreeze,mode,   &
+     if(nz.gt.0) call pix2d(d2d,jz,mb0,MouseDF,NFreeze,mode,   &
           s2,64,nz,b)
   endif
 

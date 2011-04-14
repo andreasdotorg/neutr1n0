@@ -80,6 +80,7 @@ subroutine savedata
   npingtime=0
   fname=fnamea                   !Save filename for output to disk
   nagain=0
+  mousebutton=0
   ndecoding=1                    !Request decoding
   
 ! Generate file name and write data to file
