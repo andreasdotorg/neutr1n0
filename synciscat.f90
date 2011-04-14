@@ -164,7 +164,7 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
 
      nsig=nint(db(smax/ref - 1.0) -15.0)
      if(mode4.eq.1) nsig=nsig-5
-     if(nsig.lt.-20) nsig=-20
+     if(nsig.lt.-20 .or. xsync.lt.1.0) nsig=-20
      ndf0=nint(df*(ipk-i0))
 
      smax=0.
