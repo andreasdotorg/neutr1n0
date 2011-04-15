@@ -1,5 +1,3 @@
-
-!------------------------------------------------------ horizspec
 subroutine horizspec(x,brightness,contrast,a)
 
   real x(4096)
@@ -73,7 +71,8 @@ subroutine horizspec(x,brightness,contrast,a)
         jmid=(ng+ng0)/2
         i=max(1,nx-1)
         do j=ng0+ist,ng,ist
-           a(i,j)=255
+           jj=max(1,j)
+           a(i,jj)=255
            if(j.eq.jmid) i=i+1
         enddo
         ng0=ng
