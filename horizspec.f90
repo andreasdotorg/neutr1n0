@@ -64,15 +64,14 @@ subroutine horizspec(x,brightness,contrast,a)
      ng=min(ng,150)
      if(nx.eq.1) ng0=ng
      if(abs(ng-ng0).le.1) then
-        a(nx,ng)=255
+        if(ng.ge.1 .and. ng.le.300) a(nx,ng)=255
      else
         ist=1
         if(ng.lt.ng0) ist=-1
         jmid=(ng+ng0)/2
         i=max(1,nx-1)
         do j=ng0+ist,ng,ist
-           jj=max(1,j)
-           a(i,jj)=255
+           if(j.ge.1 .and. j.le.300) a(i,j)=255
            if(j.eq.jmid) i=i+1
         enddo
         ng0=ng
