@@ -1,4 +1,4 @@
-subroutine iscat(cdat0,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
+subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
      MouseDF,mousebutton,mode4,nafc,psavg)
 
 ! Decode an ISCAT signal
@@ -17,7 +17,7 @@ subroutine iscat(cdat0,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   real psavg(72)                          !Average spectrum of whole file
   integer dftolerance
   integer icos(4)
-  logical last
+  logical pick,last
   data icos/0,1,3,2/
   data nsync/4/,nlen/2/,ndat/18/
   data c42/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /.?@-'/
@@ -38,7 +38,7 @@ subroutine iscat(cdat0,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
      do ia=1,npts0-npts,nsps*24
         ib=ia+npts-1
         cdat(1:npts)=cdat0(ia:ib)
-        t2=(ia + 0.5*npts)/fsample
+        if(.not.pick) t2=(ia + 0.5*npts)/fsample
 
 ! Compute symbol spectra and establish sync:
         call synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,    &

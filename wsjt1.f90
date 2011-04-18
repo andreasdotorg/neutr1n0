@@ -247,7 +247,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 ! New sample rate = fsample = BW = 11025 * (9/32) = 3100.78125 Hz
 ! NB: npts, nsps, etc., are all reduced by 9/32
 
-     call iscat(cdat,npts,t2,cfile6,MinSigdB,DFTolerance,     &
+     call iscat(cdat,npts,t2,pick,cfile6,MinSigdB,DFTolerance,     &
           NFreeze,MouseDF,mousebutton,mode4,nafc,psavg)
      psavg(65:)=0.
      go to 800

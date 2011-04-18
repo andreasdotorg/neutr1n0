@@ -24,7 +24,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   data nsync/4/,nlen/2/,ndat/18/
 
 ! Silence compiler warnings:
-  nsigbest=-999
+  nsigbest=-20
   ndf0best=0
   msglenbest=0
   ipkbest=0
@@ -56,22 +56,14 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
         savg(i)=savg(i) + s0(i,j)                 !Accumulate avg spectrum
      enddo
   enddo
-!  if(s0(15,182).lt.0.01) print*,'a',s0(15,182),ia,ib,npts,4*nsym
 
   jsym=4*nsym
   savg=savg/jsym
   do i=1,nfft
      x(1:jsym)=s0(i,1:jsym)
      call pctile(x,x2,jsym,50,b(i))           !Baseline level for each freq bin
-!     if(b(i).lt.0.5) then
-!        do j=1,jsym
-!           write(43,3001) j,x(j),x2(j)
-!3001       format(i8,2e12.3)
-!        enddo
-!     endif
   enddo
   b(1:10)=b(11)
-!  print*,'b',s0(15,182),b(15)
 
   do i=1,71                                   !Compute spectrum in dB, for plot
      if(mode4.eq.1) then
