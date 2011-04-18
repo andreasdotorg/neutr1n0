@@ -5,15 +5,15 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
 ! Synchronize an ISCAT signal
 ! cdat() is the downsampled analytic signal.  
 ! Sample rate = fsample = BW = 11025 * (9/32) = 3100.78125 Hz
-! npts, nsps, etc., are all reduced from original by 9/32
+! npts, nsps, etc., are all reduced by 9/32
 
-  parameter (NMAX=34*11025)
+  parameter (NMAX=30*3101)
   parameter (NSZ=4*1400)
-  complex cdat(368640)
+  complex cdat(NMAX)
   real x(NSZ),x2(NSZ)
   complex c(288)
   real s0(288,NSZ)
-  real fs0(288,108)                        !108 = 96 + 3*4
+  real fs0(288,96)                        !108 = 96 + 3*4
   real savg(288)
   real b(288)
   real ccf(1:96)
@@ -23,7 +23,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   data icos/0,1,3,2/
   data nsync/4/,nlen/2/,ndat/18/
 
-! To silence compiler warnings:
+! Silence compiler warnings:
   nsigbest=-999
   ndf0best=0
   msglenbest=0
@@ -34,9 +34,10 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
 
   fsample=3100.78125                   !New sample rate
   nsps=144/mode4
-  nsym=npts/nsps
+  nsym=npts/nsps - 1
   nblk=nsync+nlen+ndat
   nfft=2*nsps                          !FFTs at twice the symbol length,
+
   kstep=nsps/4                         !  stepped by 1/4 symbol
   df=fsample/nfft
   fac=1.0/1000.0                       !Somewhat arbitrary
@@ -55,14 +56,22 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
         savg(i)=savg(i) + s0(i,j)                 !Accumulate avg spectrum
      enddo
   enddo
+!  if(s0(15,182).lt.0.01) print*,'a',s0(15,182),ia,ib,npts,4*nsym
 
   jsym=4*nsym
   savg=savg/jsym
   do i=1,nfft
      x(1:jsym)=s0(i,1:jsym)
      call pctile(x,x2,jsym,50,b(i))           !Baseline level for each freq bin
+!     if(b(i).lt.0.5) then
+!        do j=1,jsym
+!           write(43,3001) j,x(j),x2(j)
+!3001       format(i8,2e12.3)
+!        enddo
+!     endif
   enddo
   b(1:10)=b(11)
+!  print*,'b',s0(15,182),b(15)
 
   do i=1,71                                   !Compute spectrum in dB, for plot
      if(mode4.eq.1) then
@@ -79,7 +88,6 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
      enddo
   enddo
 
-!  print*,jsym,0.25*jsym*nsps/fsample
   nfold=jsym/96
   jb=96*nfold
 
@@ -107,13 +115,16 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
            fs0(i,k)=fs0(i,k) + s0(i+ii,j)
         enddo
      enddo
-!     ref=sum(fs0(ia:ib,1:96))/(24.0*(ib-ia+1))
      ref=nfold*4
 
      i0=27
-     if(mode4.eq.1) i0=95                  !bin of nominal lowest tone
-     ia=i0-600/df                          !Set search range in frequency...
-     ib=i0+600/df
+     ia=i0-400/df                          !Set search range in frequency...
+     ib=i0+400/df
+     if(mode4.eq.1) then
+        i0=95
+        ia=i0-600/df                          !Set search range in frequency...
+        ib=i0+600/df
+     endif
      if(nfreeze.eq.1) then
         ia=i0+(mousedf-dftolerance)/df
         ib=i0+(mousedf+dftolerance)/df
@@ -129,6 +140,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
            ss=0.
            do n=1,4                             !Sum over 4 sync tones
               k=j+4*n-3
+              if(k.gt.96) k=k-96
               ss=ss + fs0(i+2*icos(n),k)
            enddo
            if(ss.gt.smax) then
@@ -142,10 +154,6 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
      xsync=smax/ref - 1.0
      if(nfold.lt.26) xsync=xsync * sqrt(nfold/26.0)
      xsync=xsync-0.5                           !Empirical
-     
-!     write(*,3001) idf,idf*df1,smax,ref,xsync,(ipk-i0)*df
-!     write(41,3001) idf,idf*df1,smax,ref,xsync,(ipk-i0)*df
-!3001 format(i3,f8.1,2f8.0,f8.3,f8.0)
 
      nsig=nint(db(smax/ref - 1.0) -15.0)
      if(mode4.eq.1) nsig=nsig-5
@@ -187,9 +195,5 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   jpk=jpkbest
   idf=idfbest
 
-!  print*,'A',idf,df1,idf*df1,nfold
-!  call flush(41)
-!  rewind 41
-
-900 return
+  return
 end subroutine synciscat
