@@ -22,8 +22,6 @@ subroutine iscat(cdat0,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   data nsync/4/,nlen/2/,ndat/18/
   data c42/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /.?@-'/
 
-!  print*,cfile6,cdat0(100),npts0
-
   fsample=3100.78125                   !New sample rate
   nsps=144/mode4
 
@@ -31,7 +29,7 @@ subroutine iscat(cdat0,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   last=.false.
   do inf=1,5
      nframes=2**inf
-     if(npts.gt.npts0) then
+     if(nframes*24*nsps.gt.npts0) then
         nframes=npts0/(24*nsps)
         last=.true.
      endif
@@ -112,6 +110,7 @@ subroutine iscat(cdat0,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
         endif
 
 100     continue
+
         if(worst.gt.bigworst) then
            bigworst=worst
            bigavg=avg
@@ -122,6 +121,7 @@ subroutine iscat(cdat0,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
            msgbig=msg
            msglenbig=msglen
            bigt2=t2
+           tana=nframes*24*nsps/fsample
            if(bigworst.gt.2.0) go to 110
         endif
      enddo
@@ -149,15 +149,16 @@ subroutine iscat(cdat0,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   if(isync.ge.1) csync='*'
   nfdot=nint(idf*df1)
 
-  tana=nframes*24*nsps/fsample
   if(nfdot.ne.0) ndf0=0
 
   call cs_lock('iscat')
-  write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,nworst,navg
-  write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,nworst,navg
-1020 format(a6,2i4,f5.1,i5,i4,1x,a1,2x,a28,i4,2i3)
-  write(*,1021) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,nworst,navg,tana
-1021 format(a6,2i4,f5.1,2i5,1x,a1,1x,a28,3i3,f5.1)
+  write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
+       nworst,navg,tana
+  write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
+       nworst,navg,tana
+1020 format(a6,2i4,f5.1,i5,i4,1x,a1,2x,a28,i4,2i3,f5.1)
+!  write(*,1021) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,nworst,navg,tana
+!1021 format(a6,2i4,f5.1,2i5,1x,a1,1x,a28,3i3,f5.1)
   call cs_unlock
 
   return
