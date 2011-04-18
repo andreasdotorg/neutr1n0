@@ -1,14 +1,15 @@
-subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
+subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
      MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,         &
      ipk,jpk,idf,df1)
 
 ! Synchronize an ISCAT signal
+! cdat() is the downsampled analytic signal.  
+! Sample rate = fsample = BW = 11025 * (9/32) = 3100.78125 Hz
+! npts, nsps, etc., are all reduced from original by 9/32
 
   parameter (NMAX=34*11025)
   parameter (NSZ=4*1400)
-  real dat(NMAX)                          !Raw signal, 30 s at 11025 sps
   complex cdat(368640)
-!  complex cdat0(368640)
   real x(NSZ),x2(NSZ)
   complex c(288)
   real s0(288,NSZ)
@@ -31,21 +32,6 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   ipk2=0
   idfbest=mousebutton
 
-  nfft1=184320
-  if(npts0.gt.nfft1) nfft1=2*nfft1
-  nfft2=9*nfft1/32
-  fac=2.0/nfft1
-  do i=1,npts0/2
-     cdat(i)=fac*cmplx(dat(2*i-1),dat(2*i))
-  enddo
-  cdat(npts0/2+1:nfft1/2)=0.
-  call four2a(cdat,nfft1,1,-1,0)               !Forward r2c FFT
-  call four2a(cdat,nfft2,1,1,1)                !Inverse c2c FFT
-! Now cdat() is the downsampled analytic signal.  
-! New sample rate = fsample = BW = 11025 * (9/32) = 3100.78125 Hz
-! NB: npts, nsps, etc., are all reduced by 9/32
-
-  npts=npts0*9.0/32.0                  !Downsampled data length
   fsample=3100.78125                   !New sample rate
   nsps=144/mode4
   nsym=npts/nsps
@@ -55,7 +41,6 @@ subroutine synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   df=fsample/nfft
   fac=1.0/1000.0                       !Somewhat arbitrary
   savg=0.
-!  cdat0(:npts)=cdat(:npts)
 
   ia=1-kstep
   do j=1,4*nsym                                   !Compute symbol spectra

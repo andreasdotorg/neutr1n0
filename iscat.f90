@@ -1,11 +1,10 @@
-subroutine iscat(dat,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
+subroutine iscat(cdat,npts,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
      MouseDF,mousebutton,mode4,nafc,psavg)
 
 ! Decode an ISCAT signal
 
   parameter (NMAX=34*11025)
   parameter (NSZ=4*1400)
-  real dat(NMAX)                          !Raw signal, 30 s at 11025 sps
   character cfile6*6                      !File time
   character c42*42
   character msg*29,msg1*29
@@ -20,7 +19,7 @@ subroutine iscat(dat,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   data c42/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /.?@-'/
 
 ! Compute symbol spectra and establish sync:
-  call synciscat(dat,npts0,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,    &
+  call synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,    &
        MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,    &
        ipk,jpk,idf,df1)
 
@@ -45,7 +44,6 @@ subroutine iscat(dat,npts0,t2,cfile6,MinSigdB,DFTolerance,NFreeze,   &
      if(mod(k-1,nblk)+1.gt.6) then
         n=n+1
         m=mod(n-1,msglen)+1
-!        ii=nint(idf*float(j-jb/2)/2584.0)
         ii=nint(idf*float(j-jb/2)/float(jb))
         do i=0,41
            iii=ii+ipk+2*i

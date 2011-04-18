@@ -91,7 +91,7 @@ subroutine four2a(a,nfft,ndim,isign,iform)
      open(24,file='FFT_plans.txt',status='unknown')
      do i=1,nplan
         write(24,1999) i,nn(i),ns(i),nf(i),nl(i)
-1999    format(5i10,2x)
+1999    format(5i12)
      enddo
      call flush(24)
      if(nplan.ge.NPMAX) stop 'Too many FFTW plans requested.'
