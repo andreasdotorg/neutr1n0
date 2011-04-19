@@ -24,7 +24,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   data nsync/4/,nlen/2/,ndat/18/
 
 ! Silence compiler warnings:
-  nsigbest=-999
+  nsigbest=-20
   ndf0best=0
   msglenbest=0
   ipkbest=0
@@ -43,6 +43,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   fac=1.0/1000.0                       !Somewhat arbitrary
   savg=0.
 
+  call timer('ffts    ',0)
   ia=1-kstep
   do j=1,4*nsym                                   !Compute symbol spectra
      ia=ia+kstep
@@ -56,6 +57,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
         savg(i)=savg(i) + s0(i,j)                 !Accumulate avg spectrum
      enddo
   enddo
+  call timer('ffts    ',1)
 
   jsym=4*nsym
   savg=savg/jsym
@@ -92,9 +94,11 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   endif
   dts4=nsps/(4.0*fsample)
 
+  call timer('idf loop',0)
   xsyncbest=0.
   do idf=idf1,idf2
      fs0=0.
+     call timer('idf 1   ',0)
      do j=1,jb                             !Fold s0 into fs0, modulo 4*nblk 
         k=mod(j-1,4*nblk)+1
         ii=nint(idf*float(j-jb/2)/float(jb))
@@ -104,6 +108,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
            fs0(i,k)=fs0(i,k) + s0(i+ii,j)
         enddo
      enddo
+     call timer('idf 1   ',1)
      ref=nfold*4
 
      i0=27
@@ -124,7 +129,9 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
      smax=0.
      ipk=1
      jpk=1
+     call timer('idf 2   ',0)
      do j=0,4*nblk-1                            !Find sync pattern: lags 0-95
+        call timer('idf 2a  ',0)
         do i=ia,ib                              !Search specified freq range
            ss=0.
            do n=1,4                             !Sum over 4 sync tones
@@ -138,7 +145,9 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
               jpk=j+1                           !Time offset, DT
            endif
         enddo
+        call timer('idf 2a  ',1)
      enddo
+     call timer('idf 2   ',1)
 
      xsync=smax/ref - 1.0
      if(nfold.lt.26) xsync=xsync * sqrt(nfold/26.0)
@@ -154,6 +163,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
      if(ja.gt.4*nblk) ja=ja-4*nblk
      jj=jpk+20
      if(jj.gt.4*nblk) jj=jj-4*nblk
+     call timer('idf 3   ',0)
      do i=ipk,ipk+60,2                         !Find User's message length
         ss=fs0(i,ja) + fs0(i+10,jj)
         if(ss.gt.smax) then
@@ -161,6 +171,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
            ipk2=i
         endif
      enddo
+     call timer('idf 3   ',1)
      
      msglen=(ipk2-ipk)/2
      if(msglen.lt.2 .or. msglen.gt.29) msglen=3
@@ -175,6 +186,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
         idfbest=idf
      endif
   enddo
+  call timer('idf loop',1)
 
   xsync=xsyncbest
   nsig=nsigbest

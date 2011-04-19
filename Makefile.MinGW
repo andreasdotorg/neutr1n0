@@ -82,7 +82,7 @@ SRCS2F77 = avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	deg2grid.f dot.f ftsky.f geocentric.f GeoDist.f grid2deg.f \
 	moon2.f MoonDop.f sun.f toxyz.f pfxdump.f \
 	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f \
-	rfile2.f 
+	rfile2.f timer.f
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c start_threads.c \
 	cutil.c fthread.c tmoonsub.c
@@ -94,7 +94,7 @@ WSJT9.EXE: WsjtMod/Audio.pyd wsjt.spec
 WsjtMod/Audio.pyd: $(OBJS2C) $(SRCS2F90) $(SRCS2F77) $(SRCS2C) 
 	c:/python25/python c:/python25/scripts/f2py.py -c -I. \
 	--quiet --fcompiler=g95 \
-	--opt="-cpp -fbounds-check" \
+	--opt="-cpp -fbounds-check -O2" \
 	--compiler=mingw32 \
 	$(OBJS2C) libportaudio.a libfftw3f_win.a libsamplerate.a \
 	libpthreadGC2.a -lwinmm -m Audio \
