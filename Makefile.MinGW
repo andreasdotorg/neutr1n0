@@ -39,10 +39,16 @@ OBJS4	= t75.o iscat.o four2a.o db.o pctile.o match.o \
 t75.exe:$(OBJS4)
 	$(FC) -o t75 $(OBJS4) libfftw3f_win.a
 
-OBJS5	= techo.o analytic.o four2b.o db.o
+OBJS5	= t76.o iscat.o four2a.o db.o pctile.o match.o \
+	sort.o ssort.o thnix_stub.o geniscat.o synciscat.o
 
-techo.exe: $(OBJS5)
-	$(FC) -o techo.exe $(OBJS5) libfftw3f_win.a
+t76.exe:$(OBJS5)
+	$(FC) -o t76 $(OBJS5) libfftw3f_win.a
+
+OBJS6	= techo.o analytic.o four2b.o db.o
+
+techo.exe: $(OBJS6)
+	$(FC) -o techo.exe $(OBJS6) libfftw3f_win.a
 
 F2PYONLY = ftn_init ftn_quit audio_init spec getfile azdist0 astro0 chkt0
 
@@ -55,7 +61,7 @@ SRCS2F90 = wsjt1.f90 a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	thnix.f90 tweak1.f90 smo.f90 analytic.f90 geniscat.f90 synciscat.f90 \
 	iscat.f90 four2a.f90 hipass.f90 msdf.f90 syncms.f90 lenms.f90 \
 	jtms.f90 foldms.f90 avecho.f90 echogen.f90 alignmsg.f90 \
-	chk441.f90 gen441.f90 tm2.f90 gendiana.f90 diana.f90 \
+	chk441.f90 gen441.f90 tm2.f90 gendiana.f90 diana.f90 ana932.f90 \
 	specdiana.f90 syncdiana.f90 decdiana.f90 tweak2.f90 dtrim.f90
 
 
