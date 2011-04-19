@@ -45,6 +45,7 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
         call synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,    &
              MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,    &
              ipk,jpk,idf,df1)
+        nfdot=nint(idf*df1)
 
         if(nsig.lt.MinSigdB .or. xsync.le.1.0) then
            msglen=0
@@ -148,9 +149,8 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   if(navg.le.0) msg=' '
   csync=' '
   if(isync.ge.1) csync='*'
-  nfdot=nint(idf*df1)
 
-  if(nfdot.ne.0) ndf0=0
+!  if(nfdot.ne.0) ndf0=0
 
   call cs_lock('iscat')
   write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &

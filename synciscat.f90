@@ -24,7 +24,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   data nsync/4/,nlen/2/,ndat/18/
 
 ! Silence compiler warnings:
-  nsigbest=-20
+  nsigbest=-999
   ndf0best=0
   msglenbest=0
   ipkbest=0
@@ -96,7 +96,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   dts4=nsps/(4.0*fsample)
 
   xsyncbest=0.
-  do idf=idf1,idf2,2
+  do idf=idf1,idf2
      fs0=0.
      do j=1,jb                             !Fold s0 into fs0, modulo 4*nblk 
         k=mod(j-1,4*nblk)+1
