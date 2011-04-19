@@ -46,7 +46,7 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
 
 ! Compute symbol spectra and establish sync:
         call timer('syncisca',0)
-        call synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,    &
+        call synciscat(cdat,npts,s0,jsym,df,DFTolerance,NFreeze,             &
              MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,    &
              ipk,jpk,idf,df1)
         call timer('syncisca',1)
@@ -100,7 +100,8 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
            do i=0,41
               if(fs1(i,m).gt.smax2 .and. i.ne.ipk3) smax2=fs1(i,m)
            enddo
-           rr=smax/smax2
+           rr=0.
+           if(smax2.gt.0.0) rr=smax/smax2
            sum=sum + rr
            if(rr.lt.worst) worst=rr
            if(ipk3.eq.40) mpk=m

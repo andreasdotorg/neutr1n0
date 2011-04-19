@@ -29,11 +29,8 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   logical LDecoded        !True if anything was decoded
   real s2(64,3100)        !2D spectral array
   real ccf(-5:540)        !X-cor function in JT65 mode (blue line)
-  real red(512)
   real ss1(-224:224)      !Magenta curve (for JT65 shorthands)
   real ss2(-224:224)      !Orange curve (for JT65 shorthands)
-  real yellow(216)
-  real yellow0(216)
   real fzap(200)
   real sumsq(600)
   integer resample

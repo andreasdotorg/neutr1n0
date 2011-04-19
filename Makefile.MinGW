@@ -62,7 +62,8 @@ SRCS2F90 = wsjt1.f90 a2d.f90 abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	iscat.f90 four2a.f90 hipass.f90 msdf.f90 syncms.f90 lenms.f90 \
 	jtms.f90 foldms.f90 avecho.f90 echogen.f90 alignmsg.f90 \
 	chk441.f90 gen441.f90 tm2.f90 gendiana.f90 diana.f90 ana932.f90 \
-	specdiana.f90 syncdiana.f90 decdiana.f90 tweak2.f90 dtrim.f90
+	specdiana.f90 syncdiana.f90 decdiana.f90 tweak2.f90 dtrim.f90 \
+	timer.f90
 
 
 SRCS2F77 = avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
@@ -82,7 +83,7 @@ SRCS2F77 = avesp2.f bzap.f spec441.f spec2d.f mtdecode.f \
 	deg2grid.f dot.f ftsky.f geocentric.f GeoDist.f grid2deg.f \
 	moon2.f MoonDop.f sun.f toxyz.f pfxdump.f \
 	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f \
-	rfile2.f timer.f
+	rfile2.f
 
 SRCS2C   = resample.c ptt.c igray.c wrapkarn.c start_threads.c \
 	cutil.c fthread.c tmoonsub.c

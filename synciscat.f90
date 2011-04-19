@@ -1,4 +1,4 @@
-subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
+subroutine synciscat(cdat,npts,s0,jsym,df,DFTolerance,NFreeze,            &
      MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,         &
      ipk,jpk,idf,df1)
 
@@ -10,13 +10,11 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
   parameter (NMAX=30*3101)
   parameter (NSZ=4*1400)
   complex cdat(NMAX)
-  real x(NSZ),x2(NSZ)
   complex c(288)
   real s0(288,NSZ)
   real fs0(288,96)                        !108 = 96 + 3*4
   real savg(288)
   real b(288)
-  real ccf(1:96)
   real psavg(72)                          !Average spectrum of whole file
   integer dftolerance
   integer icos(4)

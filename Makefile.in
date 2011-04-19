@@ -75,7 +75,7 @@ SRCS2F90 = abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	msdf.f90 syncms.f90 lenms.f90 jtms.f90 foldms.f90 avecho.f90 \
 	echogen.f90 alignmsg.f90 chk441.f90 gen441.f90 tm2.f90 \
 	gendiana.f90 diana.f90 specdiana.f90 syncdiana.f90 \
-	decdiana.f90 ana932.f90
+	decdiana.f90 ana932.f90 timer.f90
 
 OBJS2F90 = ${SRCS2F90:.f90=.o}
 
@@ -97,7 +97,7 @@ SRCS2F77 = wsjt1.f astro.f azdist.f coord.f dcoord.f deg2grid.f \
         short65.f slope.f spec2d65.f sync65.f unpackcall.f \
         unpackgrid.f unpackmsg.f unpacktext.f xcor.f xfft.f xfft2.f wsjt65.f \
 	ftpeak65.f fil651.f fil652.f fil653.f symsync65.f \
-	rfile2.f encode232.f timer.f
+	rfile2.f encode232.f
 
 OBJS2F77 = ${SRCS2F77:.f=.o} deep65.o
 

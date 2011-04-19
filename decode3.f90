@@ -80,12 +80,10 @@ subroutine decode3(d2,jz,istart,filename)
      call pix2d65(d2d,jz)
   else if(mode.eq.'FSK441' .or. mode(1:4).eq.'JTMS') then
      nz=s2(1,1)
-     if(nz.gt.0) call pix2d(d2d,jz,mb0,MouseDF,NFreeze,mode,   &
-          s2,64,nz,b)
+     if(nz.gt.0) call pix2d(d2d,jz,mb0,mode,s2,64,nz,b)
   else if(mode(1:5).eq.'ISCAT' .and. mb0.le.1) then
      nz=s2(1,1)
-     if(nz.gt.0) call pix2d(d2d,jz,mb0,MouseDF,NFreeze,mode,   &
-          s2,64,nz,b)
+     if(nz.gt.0) call pix2d(d2d,jz,mb0,mode,s2,64,nz,b)
   endif
 
 ! Compute red and magenta cutves for small plot area, FSK441/JTMS only

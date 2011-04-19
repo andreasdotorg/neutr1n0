@@ -1,4 +1,4 @@
-subroutine pix2d(d2,jz,mousebutton,mousedf,nfreeze,mode,s2,nchan,nz,b)
+subroutine pix2d(d2,jz,mousebutton,mode,s2,nchan,nz,b)
 
 ! Compute pixels to represent the 2-d spectrum s2(nchan,nz), and the
 ! green line.
