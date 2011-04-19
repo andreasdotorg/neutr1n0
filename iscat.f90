@@ -30,7 +30,7 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
 
   bigworst=-1.e30
   last=.false.
-  do inf=1,5
+  do inf=1,6
      nframes=2**inf
      if(nframes*24*nsps.gt.npts0) then
         nframes=npts0/(24*nsps)
