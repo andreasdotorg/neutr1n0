@@ -168,7 +168,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
      msglen=(ipk2-ipk)/2
      if(msglen.lt.2 .or. msglen.gt.29) msglen=3
 
-     if(xsync.gt.xsyncbest) then
+     if(xsync.ge.xsyncbest) then
         xsyncbest=xsync
         nsigbest=nsig
         ndf0best=ndf0
