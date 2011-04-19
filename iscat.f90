@@ -38,7 +38,8 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
      do ia=1,npts0-npts,nsps*24
         ib=ia+npts-1
         cdat(1:npts)=cdat0(ia:ib)
-        if(.not.pick) t2=(ia + 0.5*npts)/fsample
+        t3=t2+(ia + 0.5*npts)/fsample + 0.9
+        if(pick) t3=t2
 
 ! Compute symbol spectra and establish sync:
         call synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,    &
@@ -120,7 +121,7 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
            nfdotbig=nfdot
            msgbig=msg
            msglenbig=msglen
-           bigt2=t2
+           bigt2=t3
            tana=nframes*24*nsps/fsample
            if(bigworst.gt.2.0) go to 110
         endif

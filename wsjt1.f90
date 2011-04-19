@@ -237,7 +237,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
      nz=jz/nstep - 1            !# of spectra to compute
      call spec2d(dat,jz,nstep,s2,nchan,nz,psavg,sigma)
      call dtrim(dat,jz,dat2,jz2)
-     t2=0.
+     t2=(jz-jz2)/11025.0
      if(pick) t2=(istart+0.5*jz2)/11025.0 + 0.5           !### +0.5 is empirical
      jz2=min(jz2,30*11025)
      call ana932(dat2,jz2,cdat,npts)          !Make downsampled analytic signal
