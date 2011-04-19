@@ -59,10 +59,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,MinSigdB,DFTolerance,NFreeze,   &
 
   jsym=4*nsym
   savg=savg/jsym
-  do i=1,nfft
-     x(1:jsym)=s0(i,1:jsym)
-     call pctile(x,x2,jsym,50,b(i))           !Baseline level for each freq bin
-  enddo
+  b=savg
   b(1:10)=b(11)
 
   do i=1,71                                   !Compute spectrum in dB, for plot
