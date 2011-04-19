@@ -193,6 +193,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,DFTolerance,NFreeze,            &
   ipk=ipkbest
   jpk=jpkbest
   idf=idfbest
+  if(nafc.eq.0) idf=0
 
   return
 end subroutine synciscat

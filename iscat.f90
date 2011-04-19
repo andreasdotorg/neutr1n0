@@ -1,5 +1,5 @@
 subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
-     MouseDF,mousebutton,mode4,nafc,psavg)
+     MouseDF,mousebutton,mode4,nafc,ndebug,psavg)
 
 ! Decode an ISCAT signal
 
@@ -159,13 +159,16 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
 !  if(nfdot.ne.0) ndf0=0
 
   call cs_lock('iscat')
-  write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
-       nworst,navg,tana
-  write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
-       nworst,navg,tana
+  if(ndebug.eq.1) then
+     write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
+          nworst,navg,tana
+     write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
+          nworst,navg,tana
 1020 format(a6,2i4,f5.1,i5,i4,1x,a1,2x,a28,i4,2i3,f5.1)
-!  write(*,1021) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,nworst,navg,tana
-!1021 format(a6,2i4,f5.1,2i5,1x,a1,1x,a28,3i3,f5.1)
+  else
+     write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg
+     write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg
+  endif
   call cs_unlock
 
   call timer('iscat   ',1)

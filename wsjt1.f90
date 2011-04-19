@@ -1,7 +1,7 @@
 subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
      MinSigdB,DFTolerance,MouseButton,NClearAve,nforce,            &
      Mode,NFreeze,NAFC,NZap,mode65,mode4,idf,ntdecode0,            &
-     MyCall,HisCall,HisGrid,neme,ntx2,s2,                          &
+     MyCall,HisCall,HisGrid,neme,ntx2,ndebug,s2,                   &
      ps0,npkept,lumsg,nslim2,psavg,ccf,Nseg,                       &
      MouseDF,NAgain,LDecoded,nspecial,ndf,ss1,ss2)
 
@@ -245,7 +245,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 ! NB: npts, nsps, etc., are all reduced by 9/32
 
      call iscat(cdat,npts,t2,pick,cfile6,MinSigdB,DFTolerance,     &
-          NFreeze,MouseDF,mousebutton,mode4,nafc,psavg)
+          NFreeze,MouseDF,mousebutton,mode4,nafc,ndebug,psavg)
      psavg(65:)=0.
      go to 800
   endif
