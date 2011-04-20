@@ -81,7 +81,7 @@ subroutine decode2
      if(mousebutton.gt.0) then
         if(mode(1:5).eq.'ISCAT' .and. abs(npingtime2-npingtime).lt.1000)   &
              lenpick=lenpick*2.24
-        jzz=lenpick
+        if(mousebutton.eq.1) jzz=lenpick
         if(abs(npingtime2-npingtime).lt.1000) then
            istart=istart + 3300 - jzz/2
            if(istart.lt.2) istart=2
