@@ -79,16 +79,12 @@ subroutine decode2
      jzz=jzc
      if(mousebutton.eq.0) istart=1
      if(mousebutton.gt.0) then
-        if(mode(1:5).eq.'ISCAT') then
-           lenpick=lenpick*2.24/2.0
-           istart=1
-        else
-           jzz=lenpick
+        if(mode(1:5).eq.'ISCAT') lenpick=lenpick*2.24
+        jzz=lenpick
 !  This is a major kludge:
-           istart=istart + 3300 - jzz/2
-           if(istart.lt.2) istart=2
-           if(istart+jzz.gt.jzc) istart=jzc-jzz
-        endif
+        istart=istart + 3300 - jzz/2
+        if(istart.lt.2) istart=2
+        if(istart+jzz.gt.jzc) istart=jzc-jzz
      endif
 
      if(mode(1:5).eq.'ISCAT' .and. mousebutton.eq.3) then

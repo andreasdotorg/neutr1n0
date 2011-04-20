@@ -1925,8 +1925,12 @@ def update():
                         x1=2
                         x2=(Audio.gcom2.npingtime - 195)/60.0
                     else:
-                        x1=(Audio.gcom2.npingtime  - 195 - 1000)/60.0
-                        x2=(Audio.gcom2.npingtime2 - 195 + 1000)/60.0
+                        if mode.get()[:5]=='ISCAT':
+                            x1=(Audio.gcom2.npingtime  - 195 - 2240)/60.0
+                            x2=(Audio.gcom2.npingtime2 - 195 + 2240)/60.0
+                        else:
+                            x1=(Audio.gcom2.npingtime  - 195 - 1000)/60.0
+                            x2=(Audio.gcom2.npingtime2 - 195 + 1000)/60.0
                 graph1.create_line([x1,90,x2,90],fill="yellow")
                 graph1.create_line([x1,85,x1,95],fill="yellow")
                 graph1.create_line([x2,85,x2,95],fill="yellow")
