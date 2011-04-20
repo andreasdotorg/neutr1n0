@@ -14,7 +14,6 @@ subroutine synciscat(cdat,npts,s0,jsym,df,DFTolerance,NFreeze,            &
   real s0(288,NSZ)
   real fs0(288,96)                        !108 = 96 + 3*4
   real savg(288)
-  real b(288)
   real psavg(72)                          !Average spectrum of whole file
   integer dftolerance
   integer icos(4)
@@ -59,8 +58,6 @@ subroutine synciscat(cdat,npts,s0,jsym,df,DFTolerance,NFreeze,            &
 
   jsym=4*nsym
   savg=savg/jsym
-  b=savg
-  b(1:10)=b(11)
 
   do i=1,71                                   !Compute spectrum in dB, for plot
      if(mode4.eq.1) then
@@ -70,9 +67,10 @@ subroutine synciscat(cdat,npts,s0,jsym,df,DFTolerance,NFreeze,            &
      endif
   enddo
 
-  do i=1,nfft
-     fac=1.0/b(i)
-     do j=1,jsym                             !Normalize the symbol spectra
+  do i=1,nfft                                 !Normalize the symbol spectra
+     fac=1.0/savg(i)
+     if(i.lt.11) fac=1.0/savg(11)
+     do j=1,jsym
         s0(i,j)=fac*s0(i,j)
      enddo
   enddo
@@ -94,7 +92,7 @@ subroutine synciscat(cdat,npts,s0,jsym,df,DFTolerance,NFreeze,            &
 
   call timer('idf loop',0)
   xsyncbest=0.
-  do idf=idf1,idf2
+  do idf=idf1,idf2                         !Loop over fdot
      fs0=0.
      call timer('idf 1   ',0)
      do j=1,jb                             !Fold s0 into fs0, modulo 4*nblk 

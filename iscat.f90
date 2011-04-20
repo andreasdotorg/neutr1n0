@@ -12,7 +12,6 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   complex cdat0(NMAX)
   complex cdat(NMAX)
   real s0(288,NSZ)
-  real fs0(0:41,6)
   real fs1(0:41,30)
   real psavg(72)                          !Average spectrum of whole file
   integer dftolerance
@@ -25,12 +24,12 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
 
   lu=99
   call timer('iscat   ',0)
-  fsample=3100.78125                   !New sample rate
+  fsample=3100.78125                   !Sample rate after 9/32 downsampling
   nsps=144/mode4
 
   bigworst=-1.e30
   last=.false.
-  do inf=1,6
+  do inf=1,6                           !Loop over data-segment sizes
      nframes=2**inf
      if(nframes*24*nsps.gt.npts0) then
         nframes=npts0/(24*nsps)
@@ -38,7 +37,7 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
      endif
      npts=nframes*24*nsps
 
-     do ia=1,npts0-npts,nsps*24
+     do ia=1,npts0-npts,nsps*24        !Loop over start times stepped by 1 frame
         ib=ia+npts-1
         cdat(1:npts)=cdat0(ia:ib)
         t3=t2+(ia + 0.5*npts)/fsample + 0.9
@@ -63,7 +62,6 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
 
         ipk3=0                                  !Silence compiler warning
         nblk=nsync+nlen+ndat
-        fs0=0.
         fs1=0.
         nfold=jsym/96
         jb=96*nfold
@@ -83,7 +81,7 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
            endif
         enddo
 
-! Read out the message:
+! Read out the message contents:
         msg1='                            '
         mpk=0
         worst=9999.
