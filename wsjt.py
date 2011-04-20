@@ -1256,7 +1256,8 @@ def dtdf_change(event):
 def mouse_click_g1(event):
     global nopen
     if not nopen:
-        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4':
+        if mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4' or \
+           mode.get()[:5]=='Diana':
             Audio.gcom2.mousedf=int(Audio.gcom2.idf+(event.x-250)*2.4)
         else:
             if Audio.gcom2.ndecoding==0:              #If decoder is busy, ignore
@@ -1272,8 +1273,8 @@ def mouse_click_g1(event):
 
 #------------------------------------------------------ double-click_g1
 def double_click_g1(event):
-    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4') and \
-        Audio.gcom2.ndecoding==0:
+    if (mode.get()[:4]=='JT65' or mode.get()[:3]=='JT4' or \
+        mode.get()[:5]=='Diana') and Audio.gcom2.ndecoding==0:
         g.freeze_decode=1
     
 #------------------------------------------------------ mouse_up_g1

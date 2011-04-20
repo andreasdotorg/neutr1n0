@@ -75,23 +75,27 @@ subroutine decode2
      call decode3(d2b,lenpick,istart,fnamex)
 
   else if(ndecoding.eq.4) then
-!Recorded file
+! Recorded file
      jzz=jzc
      if(mousebutton.eq.0) istart=1
-     if(mousebutton.eq.1 .or. mode(1:5).ne.'ISCAT') then
-        lenpick=lenpick*2.24/2.0
-        jzz=lenpick
+     if(mousebutton.gt.0) then
+        if(mode(1:5).eq.'ISCAT') then
+           lenpick=lenpick*2.24/2.0
+           istart=1
+        else
+           jzz=lenpick
 !  This is a major kludge:
-        istart=istart + 3300 - jzz/2
-        if(istart.lt.2) istart=2
-        if(istart+jzz.gt.jzc) istart=jzc-jzz
+           istart=istart + 3300 - jzz/2
+           if(istart.lt.2) istart=2
+           if(istart+jzz.gt.jzc) istart=jzc-jzz
+        endif
      endif
 
-     if(mode(1:5).eq.'ISCAT' .and. MouseButton.eq.3) then
+     if(mode(1:5).eq.'ISCAT' .and. mousebutton.eq.3) then
         lenpick=11.025*npingtime
         if(lenpick.gt.jzz) then
            lenpick=jzz
-           npingtime=jzz/11.015
+           npingtime=jzz/11.025
         endif
         if(lenpick.lt.24586) lenpick=24586
         istart=1
