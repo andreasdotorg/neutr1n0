@@ -251,9 +251,10 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   endif
 
   if(mode.eq.10) then
-!     write(74) jz,cfile6,(dat(j),j=1,jz)
      jza=min(jz,11025*30)
-     call diana(dat,jza,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,ccf,psavg)
+!     write(74) jza,cfile6,(dat(j),j=1,jza)
+     call diana(dat,jza,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,     &
+          nafc,ccf,psavg)
      go to 900
   endif
      

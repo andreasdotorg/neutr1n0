@@ -1,11 +1,10 @@
-subroutine specdiana(dat,npts,s0,jsym,fs0)
+subroutine specdiana(dat,npts,s0,jsym)
 
   parameter (NSZ=646)
   real dat(npts)                          !Raw signal, 30 s at 11025 sps
   real x(4096),x2(4096)
   complex c(0:4096)
   real s0(1024,NSZ)                       !Symbol spectra at 1/4-symbol steps
-  real fs0(1024,96)                       !Folded-for-sync spectra
   real b(1024)
   equivalence (x,c)
 
@@ -42,14 +41,6 @@ subroutine specdiana(dat,npts,s0,jsym,fs0)
 
   do j=1,jsym                         !Normalize the spectra
      s0(1:nq,j)=s0(1:nq,j)/b(1:nq)
-  enddo
-
-  fs0=0.
-  jb=(jsym-4*nblk+1)/4
-  jb=4*jb
-  do j=1,jb                           !Fold s0 into fs0, modulo 4*nblk
-     k=mod(j-1,4*nblk)+1
-     fs0(1:nq,k)=fs0(1:nq,k) + s0(1:nq,j)
   enddo
 
   return

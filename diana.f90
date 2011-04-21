@@ -1,5 +1,5 @@
 subroutine diana(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
-     MouseDF,ccfblue,ccfred)
+     MouseDF,nafc,ccfblue,ccfred)
 
 ! Decode a Diana signal
 
@@ -7,10 +7,8 @@ subroutine diana(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
   parameter (NSZ=646)                     !Quarter-symbols in 30 s
   real dat(NMAX)                          !Raw signal, 30 s at 11025 sps
   character cfile6*6                      !File time
-  character c42*42
   character msg*28
   real s0(1024,NSZ)
-  real fs0(1024,96)                       !Folded-for-sync symbol spectra
   real ccfblue(-5:540)
   real ccfred(-224:224)
   integer dftolerance
@@ -23,24 +21,22 @@ subroutine diana(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
   df=11025.0/nfft
   kstep=nsps/4
 
-  call specdiana(dat,npts,s0,jsym,fs0)   !Get symbol spectra, fold for sync
+! Get symbol spectra, fold for sync
+  call specdiana(dat,npts,s0,jsym)
 
-  call syncdiana(fs0,kstep,nfreeze,mousedf,dftolerance,syncx,     &
-     ipk,jpk,dfx,dtx,msglen,ccfblue,ccfred)     !Get sync: DF, DT, msglen
-  
-  msg=' '
-  nsnr=-25
-  jsync=syncx
-  if(jsync.ge.MinSigdB .and. msglen.gt.0) call decdiana(s0,jsym,ipk,jpk,  &
-       msglen,msg,nsnr)                               !Decode message
+! Get sync: DF, DT, msglen
+  call syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,   &
+     ipk,jpk,idfpk,dfx,dtx,msglen,msg,nsnr,nworst,navg,ccfblue,ccfred)
+
   jdf=nint(dfx)
-  nwidth=0
+  nfdot=nint(idfpk*df)
+  jsync=xsync
 
   call cs_lock('iscat')
-!  write(*,1020) cfile6,jsync,nsnr,dtx,jdf,nwidth,msg
-  write(11,1020) cfile6,jsync,nsnr,dtx,jdf,nwidth,msg
-  write(21,1020) cfile6,jsync,nsnr,dtx,jdf,nwidth,msg
-1020 format(a6,i3,i5,f5.1,i5,i3,7x,a28)
+  write(*,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
+  write(11,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
+  write(21,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
+1020 format(a6,i3,i5,f5.1,i5,i4,7x,a28,i5,2i3)
   call cs_unlock
 
   return
