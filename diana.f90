@@ -33,7 +33,7 @@ subroutine diana(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
   jsync=xsync
 
   call cs_lock('iscat')
-  write(*,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
+!  write(*,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
   write(11,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
   write(21,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
 1020 format(a6,i3,i5,f5.1,i5,i4,7x,a28,i5,2i3)
