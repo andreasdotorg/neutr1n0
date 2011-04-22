@@ -17,13 +17,10 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   integer dftolerance
   integer icos(4)
   logical pick,last
-  common/tracer/ limtrace,lu
   data icos/0,1,3,2/
   data nsync/4/,nlen/2/,ndat/18/
   data c42/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /.?@-'/
 
-  lu=99
-  call timer('iscat   ',0)
   fsample=3100.78125                   !Sample rate after 9/32 downsampling
   nsps=144/mode4
 
@@ -44,11 +41,9 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
         if(pick) t3=t2
 
 ! Compute symbol spectra and establish sync:
-        call timer('syncisca',0)
         call synciscat(cdat,npts,s0,jsym,df,DFTolerance,NFreeze,             &
              MouseDF,mousebutton,mode4,nafc,psavg,xsync,nsig,ndf0,msglen,    &
              ipk,jpk,idf,df1)
-        call timer('syncisca',1)
         nfdot=nint(idf*df1)
 
         if(nsig.lt.MinSigdB .or. xsync.le.1.0) then
@@ -168,10 +163,6 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
 !     write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg
 !  endif
   call cs_unlock
-
-  call timer('iscat   ',1)
-  call timer('iscat   ',101)
-  call flush(99)
 
   return
 end subroutine iscat

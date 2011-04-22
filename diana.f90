@@ -11,26 +11,19 @@ subroutine diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
   real ccfblue(-5:540)
   real ccfred(-224:224)
   integer dftolerance
-  common/tracer/ limtrace,lu
   data nsps/576/,nsync/4/,nlen/2/,ndat/18/
 
-  lu=99
-  call timer('diana   ',0)
   nsym=npts/nsps                      !Total symbol intervals in file
   nblk=nsync+nlen+ndat                !Frame size
   df=11025.0/4096.0
   kstep=nsps/4
 
 ! Get symbol spectra, fold for sync
-  call timer('specdian',0)
   call specdiana(cdat,npts,s0,jsym)
-  call timer('specdian',1)
 
 ! Get sync: DF, DT, msglen
-  call timer('syncdian',0)
   call syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,   &
      ipk,jpk,idfpk,dfx,dtx,msglen,msg,nsnr,nworst,navg,ccfblue,ccfred)
-  call timer('syncdian',1)
 
   jdf=nint(dfx)
   nfdot=nint(idfpk*df)
@@ -42,10 +35,6 @@ subroutine diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
   write(21,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
 1020 format(a6,i3,i5,f5.1,i5,i4,7x,a28,i5,2i3)
   call cs_unlock
-
-  call timer('diana   ',1)
-  call timer('diana   ',101)
-  call flush(99)
 
   return
 end subroutine diana

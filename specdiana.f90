@@ -5,7 +5,6 @@ subroutine specdiana(cdat,npts,s0,jsym)
   complex ct(1152)
   real x(1152),x2(1152)
   real savg(1152)
-!  complex c(0:4096)
   real s0(1152,NSZ)                       !Symbol spectra at 1/4-symbol steps
   equivalence (x,c)
 
@@ -18,7 +17,6 @@ subroutine specdiana(cdat,npts,s0,jsym)
   fac=1.0/1000.0                      !Somewhat arbitrary
   savg=0.
 
-  call timer('ffts    ',0)
   ia=1-kstep
   do j=1,4*nsym                       !Compute symbol spectra
      ia=ia+kstep
@@ -34,7 +32,6 @@ subroutine specdiana(cdat,npts,s0,jsym)
   enddo
   jsym=4*nsym
   savg=savg/jsym
-  call timer('ffts    ',1)
 
   do i=1,nfft                                 !Normalize the symbol spectra
      fac=1.0/savg(i)

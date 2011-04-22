@@ -75,7 +75,7 @@ SRCS2F90 = abc441.f90 astro0.f90 audio_init.f90 azdist0.f90 \
 	msdf.f90 syncms.f90 lenms.f90 jtms.f90 foldms.f90 avecho.f90 \
 	echogen.f90 alignmsg.f90 chk441.f90 gen441.f90 tm2.f90 \
 	gendiana.f90 diana.f90 specdiana.f90 syncdiana.f90 \
-	decdiana.f90 ana932.f90 timer.f90
+	decdiana.f90 ana932.f90
 
 OBJS2F90 = ${SRCS2F90:.f90=.o}
 
