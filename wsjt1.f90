@@ -233,11 +233,10 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   if(mode.eq.9) then                             !ISCAT mode
      nz=jz/nstep - 1            !# of spectra to compute
      call spec2d(dat,jz,nstep,s2,nchan,nz,psavg,sigma)
-     call dtrim(dat,jz,dat2,jz2)
-     t2=(jz-jz2)/11025.0
+     t2=0.
      if(pick) t2=(istart+0.5*jz2)/11025.0 + 0.5           !### +0.5 is empirical
      jz2=min(jz2,30*11025)
-     call ana932(dat2,jz2,cdat,npts)          !Make downsampled analytic signal
+     call ana932(dat,jz,cdat,npts)          !Make downsampled analytic signal
 !     write(74) npts,cfile6,(cdat(j),j=1,npts)
 
 ! Now cdat() is the downsampled analytic signal.  
@@ -252,6 +251,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 
   if(mode.eq.10) then
      jza=min(jz,11025*30)
+!     call dtrim(dat,jza,dat2,jzb)
      call ana932(dat,jza,cdat,npts)          !Make downsampled analytic signal
 !     write(74) npts,cfile6,(cdat(j),j=1,npts)
      call diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,     &

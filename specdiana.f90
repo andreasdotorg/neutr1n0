@@ -44,11 +44,5 @@ subroutine specdiana(cdat,npts,s0,jsym)
      enddo
   enddo
 
-  df=11025.0*(9.0/32.0)/nfft
-  do i=1,nfft
-     write(41,3001) i,i*df,savg(i)
-3001 format(i8,f10.3,f12.1)
-  enddo
-
   return
 end subroutine specdiana
