@@ -57,6 +57,7 @@ mousedf0=0
 naxis=IntVar()
 ncall=0
 newMinute=0
+new30=0
 nflat=IntVar()
 nfr=IntVar()
 nfr.set(1)
@@ -274,7 +275,7 @@ def freeze_decode(event):
 def update():
     global a,b0,c0,g0,im,isec0,line0,newMinute,nscroll,nspeed00,pim, \
            root_geom,t0,mousedf0,nfreeze0,tol0,mode0,nmark0,logm0, \
-           fmid,fmid0,frange,frange0
+           fmid,fmid0,frange,frange0,new30
     
     utc=time.gmtime(time.time()+0.1*Audio.gcom1.ndsec)
     isec=utc[5]
@@ -287,6 +288,8 @@ def update():
         g.rms=Audio.gcom1.rms
         if isec==0: nscroll=0
         if isec==59: newMinute=1
+        if g.mode=='Diana' and (isec==29 or isec==59):
+            new30=1
 
     if g.showspecjt==1:
         showspecjt()
@@ -330,7 +333,7 @@ def update():
 
     if newdat:
         if Audio.gcom2.monitoring:
-            if minsep.get() and newMinute:
+            if minsep.get() and (newMinute or (g.mode=='Diana' and new30)):
                 draw.line((0,0,749,0),fill=128)     #Draw the minute separator
             if nscroll == 13:
                 draw.text((5,2),t0[0:5],fill=253)   #Insert time label
@@ -353,6 +356,7 @@ def update():
             graph1.create_text(5,260,anchor=W,text=t,fill=color)
 
         newMinute=0
+        new30=0
 
     if (Audio.gcom2.mousedf != mousedf0 or Audio.gcom2.dftolerance != tol0) \
             and (g.mode[:4]=='JT65' or g.mode[:3]=='JT4' \
