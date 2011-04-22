@@ -252,8 +252,9 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 
   if(mode.eq.10) then
      jza=min(jz,11025*30)
-!     write(74) jza,cfile6,(dat(j),j=1,jza)
-     call diana(dat,jza,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,     &
+     call ana932(dat,jza,cdat,npts)          !Make downsampled analytic signal
+!     write(74) npts,cfile6,(cdat(j),j=1,npts)
+     call diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,     &
           nafc,ccf,psavg)
      go to 900
   endif

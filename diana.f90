@@ -1,32 +1,29 @@
-subroutine diana(dat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
+subroutine diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
      MouseDF,nafc,ccfblue,ccfred)
 
 ! Decode a Diana signal
 
-  parameter (NMAX=512*1024)
   parameter (NSZ=646)                     !Quarter-symbols in 30 s
-  real dat(NMAX)                          !Raw signal, 30 s at 11025 sps
+  complex cdat(93024)                     !Raw signal, 30 s at 11025*9/32 sps
   character cfile6*6                      !File time
   character msg*28
-  real s0(1024,NSZ)
+  real s0(1152,NSZ)
   real ccfblue(-5:540)
   real ccfred(-224:224)
   integer dftolerance
   common/tracer/ limtrace,lu
-  data nsps/2048/,nsync/4/,nlen/2/,ndat/18/
+  data nsps/576/,nsync/4/,nlen/2/,ndat/18/
 
   lu=99
   call timer('diana   ',0)
   nsym=npts/nsps                      !Total symbol intervals in file
   nblk=nsync+nlen+ndat                !Frame size
-  nfft=4096
-  nq=nfft/4
-  df=11025.0/nfft
+  df=11025.0/4096.0
   kstep=nsps/4
 
 ! Get symbol spectra, fold for sync
   call timer('specdian',0)
-  call specdiana(dat,npts,s0,jsym)
+  call specdiana(cdat,npts,s0,jsym)
   call timer('specdian',1)
 
 ! Get sync: DF, DT, msglen

@@ -1,7 +1,7 @@
 subroutine decdiana(s0,jsym,ipk,jpk,idfpk,msglen,msg,snrx,worst,avg)
 
   parameter (NSZ=646)
-  real s0(1024,NSZ)
+  real s0(1152,NSZ)
   real fs1(0:41,28)
   real tmp(1176)
   real tmp2(1176)

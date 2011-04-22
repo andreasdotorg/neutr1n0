@@ -2,9 +2,9 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
      ipk,jpk,idfpk,dfx,dtx,msglen,msg,nsnr,nworst,navg,ccfblue,ccfred)
 
   parameter (NSZ=646)                     !Quarter-symbols in 30 s
-  real s0(1024,NSZ)
-  real fs0(1024,96)                       !Folded-for-sync spectra
-  real fs00(1024,96)
+  real s0(1152,NSZ)
+  real fs0(1152,96)                       !Folded-for-sync spectra
+  real fs00(1152,96)
   real ccfblue(-5:540)
   real ccfred(-224:224)
   character msg*28,msgbest*28
@@ -132,7 +132,7 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
   snrx=snrbest
 
   dfx=(ipk-i0)*df
-  dtx=jpk*kstep/11025.0 - 1.4
+  dtx=jpk*kstep/(11025.0*9.0/32.0) - 1.4
   nsnr=nint(snrx)
   if(nsnr.le.-27) then
      nsnr=-27
