@@ -4,6 +4,7 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
   parameter (NSZ=646)                     !Quarter-symbols in 30 s
   real s0(1024,NSZ)
   real fs0(1024,96)                       !Folded-for-sync spectra
+  real fs00(1024,96)
   real ccfblue(-5:540)
   real ccfred(-224:224)
   character msg*28,msgbest*28
@@ -24,9 +25,11 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
 
   idfmax=0
   if(nafc.eq.1) idfmax=10
+  call timer('idf loop',0)
   do idf=-idfmax,idfmax,2
 
      fs0=0.
+     call timer('fs0     ',0)
      do j=1,jb                           !Fold s0 into fs0, modulo 4*nblk
         k=mod(j-1,4*nblk)+1
         ii=nint(idf*float(j-jb/2)/float(jb))
@@ -34,6 +37,7 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
         i2=min(nq,nq-ii)
         fs0(i1:i2,k)=fs0(i1:i2,k) + s0(i1+ii:i2+ii,j)
      enddo
+     call timer('fs0     ',1)
 
      ia=nint(-600.0/df)
      ib=nint(600.0/df)
@@ -43,8 +47,10 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
      endif
 
      smax=0.
+     call timer('ipk loop',0)
      do i=ia,ib                          !Search over DF range
         sm1=0.
+        call timer('jpk loop',0)
         do j=0,4*nblk-1                  !Find sync pattern, lags 0-95
            ss=0.
            do n=1,4                      !Sum the four sync tones
@@ -56,8 +62,8 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
               sm1=ss
               jpk1=j+1
            endif
-!           if(abs(i).le.224) ccfred(i)=sm1
         enddo
+        call timer('jpk loop',1)
         if(sm1.gt.smax) then
            smax=sm1
            ipk=i0+i                   !Frequency offset, DF
@@ -65,6 +71,7 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
            idfpk=idf
         endif
      enddo
+     call timer('ipk loop',1)
 
      ref=fs0(ipk+2,jpk) + fs0(ipk+4,jpk) + fs0(ipk+6,jpk)
      j=jpk+4
@@ -94,7 +101,9 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
      enddo
      msglen=(ipk2-ipk)/2
 
+     call timer('decdiana',0)
      call decdiana(s0,jsym,ipk,jpk,idfpk,msglen,msg,snrx,worst,avg)
+     call timer('decdiana',1)
 
      if(worst.gt.bigworst) then
         bigworst=worst
@@ -106,9 +115,11 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
         msglenbest=msglen
         msgbest=msg
         snrbest=snrx
+        fs00=fs0
      endif
 
   enddo
+  call timer('idf loop',1)
 
   worst=bigworst
   avg=bigavg
@@ -134,16 +145,7 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
   if(navg.gt.10) navg=10
   if(navg.le.0) msg=' '
 
-! Final computation of fs0, using idfpk
-  fs0=0.
-  do j=1,jb                           !Fold s0 into fs0, modulo 4*nblk
-     k=mod(j-1,4*nblk)+1
-     ii=nint(idfpk*float(j-jb/2)/float(jb))
-     i1=max(1,1-ii)
-     i2=min(nq,nq-ii)
-     fs0(i1:i2,k)=fs0(i1:i2,k) + s0(i1+ii:i2+ii,j)
-  enddo
-
+  call timer('ccfred  ',0)
 ! Compute ccfred
   do i=ia,ib                          !Search over DF range
      sm1=0.
@@ -152,7 +154,7 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
         do n=1,4                      !Sum the four sync tones
            k=j+4*n-3
            if(k.gt.4*nblk) k=k-4*nblk
-           ss=ss + fs0(i0+i+2*isync(n),k)
+           ss=ss + fs00(i0+i+2*isync(n),k)
         enddo
         if(ss.gt.sm1) then
            sm1=ss
@@ -162,22 +164,21 @@ subroutine syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,  &
      enddo
   enddo
   ccfred=0.5*ccfred/ref - 1.0
+  call timer('ccfred  ',1)
 
+  call timer('ccfblue ',0)
 ! Compute ccfblue using idfpk and ipk
   do j=0,4*nblk-1
      ss=0.
      do n=1,4
         k=j+4*n-3
         if(k.gt.4*nblk) k=k-4*nblk
-        ss=ss + fs0(ipk+2*isync(n),k)
+        ss=ss + fs00(ipk+2*isync(n),k)
      enddo
      jj=mod(j+80,96) - 5
      ccfblue(jj)=0.5*(ss/ref - 1.0)
-!     write(41,3001) j,jj,ccfblue(jj)
-!3001 format(2i6,f10.3)
   enddo
-!  call flush(41)
-!  rewind 41
+  call timer('ccfblue ',1)
 
   return
 end subroutine syncdiana
