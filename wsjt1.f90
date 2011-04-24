@@ -234,8 +234,8 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
      nz=jz/nstep - 1            !# of spectra to compute
      call spec2d(dat,jz,nstep,s2,nchan,nz,psavg,sigma)
      t2=0.
-     if(pick) t2=(istart+0.5*jz2)/11025.0 + 0.5           !### +0.5 is empirical
-     jz2=min(jz2,30*11025)
+     if(pick) t2=(istart+0.5*jz)/11025.0 + 0.5           !### +0.5 is empirical
+     jz=min(jz,30*11025)
      call ana932(dat,jz,cdat,npts)          !Make downsampled analytic signal
 !     write(74) npts,cfile6,(cdat(j),j=1,npts)
 
@@ -264,6 +264,8 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   df=11025.0/256.0            !FFT resolution ~43 Hz
   dtbuf=nstep/11025.0
   stlim=nslim2                !Single-tone threshold
+  jz=min(30*11025,jz)
+  nz=jz/nstep - 1            !# of spectra to compute
   call spec2d(dat,jz,nstep,s2,nchan,nz,psavg,sigma)
   if(sigma.lt.0.0) basevb=-99.0
   if(sigma.lt.0.0) go to 900
@@ -324,4 +326,3 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 
   return
 end subroutine wsjt1
-

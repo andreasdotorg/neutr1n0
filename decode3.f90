@@ -54,7 +54,7 @@ subroutine decode3(d2,jz,istart,filename)
      jz=min(60*11025,jz+nzero)
   endif
   mb0=mousebutton
-  call dtrim(d2d,jz)
+  if(jz.gt.14*11025) call dtrim(d2d,jz)
   call wsjt1(d2d,jz,istart,samfacin,FileID,ndepth,                     &
        MinSigdB,DFTolerance,MouseButton,NClearAve,nforce,              &
        nMode,NFreeze,NAFC,NZap,mode65,mode4,idf,ntdecode,              &

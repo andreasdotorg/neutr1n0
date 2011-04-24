@@ -31,7 +31,6 @@ subroutine decode2
      istart=1
      call decode3(d2a,jza,istart,fnamea)
   else if(ndecoding.eq.2) then
-
 ! Mouse pick, top half of waterfall
      if(mode(1:5).eq.'ISCAT' .and. MouseButton.eq.3) then
         lenpick=istart
@@ -81,7 +80,8 @@ subroutine decode2
      if(mousebutton.gt.0) then
         if(mode(1:5).eq.'ISCAT' .and. abs(npingtime2-npingtime).lt.1000)   &
              lenpick=lenpick*2.24
-        if(mousebutton.eq.1) jzz=lenpick
+        if(mousebutton.eq.1 .or. (mode.eq.'FSK441' .and.              &
+             mousebutton.eq.3)) jzz=lenpick
         if(abs(npingtime2-npingtime).lt.1000) then
            istart=istart + 3300 - jzz/2
            if(istart.lt.2) istart=2

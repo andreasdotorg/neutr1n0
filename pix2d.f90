@@ -43,7 +43,6 @@ subroutine pix2d(d2,jz,mousebutton,mode,s2,nchan,nz,b)
         k=k+500-nz
      enddo
   endif
-  b(k+1:)=0
 
   if(mousebutton.eq.0) then
 ! Compute the green curve
