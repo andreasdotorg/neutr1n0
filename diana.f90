@@ -22,8 +22,9 @@ subroutine diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
   call specdiana(cdat,npts,s0,jsym)
 
 ! Get sync: DF, DT, msglen
-  call syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,nafc,xsync,   &
-     ipk,jpk,idfpk,dfx,dtx,msglen,msg,nsnr,nworst,navg,ccfblue,ccfred)
+  call syncdiana(s0,jsym,kstep,nfreeze,mousedf,dftolerance,minsigdb,      &
+       nafc,xsync,ipk,jpk,idfpk,dfx,dtx,msglen,msg,nsnr,nworst,navg,      &
+       ccfblue,ccfred)
 
   jdf=nint(dfx)
   nfdot=nint(idfpk*df)
