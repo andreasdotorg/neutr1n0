@@ -46,11 +46,11 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
              ipk,jpk,idf,df1)
         nfdot=nint(idf*df1)
 
-        if(nsig.lt.MinSigdB .or. xsync.le.1.0) then
+        isync=xsync
+        if(msglen.eq.0 .or. isync.lt.max(MinSigdB,0)) then
            msglen=0
            worst=1.
            avg=1.
-           xsync=0.
            ndf0=0
            go to 100
         endif
@@ -110,8 +110,6 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
            msg=msg1(1:msglen-1)
         endif
 
-100     continue
-
         if(worst.gt.bigworst) then
            bigworst=worst
            bigavg=avg
@@ -125,6 +123,7 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
            tana=nframes*24*nsps/fsample
            if(bigworst.gt.2.0) go to 110
         endif
+100  continue
      enddo
      if(last) go to 110
   enddo
@@ -140,12 +139,16 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   msglen=msglenbig
   t2=bigt2
 
+  isync=xsync
   nworst=10.0*(worst-1.0)
   navg=10.0*(avg-1.0)
   if(nworst.gt.10) nworst=10
   if(navg.gt.10) navg=10
-  isync=xsync
-  if(navg.le.0) msg=' '
+  if(navg.le.0 .or. isync.lt.max(minsigdb,0)) then
+     msg=' '
+     nworst=0
+     navg=0
+  endif
   csync=' '
   if(isync.ge.1) csync='*'
 
