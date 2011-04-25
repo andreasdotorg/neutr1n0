@@ -2,7 +2,7 @@ subroutine gendiana(msg,msglen,samfac,iwave,nwave,msgsent,sendingsh)
 
 ! Generate waveform for Diana mode.
 
-  parameter (NMAX=30*11025,NSZ=126,NSPS=2048)
+  parameter (NMAX=30*11025,NSZ=126)
   character msg*28,msgsent*28
   integer*2 iwave(NMAX)
   integer imsg(28)
@@ -16,12 +16,23 @@ subroutine gendiana(msg,msglen,samfac,iwave,nwave,msgsent,sendingsh)
   data c42/'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /.?+-'/
 
   twopi=8.d0*atan(1.d0)
+  nsps=2048
   df=11025.d0/NSPS                     !5.383 Hz
   dt=1.d0/(samfac*11025.d0)
   f0=236*df                            !1270.46 Hz
   nsym=126                             !Total symbols in whole transmission
-
   nblk=nsync+nlen+ndat
+
+  nspecial=0
+  if(msg.eq.'CQ                          ') nspecial=1
+  if(msg.eq.'RO                          ') nspecial=2
+  if(msg.eq.'RRR                         ') nspecial=3
+  if(msg.eq.'73                          ') nspecial=4
+  if(nspecial.gt.0) then
+     nsym=16
+     nsps=16384
+  endif
+
   k=0
   kk=1
   do i=1,msglen                        !Define tone sequence for user message
@@ -52,7 +63,11 @@ subroutine gendiana(msg,msglen,samfac,iwave,nwave,msgsent,sendingsh)
   k=0
   pha=0.
   do m=1,nsym                                    !Generate iwave
-     f=f0 + itone(m)*df
+     if(nspecial.eq.0) then
+        f=f0 + itone(m)*df
+     else
+        f=f0 + mod(m-1,2)*5*nspecial*df
+     endif
      dpha=twopi*f*dt
      do i=1,NSPS
         k=k+1

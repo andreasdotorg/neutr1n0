@@ -169,8 +169,10 @@ def df_mark():
     draw_axis()
     if nmark.get()==0 or Audio.gcom2.nfreeze:
         fstep=10.0*11025.0/4096.0
-        if g.mode[4:5]=='B': fstep=2*fstep
-        if g.mode[4:5]=='C': fstep=4*fstep
+        nd=0
+        if g.mode=='Diana': nd=1
+        if g.mode[:5]=='JT65B' or nd: fstep=2*fstep
+        if g.mode[:5]=='JT65C': fstep=4*fstep
 
 # Mark sync tone and top JT65 tone (green) and shorthand tones (red)
         if(frange==2000):
@@ -178,9 +180,10 @@ def df_mark():
             if g.mode[:4]=="JT65" or g.mode[:3]=="JT4" or g.mode=='Diana':
                 color='green'
                 n=1
-                if g.mode[:4]=="JT65":
+                if g.mode[:4]=='JT65' or nd:
                     n=5
                     x1=(Audio.gcom2.mousedf + 6.6*fstep)/df + dx
+                    if nd: x1=(Audio.gcom2.mousedf + 4.2*fstep)/df + dx
                     c.create_line(x1-0.5,25,x1-0.5,12,fill=color)
                     c.create_line(x1+0.5,25,x1+0.5,12,fill=color)
                 for i in range(n):
@@ -188,17 +191,20 @@ def df_mark():
                     x1=(mdf + i*fstep)/df + dx
                     j=12
                     if i>0: j=15
-                    if i!=1: c.create_line(x1-0.5,25,x1-0.5,j,fill=color)
-                    if i!=1: c.create_line(x1+0.5,25,x1+0.5,j,fill=color)
+                    if i!=1:
+                        c.create_line(x1-0.5,25,x1-0.5,j,fill=color)
+                    if i!=1:
+                        c.create_line(x1+0.5,25,x1+0.5,j,fill=color)
                     color='red'
         if(frange==4000):
             dx=375 + (1270.5-fmid)/(2*df)
             if g.mode[:4]=="JT65" or g.mode[:3]=="JT4" or g.mode=='Diana':
                 color='green'
                 n=1
-                if g.mode[:4]=="JT65":
+                if g.mode[:4]=="JT65" or nd:
                     n=5
                     x1=(Audio.gcom2.mousedf + 6.6*fstep)/(2*df) + dx
+                    if nd: x1=(Audio.gcom2.mousedf + 4.2*fstep)/(2*df) + dx
                     c.create_line(x1-0.5,25,x1-0.5,12,fill=color)
                     c.create_line(x1+0.5,25,x1+0.5,12,fill=color)
                 for i in range(n):
@@ -206,8 +212,10 @@ def df_mark():
                     x1=(mdf + i*fstep)/(2*df) + dx
                     j=12
                     if i>0: j=15
-                    if i!=1: c.create_line(x1-0.5,25,x1-0.5,j,fill=color)
-                    if i!=1: c.create_line(x1+0.5,25,x1+0.5,j,fill=color)
+                    if i!=1:
+                        c.create_line(x1-0.5,25,x1-0.5,j,fill=color)
+                    if i!=1:
+                        c.create_line(x1+0.5,25,x1+0.5,j,fill=color)
                     color='red'
 
 #---------------------------------------------------- change_fmid

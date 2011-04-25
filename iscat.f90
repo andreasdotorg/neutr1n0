@@ -148,23 +148,19 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
      msg=' '
      nworst=0
      navg=0
+     ndf0=0
+     nfdot=0
+     nsig=-20
   endif
   csync=' '
   if(isync.ge.1) csync='*'
 
-!  if(nfdot.ne.0) ndf0=0
-
   call cs_lock('iscat')
-!  if(nmore.eq.1) then
      write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
           nworst,navg,tana
      write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
           nworst,navg,tana
 1020 format(a6,2i4,f5.1,i5,i4,1x,a1,2x,a28,i4,2i3,f5.1)
-!  else
-!     write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg
-!     write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg
-!  endif
   call cs_unlock
 
   return

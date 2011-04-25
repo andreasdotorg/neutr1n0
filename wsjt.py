@@ -57,7 +57,7 @@ first=1
 g.appdir=appdir
 isync=0
 isync441=1
-isync_iscat=-20
+isync_iscat=1
 isync65=1
 isync_save=0
 itol=5                                       #Default tol=400 Hz
@@ -696,6 +696,7 @@ def ModeISCAT_B(event=NONE):
         if lauto: toggleauto()
         cleartext()
         ModeFSK441()
+        slabel="Sync   "
         mode.set("ISCAT-B")
         lab2.configure(text='FileID       Sync    dB      DT       DF       F1')
         isync=isync_iscat
@@ -724,6 +725,7 @@ def ModeDiana(event=NONE):
         ModeJT65()
         Audio.gcom1.trperiod=30
         mode.set("Diana")
+        lab2.configure(text='FileID      Sync      dB        DT       DF    F1')
         isync=1
         lsync.configure(text=slabel+str(isync))
         report.delete(0,END)
@@ -856,7 +858,7 @@ these operating modes:
   5. CW        -  15 WPM Morse code, messages structured for EME
   6. Echo      -  EME Echo testing
 
-Copy (c) 2001-2010 by Joseph H. Taylor, Jr., K1JT, with
+Copy (c) 2001-2011 by Joseph H. Taylor, Jr., K1JT, with
 contributions from additional authors.  WSJT is Open Source 
 software, licensed under the GNU General Public License (GPL).
 Source code and programming information may be found at 
