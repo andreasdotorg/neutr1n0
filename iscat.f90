@@ -154,6 +154,9 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
      ndf0=0
      nfdot=0
      nsig=-20
+     msglen=0
+     tana=0.
+     t2=0.
   endif
   csync=' '
   if(isync.ge.1) csync='*'
