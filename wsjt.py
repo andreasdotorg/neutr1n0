@@ -691,7 +691,7 @@ def ModeISCAT_A(event=NONE):
     
 #------------------------------------------------------ ModeISCAT_B
 def ModeISCAT_B(event=NONE):
-    global isync,isync_iscat
+    global isync,isync_iscat,slabel
     if g.mode != "ISCAT-B":
         if lauto: toggleauto()
         cleartext()

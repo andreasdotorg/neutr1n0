@@ -25,6 +25,7 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   nsps=144/mode4
 
   bigworst=-1.e30
+  bigxsync=0.
   last=.false.
   do inf=1,6                           !Loop over data-segment sizes
      nframes=2**inf
@@ -77,7 +78,8 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
         enddo
 
 ! Read out the message contents:
-        msg1='                            '
+        msg= '                             '
+        msg1='                             '
         mpk=0
         worst=9999.
         sum=0.
@@ -144,8 +146,9 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   navg=10.0*(avg-1.0)
   if(nworst.gt.10) nworst=10
   if(navg.gt.10) navg=10
+
   if(navg.le.0 .or. isync.lt.max(minsigdb,0)) then
-     msg=' '
+     msg='                             '
      nworst=0
      navg=0
      ndf0=0
@@ -156,10 +159,10 @@ subroutine iscat(cdat0,npts0,t2,pick,cfile6,MinSigdB,DFTolerance,NFreeze,   &
   if(isync.ge.1) csync='*'
 
   call cs_lock('iscat')
-     write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
-          nworst,navg,tana
-     write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg,msglen,    &
-          nworst,navg,tana
+     write(11,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg(1:28),     &
+          msglen,nworst,navg,tana
+     write(21,1020) cfile6,isync,nsig,t2,ndf0,nfdot,csync,msg(1:28),     &
+          msglen,nworst,navg,tana
 1020 format(a6,2i4,f5.1,i5,i4,1x,a1,2x,a28,i4,2i3,f5.1)
   call cs_unlock
 
