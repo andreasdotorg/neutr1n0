@@ -36,12 +36,14 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   integer resample
   real*8 samfacin,samratio
   real dat2(NP2)
-  complex cdat(256*1024)
+  complex cdat(262145)
   character msg3*3
   character cfile6*6
   logical lcum
   integer indx(100)
   character*90 line
+!  complex cfft
+!  common/down932/cfft(147456),npts2,df932
   common/avecom/dat(NP2),labdat,jza,modea
   common/ccom/nline,tping(100),line(100)
   common/limcom/ nslim2a
@@ -254,6 +256,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 !     call dtrim(dat,jza,dat2,jzb)
      call ana932(dat,jza,cdat,npts)          !Make downsampled analytic signal
 !     write(74) npts,cfile6,(cdat(j),j=1,npts)
+!     write(75) npts2,cfile6,(cfft(j),j=1,npts2)
      call diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,MouseDF,     &
           nafc,ccf,psavg)
      go to 900
