@@ -161,11 +161,6 @@ subroutine fivehz
           (t.ge.tx1+trperiod .and. t.lt.tx2+trperiod)
   endif
 
-  if(n1.ne.n1z) then
-     print*,nwave,tx1,tx2,t,txtime
-     n1z=n1
-  endif
-
   n2a=mod(n2/900,2)
   if(mode(1:4).eq.'JT65' .and. nlowbeacon.ne.0 .and. n2a.eq.1) txtime=.false.
 

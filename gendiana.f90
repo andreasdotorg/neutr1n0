@@ -81,9 +81,5 @@ subroutine gendiana(msg,msglen,samfac,iwave,nwave,msgsent,sendingsh)
   nwave=k
   iwave(k:)=0
 
-  print*,nsym,msglen,nwave
-  write(*,3003) (itone(i),i=1,nsym)
-3003 format(24i3)
-
   return
 end subroutine gendiana
