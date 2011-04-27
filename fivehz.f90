@@ -142,6 +142,10 @@ subroutine fivehz
      if(nwave.lt.126*4096) nwave=126*4096
      tx2=txdelay + nwave/11025.0
      if(tx2.gt.(trperiod-2.0)) tx2=trperiod-tlatency-1.0
+  else if(mode(1:5).eq.'Diana') then
+     if(nwave.lt.126*2048) nwave=126*2048
+     tx2=txdelay + nwave/11025.0
+     if(tx2.gt.(trperiod-2.0)) tx2=trperiod-tlatency-1.0
   endif
 
   if(TxFirst.eq.0 .and. ntxboth.eq.0) then
@@ -155,6 +159,11 @@ subroutine fivehz
   else
      txtime = (t.ge.tx1 .and. t.lt.tx2) .or.                     &
           (t.ge.tx1+trperiod .and. t.lt.tx2+trperiod)
+  endif
+
+  if(n1.ne.n1z) then
+     print*,nwave,tx1,tx2,t,txtime
+     n1z=n1
   endif
 
   n2a=mod(n2/900,2)

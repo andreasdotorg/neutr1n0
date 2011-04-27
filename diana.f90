@@ -11,6 +11,8 @@ subroutine diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
   real ccfblue(-5:540)
   real ccfred(-224:224)
   integer dftolerance
+  complex cfft
+  common/down932/cfft(147456),nfft2,df932
   data nsps/576/,nsync/4/,nlen/2/,ndat/18/
 
   nsym=npts/nsps                      !Total symbol intervals in file
@@ -28,12 +30,12 @@ subroutine diana(cdat,npts,cfile6,MinSigdB,DFTolerance,NFreeze,       &
 
   jdf=nint(dfx)
   nfdot=nint(idfpk*df)
-  jsync=xsync
+  isync=xsync
 
   call cs_lock('iscat')
-!  write(*,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
-  write(11,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
-  write(21,1020) cfile6,jsync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
+!  write(*,1020) cfile6,isync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
+  write(11,1020) cfile6,isync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
+  write(21,1020) cfile6,isync,nsnr,dtx,jdf,nfdot,msg,msglen,nworst,navg
 1020 format(a6,i3,i5,f5.1,i5,i4,7x,a28,i5,2i3)
   call cs_unlock
 

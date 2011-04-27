@@ -36,7 +36,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   integer resample
   real*8 samfacin,samratio
   real dat2(NP2)
-  complex cdat(368640)
+  complex cdat(256*1024)
   character msg3*3
   character cfile6*6
   logical lcum

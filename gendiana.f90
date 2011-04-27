@@ -62,20 +62,28 @@ subroutine gendiana(msg,msglen,samfac,iwave,nwave,msgsent,sendingsh)
 
   k=0
   pha=0.
+!  f1=0.3*twopi/(11025.d0**2)                        !###
+!  kh=(nsym*nsps)/2                              !###
   do m=1,nsym                                    !Generate iwave
      if(nspecial.eq.0) then
         f=f0 + itone(m)*df
      else
-        f=f0 + mod(m-1,2)*5*nspecial*df
+        f=f0 + mod(m-1,2)*10*nspecial*df
      endif
      dpha=twopi*f*dt
      do i=1,NSPS
         k=k+1
         pha=pha+dpha
+!        pha=pha+dpha + f1*(k-kh)                      !###
         iwave(k)=nint(32767.0*sin(pha))
      enddo
   enddo
   nwave=k
+  iwave(k:)=0
+
+  print*,nsym,msglen,nwave
+  write(*,3003) (itone(i),i=1,nsym)
+3003 format(24i3)
 
   return
 end subroutine gendiana
