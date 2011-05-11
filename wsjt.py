@@ -668,12 +668,28 @@ def ModeJT65B(event=NONE):
         mode.set("JT65B")
         ModeJT65()
 
+#------------------------------------------------------ ModeJT65B2
+def ModeJT65B2(event=NONE):
+    if g.mode != "JT65B2":
+        if lauto: toggleauto()
+        mode.set("JT65B2")
+        ModeJT65()
+        Audio.gcom1.trperiod=30
+
 #------------------------------------------------------ ModeJT65C
 def ModeJT65C(event=NONE):
     if g.mode != "JT65C":
         if lauto: toggleauto()
         mode.set("JT65C")
         ModeJT65()
+
+#------------------------------------------------------ ModeJT65C2
+def ModeJT65C2(event=NONE):
+    if g.mode != "JT65C2":
+        if lauto: toggleauto()
+        mode.set("JT65C2")
+        ModeJT65()
+        Audio.gcom1.trperiod=30
 
 #------------------------------------------------------ ModeJTMS
 def ModeJTMS(event=NONE):
@@ -2130,7 +2146,9 @@ modemenu.add_radiobutton(label = 'ISCAT-A', variable=mode, command = ModeISCAT_A
 modemenu.add_radiobutton(label = 'ISCAT-B', variable=mode, command = ModeISCAT_B)
 modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A)
 modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B)
+modemenu.add_radiobutton(label = 'JT65B2', variable=mode, command = ModeJT65B2)
 modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C)
+modemenu.add_radiobutton(label = 'JT65C2', variable=mode, command = ModeJT65C2)
 modemenu.add_radiobutton(label = 'JT4A', variable=mode, command = ModeJT4A)
 modemenu.add_radiobutton(label = 'JT4B', variable=mode, command = ModeJT4B)
 modemenu.add_radiobutton(label = 'JT4C', variable=mode, command = ModeJT4C)

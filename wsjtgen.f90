@@ -122,8 +122,11 @@ subroutine wsjtgen
         if(mode(5:5).eq.'A') mode65=1
         if(mode(5:5).eq.'B') mode65=2
         if(mode(5:5).eq.'C') mode65=4
-        call gen65(msg,mode65,samfacout,ntxdf,iwave,nwave,sendingsh,   &
-             msg22,nmsg0)
+        nfast=1
+        if((mode(5:5).eq.'B' .or. mode(5:5).eq.'C') .and.            &
+             mode(6:6).eq.'2') nfast=2
+        call gen65(msg,mode65,nfast,samfacout,ntxdf,iwave,nwave,     &
+             sendingsh,msg22,nmsg0)
         msgsent=msg22
      else if(mode(1:5).eq.'ISCAT') then
         call geniscat(msg,nmsg,mode4,samfacout,iwave,nwave,msgsent)

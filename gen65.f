@@ -1,4 +1,4 @@
-      subroutine gen65(message,mode65,samfac,ntxdf,iwave,nwave,
+      subroutine gen65(message,mode65,nfast,samfac,ntxdf,iwave,nwave,
      +  sendingsh,msgsent,nmsg)
 
 C  Encodes a JT65 message into a wavefile.
@@ -29,7 +29,7 @@ C  Encodes a JT65 message into a wavefile.
          call rs_encode(dgen,sent)
          call interleave63(sent,1)           !Apply interleaving
          call graycode(sent,63,1)            !Apply Gray code
-         tsymbol=4096.d0/11025.d0
+         tsymbol=4096.d0/(nfast*11025.d0)
          nsym=126                            !Symbols per transmission
       else
          tsymbol=16384.d0/11025.d0
