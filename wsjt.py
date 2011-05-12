@@ -2000,6 +2000,8 @@ def update():
     Audio.gcom2.ndtr=options.ndtr.get()
     if mode.get()=='CW':
         Audio.gcom2.ntdecode=56
+    elif mode.get()=='JT65B2' or mode.get()=='JT65C2':
+        Audio.gcom2.ntdecode=26
     else:
         if qdecode.get():
             Audio.gcom2.ntdecode=48

@@ -1,6 +1,6 @@
 subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
      MinSigdB,DFTolerance,MouseButton,NClearAve,nforce,            &
-     Mode,NFreeze,NAFC,NZap,mode65,mode4,idf,ntdecode0,            &
+     Mode,NFreeze,NAFC,NZap,mode65,nfast,mode4,idf,ntdecode0,      &
      MyCall,HisCall,HisGrid,neme,ntx2,ndebug,s2,                   &
      ps0,npkept,lumsg,nslim2,psavg,ccf,Nseg,                       &
      MouseDF,NAgain,LDecoded,nspecial,ndf,ss1,ss2)
@@ -164,6 +164,7 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 
 ! If we're in JT65 mode, call the decode65 routines.
   if(mode.eq.2) then
+
 ! Check for a JT65 shorthand message
      nstest=0
      if(ntx2.ne.1) call short65(dat,jz,NFreeze,MouseDF,              &
@@ -189,6 +190,8 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
 ! Offset data by about 1 s.
 !           jztest=126*2048
      jztest=11025*ntdecode/2 - 2755
+     print*,mode65,nfast,jz,2*jz/11025.0
+     write(74) jz,cfile6,(dat(j),j=1,jz)
      if(jz.ge.jztest) call wsjt65(dat(4097),jz-4096,cfile6,              &
           NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode65,Nseg,       &
           MouseDF2,NAgain,ndepth,neme,idf,idfsh,                         &
