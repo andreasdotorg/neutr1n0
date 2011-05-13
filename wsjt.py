@@ -2148,9 +2148,7 @@ modemenu.add_radiobutton(label = 'ISCAT-A', variable=mode, command = ModeISCAT_A
 modemenu.add_radiobutton(label = 'ISCAT-B', variable=mode, command = ModeISCAT_B)
 modemenu.add_radiobutton(label = 'JT65A', variable=mode, command = ModeJT65A)
 modemenu.add_radiobutton(label = 'JT65B', variable=mode, command = ModeJT65B)
-modemenu.add_radiobutton(label = 'JT65B2', variable=mode, command = ModeJT65B2)
 modemenu.add_radiobutton(label = 'JT65C', variable=mode, command = ModeJT65C)
-modemenu.add_radiobutton(label = 'JT65C2', variable=mode, command = ModeJT65C2)
 modemenu.add_radiobutton(label = 'JT4A', variable=mode, command = ModeJT4A)
 modemenu.add_radiobutton(label = 'JT4B', variable=mode, command = ModeJT4B)
 modemenu.add_radiobutton(label = 'JT4C', variable=mode, command = ModeJT4C)
@@ -2165,6 +2163,8 @@ modemenu.add_radiobutton(label = 'Measure', variable=mode, command = ModeMeasure
 try:
     f=open(appdir+'/experimental','r')
     modemenu.add_separator()
+    modemenu.add_radiobutton(label = 'JT65B2', variable=mode, command = ModeJT65B2)
+    modemenu.add_radiobutton(label = 'JT65C2', variable=mode, command = ModeJT65C2)
     modemenu.add_radiobutton(label = 'JTMS', variable=mode, command = ModeJTMS)
     modemenu.add_radiobutton(label = 'Diana', variable=mode, command = ModeDiana)
 except:
