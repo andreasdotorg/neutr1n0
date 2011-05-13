@@ -2659,6 +2659,10 @@ try:
                 ModeJT65B()
             elif value=='JT65C':
                 ModeJT65C()
+            elif value=='JT65B2':
+                ModeJT65B2()
+            elif value=='JT65C2':
+                ModeJT65C2()
             elif value=='CW':
                 ModeCW()
             elif value=='ISCAT-A':
