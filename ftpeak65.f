@@ -1,4 +1,4 @@
-      subroutine ftpeak65(dat,jz,istart,f0,flip,pr,nafc,ftrack)
+      subroutine ftpeak65(dat,jz,nfast,istart,f0,flip,pr,nafc,ftrack)
 
 C  Do the the JT65 "peakup" procedure in frequency and time; then 
 C  compute ftrack.
@@ -25,7 +25,6 @@ C  compute ftrack.
       n2 = NMAX/2
       call fil651(dat,jz,c2,n2)      !Filter and complex mix; rate 1/2
       dt=2.d0*dt                     !We're now downsampled by 4
-
       dpha=twopi*dt*(f0-fsyncset)    !Put sync tone at fsyncset
       pha=0.
       do i=1,n2
@@ -57,7 +56,9 @@ C  pr(126) array to get improved symbol synchronization.
 C  NB: if istart is increased by 64, kpk will decrease by 1.
 
       k0=nint(istart/64.0 - 7.0)
-      call symsync65(c5,n5,k0,s,flip,pr,16,kpk,ccf,smax)
+      nsps=32
+      if(nfast.eq.2) nsps=16
+      call symsync65(c5,n5,k0,s,flip,pr,nsps,kpk,ccf,smax)
 
 C  Fix up the value of istart.  (The -1 is empirical.)
       istart=istart + 64.0*(kpk-1.0)
@@ -69,7 +70,7 @@ C      What about using filter fil657?
 
       df=0.25*11025.0/4096.0             !Oversample to get accurate peak
       idfmax=50
-      iz=n5-31
+      iz=n5-nsps+1
       do idf=-idfmax,idfmax
          dpha=twopi*idf*df*dt
          pha=0.
@@ -79,13 +80,13 @@ C      What about using filter fil657?
          enddo
 
          z=0.
-         do i=1,32
+         do i=1,nsps
             z=z + c6(i)
          enddo
          s(1)=real(z)*real(z) + aimag(z)*aimag(z)
-         do i=33,n5
-            z=z + c6(i) - c6(i-32)
-            s(i-31)=real(z)*real(z) + aimag(z)*aimag(z)
+         do i=nsps+1,n5
+            z=z + c6(i) - c6(i-nsps)
+            s(i-nsps+1)=real(z)*real(z) + aimag(z)*aimag(z)
          enddo
 
          do n=1,8
@@ -93,7 +94,7 @@ C      What about using filter fil657?
             ib=ia+15
             sum=0.
             do i=ia,ib
-               j=32*(i-1) + k0 + kpk
+               j=nsps*(i-1) + k0 + kpk
                if(j.ge.1 .and. j.le.iz) sum=sum + flip*pr(i)*s(j)
             enddo
             c(idf,n)=sum/smax
@@ -106,8 +107,8 @@ C  Get drift rate and compute ftrack.
       jmax=0
       if(nafc.eq.1) jmax=25
       ssmax=0.
-      jpk=0 !Shut up compiler warnings. -db
-      ipk=0 !Shut up compiler warnings. -db
+      jpk=0                                !Silence compiler warnings. -db
+      ipk=0
       do j=-jmax,jmax
          do i=-25,25
             ss=0.
@@ -135,7 +136,7 @@ C  Get drift rate and compute ftrack.
       pha=0.
       i0=k0 + kpk + 2000
       do i=1,iz
-         k=nint(63.5 + (i-i0)/32.0)
+         k=nint(63.5 + float(i-i0)/nsps)
          if(k.lt.1) k=1
          if(k.gt.126) k=126
          dpha=twopi*dt*ftrack(k)
@@ -144,18 +145,18 @@ C  Get drift rate and compute ftrack.
       enddo
 
       z=0.
-      do i=1,32
+      do i=1,nsps
          z=z + c6(i)
       enddo
       s(1)=real(z)*real(z) + aimag(z)*aimag(z)
-      do i=33,n5
-         z=z + c6(i) - c6(i-32)
-         s(i-31)=real(z)*real(z) + aimag(z)*aimag(z)
+      do i=nsps+1,n5
+         z=z + c6(i) - c6(i-nsps)
+         s(i-nsps+1)=real(z)*real(z) + aimag(z)*aimag(z)
       enddo
 
       sum=0.
       do i=1,126
-         j=32*(i-1)+k0+kpk
+         j=nsps*(i-1)+k0+kpk
          if(j.ge.1 .and. j.le.iz) sum=sum + flip*pr(i)*s(j)
       enddo
 

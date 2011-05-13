@@ -1,27 +1,28 @@
-      subroutine symsync65(c5,n5,k0,s,flip,pr,kmax,kpk,ccf,smax)
+      subroutine symsync65(c5,n5,k0,s,flip,pr,nsps,kpk,ccf,smax)
 
       complex c5(n5)
       real s(n5),pr(126),ccf(-128:128)
       complex z
 
+      kh=nsps/2
       z=0.
-      do i=1,32
+      do i=1,nsps
          z=z + c5(i)
       enddo
-      s(1)=real(z)*real(z) + aimag(z)*aimag(z)
+      s(1)=real(z)**2 + aimag(z)**2
       smax=s(1)
-      do i=33,n5
-         z=z + c5(i) - c5(i-32)
-         s(i-31)=real(z)*real(z) + aimag(z)*aimag(z)
-         smax=max(s(i-31),smax)
+      do i=nsps+1,n5
+         z=z + c5(i) - c5(i-nsps)
+         s(i-nsps+1)=real(z)**2 + aimag(z)**2
+         smax=max(s(i-nsps+1),smax)
       enddo
-      iz=n5-31
+      iz=n5-nsps+1
 
       smax=0.
-      do k=-kmax,kmax
+      do k=-kh,kh
          sum=0.
          do i=1,126
-            j=32*(i-1)+k+k0
+            j=nsps*(i-1)+k+k0
             if(j.ge.1 .and. j.le.iz) sum=sum + flip*pr(i)*s(j)
          enddo
          ccf(k)=sum

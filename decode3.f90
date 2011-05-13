@@ -18,6 +18,8 @@ subroutine decode3(d2,jz,istart,filename)
      if(mode(5:5).eq.'B') mode65=2
      if(mode(5:5).eq.'C') mode65=4
   endif
+  nfast=1
+  if(mode.eq.'JT65B2' .or. mode.eq.'JT65C2') nfast=2
   if(mode(1:4).eq.'Echo') nmode=3
   if(mode(1:2).eq.'CW') nmode=5
   if(mode(1:3).eq.'JT4') nmode=7

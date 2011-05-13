@@ -1,5 +1,5 @@
       subroutine decode65(dat,npts,dtx,dfx,flip,ndepth,neme,
-     +  mycall,hiscall,hisgrid,mode65,nafc,decoded,ncount,
+     +  mycall,hiscall,hisgrid,mode65,nfast,nafc,decoded,ncount,
      +  deepmsg,qual)
 
 C  Decodes JT65 data, assuming that DT and DF have already been determined.
@@ -24,7 +24,8 @@ C  Decodes JT65 data, assuming that DT and DF have already been determined.
 
 C  Compute spectra of the channel symbols
       f0=1270.46 + dfx
-      call spec2d65(dat,npts,nsym,flip,istart,f0,ftrack,nafc,mode65,s2)
+      call spec2d65(dat,npts,nsym,flip,istart,f0,ftrack,nafc,mode65,
+     +    nfast,s2)
 
       do j=1,63
          k=mdat(j)                       !Points to data symbol

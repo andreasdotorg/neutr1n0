@@ -1,5 +1,5 @@
       subroutine sync65(dat,jz,DFTolerance,NFreeze,MouseDF,
-     +  mode65,dtx,dfx,snrx,snrsync,ccfblue,ccfred1,flip,width)
+     +  mode65,nfast,dtx,dfx,snrx,snrsync,ccfblue,ccfred1,flip,width)
 
 C  Synchronizes JT65 data, finding the best-fit DT and DF.  
 C  NB: at this stage, submodes ABC are processed in the same way.
@@ -24,6 +24,7 @@ C  Do FFTs of symbol length, stepped by half symbols.  Note that we have
 C  already downsampled the data by factor of 2.
       nsym=126
       nfft=2048
+      if(nfast.eq.2) nfft=1024
       nsteps=2*jz/nfft - 1
       nh=nfft/2
 

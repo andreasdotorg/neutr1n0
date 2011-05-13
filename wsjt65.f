@@ -1,5 +1,5 @@
       subroutine wsjt65(dat,npts,cfile6,NClearAve,MinSigdB,
-     +  DFTolerance,NFreeze,NAFC,mode65,Nseg,MouseDF,NAgain,
+     +  DFTolerance,NFreeze,NAFC,mode65,nfast,Nseg,MouseDF,NAgain,
      +  ndepth,neme,idf,idfsh,mycall,hiscall,hisgrid,
      +  lumsg,lcum,nspecial,ndf,nstest,dfsh,
      +  snrsh,NSyncOK,ccfblue,ccfred,ndiag,nwsh)
@@ -54,7 +54,7 @@ C  already been done.
 
 C  Attempt to synchronize: look for sync tone, get DF and DT.
       call sync65(dat,npts,DFTolerance,NFreeze,MouseDF,
-     +    mode65,dtx,dfx,snrx,snrsync,ccfblue,ccfred,flip,width)
+     +    mode65,nfast,dtx,dfx,snrx,snrsync,ccfblue,ccfred,flip,width)
       csync=' '
       decoded='                      '
       deepmsg='                      '
@@ -111,7 +111,7 @@ C  If we get here, we have achieved sync!
       endif
 
       call decode65(dat,npts,dtx,dfx,flip,ndepth,neme,
-     +   mycall,hiscall,hisgrid,mode65,nafc,decoded,
+     +   mycall,hiscall,hisgrid,mode65,nfast,nafc,decoded,
      +   ncount,deepmsg,qual)
       if(ncount.eq.-999) qual=0                 !Bad data
  200  kvqual=0

@@ -1,5 +1,5 @@
       subroutine spec2d65(dat,jz,nsym,flip,istart,f0,
-     +  ftrack,nafc,mode65,s2)
+     +  ftrack,nafc,mode65,nfast,s2)
 
 C  Computes the spectrum for each of 126 symbols.
 C  NB: At this point, istart, f0, and ftrack are supposedly known.
@@ -16,16 +16,17 @@ C  We add 5 extra bins at top and bottom for drift, making 77 bins in all.
       real ftrack(126)
       real*8 pha,dpha,twopi
       complex cx(NMAX)
-c      complex work(NMAX)
       include 'prcom.h'
       equivalence (x,cx)
       data twopi/6.28318530718d0/
       save
 
 C  Peak up in frequency and time, and compute ftrack.
-      call ftpeak65(dat,jz,istart,f0,flip,pr,nafc,ftrack)
+      call ftpeak65(dat,jz,nfast,istart,f0,flip,pr,nafc,ftrack)
 
       nfft=2048/mode65                     !Size of FFTs
+      mz=mode65
+      if(nfast.eq.2) mz=mode65/2
       dt=2.0/11025.0
       df=0.5*11025.0/nfft
       call zero(ps,77)
@@ -36,7 +37,7 @@ C  of the dat() array.  Would save some time this way ...
 
       do j=1,nsym
          call zero(s,77)
-         do m=1,mode65
+         do m=1,mz
             k=k+nfft
             if(k.ge.1 .and. k.le.(jz-nfft)) then
 C  Mix sync tone down to f=5*df (==> bin 6 of array cx, after FFT)

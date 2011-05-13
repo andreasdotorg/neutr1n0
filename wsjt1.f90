@@ -187,13 +187,15 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
      if(i.le.0) i=index(HisCall,' ')
      hiscall=HisCall(1:i-1)//'            '
 
-! Offset data by about 1 s.
-!           jztest=126*2048
+     i1=4096                            !Offset data by about 0.8 s.
      jztest=11025*ntdecode/2 - 2755
-     print*,mode65,nfast,jz,2*jz/11025.0
-     write(74) jz,cfile6,(dat(j),j=1,jz)
-     if(jz.ge.jztest) call wsjt65(dat(4097),jz-4096,cfile6,              &
-          NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode65,Nseg,       &
+     if(nfast.eq.2) then
+        jztest=jztest/2
+        i1=0
+     endif
+!     write(74) jz,cfile6,(dat(j),j=1,jz)
+     if(jz.ge.jztest) call wsjt65(dat(i1+1),jz-i1,cfile6,                &
+          NClearAve,MinSigdB,DFTolerance,NFreeze,NAFC,mode65,nfast,Nseg, &
           MouseDF2,NAgain,ndepth,neme,idf,idfsh,                         &
           mycall,hiscall,hisgrid,lumsg,lcum,nspecial,ndf,                &
           nstest,dfsh,snrsh,NSyncOK,ccf,psavg,ndiag,nwsh)
