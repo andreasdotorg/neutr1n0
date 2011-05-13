@@ -139,7 +139,11 @@ subroutine fivehz
   tx1=0.0                              !Time to start a TX sequence
   tx2=trperiod-(tlatency+txdelay)      !Time to turn TX off
   if(mode(1:4).eq.'JT65' .or. mode(1:3).eq.'JT4') then
-     if(nwave.lt.126*4096) nwave=126*4096
+     if(mode(6:6).eq.'2') then
+        if(nwave.lt.126*2048) nwave=126*2048
+     else
+        if(nwave.lt.126*4096) nwave=126*4096
+     endif
      tx2=txdelay + nwave/11025.0
      if(tx2.gt.(trperiod-2.0)) tx2=trperiod-tlatency-1.0
   else if(mode(1:5).eq.'Diana') then
