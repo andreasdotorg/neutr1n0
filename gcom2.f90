@@ -116,7 +116,7 @@ common/gcom2/ps0(431),psavg(450),s2(64,3100),ccf(-5:540),             &
      neme,nsked,naggressive,ntx2,nslim2,nagain,nsavelast,ntxdf,       &
      shok,sendingsh,d2a(ND2MAX),d2b(ND2MAX),b(60000),jza,jzb,ntime,   &
      idinterval,msmax,lenappdir,idf,ndiskdat,nfsam,nlines,nflat,      &
-     ntdecode,ntxreq,ntxnow,nchallenge,ndepth,nspecial,ndf,           &
+     ntdecode,ntxreq,ntxnow,ndepth,nspecial,ndf,                      &
      nfmid,nforce,nfrange,ss1(-224:224),ss2(-224:224),                &
      mycall,hiscall,hisgrid,txmsg,sending,mode,fname0,fnamea,         &
      fnameb,decodedfile,AppDir,AzElDir,filetokilla,filetokillb,       &
