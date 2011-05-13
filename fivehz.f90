@@ -128,7 +128,7 @@ subroutine fivehz
 !        if(ndebug.gt.0) write(*,3002) n3,s6,s6-t5a,ibuf,' Stop Rx'
 !        if(ndebug.gt.0) write(*,*)
         go to 10
-     endif
+     endif 
 
 10   s6z=s6
      go to 900
