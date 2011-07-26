@@ -327,8 +327,8 @@ subroutine wsjt1(d,jz0,istart,samfacin,FileID,ndepth,              &
   if(nz.ge.1) call s2shape(s2,nchan,nz,tbest)
 
 900 LDecoded = ((NSyncOK.gt.0) .or. npkept.gt.0)
-  endfile 11
-  call flush(11)
+  endfile (11,err=901)
+901 call flush(11)
   call flush(12)
   call flush(21)
 
