@@ -1,4 +1,4 @@
-      subroutine rfile2(fname,buf,n,nr)
+      subroutine rfile2(fname0,buf,n,nr)
 
 C  Read a wave file.
 
@@ -7,9 +7,11 @@ C  Read a wave file.
       integer*1 buf(n)
       integer open,read,close
       integer fd
+      character fname0*(*)
       character fname*80
       data iz/0/                            !Silence g77 warning
 
+      fname=fname0
       do i=80,1,-1
          if(fname(i:i).ne.' ') then
             iz=i
