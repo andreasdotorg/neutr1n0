@@ -569,12 +569,18 @@ c=Canvas(iframe1, bg='white', width=750, height=25,bd=0)
 c.pack(side=TOP)
 Widget.bind(c,"<Shift-Button-1>",freq_range)
 Widget.bind(c,"<Shift-Button-2>",freq_range)
-Widget.bind(c,"<Shift-Button-3>",freq_range)
+if (sys.platform != 'darwin'):
+  Widget.bind(c,"<Shift-Button-3>",freq_range)
+else:
+  Widget.bind(c,"<Shift-Button-2>",freq_range)
 graph1=Canvas(iframe1, bg='black', width=750, height=300,bd=0,cursor='crosshair')
 graph1.pack(side=TOP)
 Widget.bind(graph1,"<Motion>",fdf_change)
 Widget.bind(graph1,"<Button-1>",set_freezedf)
-Widget.bind(graph1,"<Button-3>",decode_request)
+if (sys.platform != 'darwin'):
+  Widget.bind(graph1,"<Button-3>",decode_request)
+else:
+  Widget.bind(graph1,"<Button-2>",decode_request)
 Widget.bind(graph1,"<Double-Button-1>",freeze_decode)
 iframe1.pack(expand=1, fill=X)
 
