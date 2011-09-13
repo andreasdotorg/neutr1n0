@@ -2295,7 +2295,10 @@ Widget.bind(graph1,"<Motion>",dtdf_change)
 Widget.bind(graph1,"<Button-1>",mouse_click_g1)
 Widget.bind(graph1,"<Double-Button-1>",double_click_g1)
 Widget.bind(graph1,"<ButtonRelease-1>",mouse_up_g1)
-Widget.bind(graph1,"<Button-3>",mouse_click_g1)
+if (sys.platform != 'darwin'):
+  Widget.bind(graph1,"<Button-3>",mouse_click_g1)
+else:
+  Widget.bind(graph1,"<Button-2>",mouse_click_g1)
 graph1.pack(side=LEFT)
 graph2=Canvas(iframe1, bg='black', width=150, height=120,cursor='crosshair')
 graph2.pack(side=LEFT)
@@ -2329,7 +2332,10 @@ iframe2.pack(expand=1, fill=X, padx=4)
 iframe4 = Frame(frame, bd=1, relief=SUNKEN)
 text=Text(iframe4, height=6, width=80)
 text.bind('<Double-Button-1>',dbl_click_text)
-text.bind('<Double-Button-3>',dbl_click3_text)
+if (sys.platform != 'darwin'):
+  text.bind('<Double-Button-3>',dbl_click3_text)
+else:
+  text.bind('<Double-Button-2>',dbl_click3_text)
 text.bind('<Key>',textkey)
 
 root.bind_all('<F1>', shortcuts)
@@ -2489,7 +2495,10 @@ f5b1.grid(column=0,row=0,padx=2,sticky='EW')
 lsync=Label(f5b1, bg='white', fg='black', text='Sync   1', width=8, relief=RIDGE)
 lsync.grid(column=0,row=0,padx=2,sticky='EW')
 Widget.bind(lsync,'<Button-1>',incsync)
-Widget.bind(lsync,'<Button-3>',decsync)
+if (sys.platform != 'darwin'):
+  Widget.bind(lsync,'<Button-3>',decsync)
+else:
+  Widget.bind(lsync,'<Button-2>',decsync)
 cbzap=Checkbutton(f5b1,text='Zap',underline=0,variable=nzap)
 cbzap.grid(column=1,row=0,padx=2,sticky='W')
 shrx=Checkbutton(f5b1,text='Rx ST',variable=nshrx,command=restart2)
@@ -2510,9 +2519,13 @@ ltol.grid(column=0,row=1,padx=2,sticky='EW')
 ##sbtol.grid(column=0,row=5)
 ##jtol.set(200)
 Widget.bind(ltol,'<Button-1>',inctol)
-Widget.bind(ltol,'<Button-3>',dectol)
 Widget.bind(ldsec,'<Button-1>',incdsec)
-Widget.bind(ldsec,'<Button-3>',decdsec)
+if (sys.platform != 'darwin'):
+   Widget.bind(ldsec,'<Button-3>',decdsec)
+   Widget.bind(ltol,'<Button-3>',dectol)
+else:
+   Widget.bind(ldsec,'<Button-2>',decdsec)
+   Widget.bind(ltol,'<Button-2>',dectol)
 
 #------------------------------------------------------ Tx parameters
 f5b2=Frame(f5b,bd=2,relief=GROOVE)
@@ -2611,7 +2624,10 @@ msg5.pack(side=LEFT, fill=X, padx=1)
 ##msg6=Message(iframe6, text='', width=300,relief=SUNKEN)
 ##msg6.pack(side=LEFT, fill=X, padx=1)
 Widget.bind(msg5,'<Button-1>',inctrperiod)
-Widget.bind(msg5,'<Button-3>',dectrperiod)
+if (sys.platform != 'darwin'):
+  Widget.bind(msg5,'<Button-3>',dectrperiod)
+else:
+  Widget.bind(msg5,'<Button-2>',dectrperiod)
 msg7=Message(iframe6, text='                        ', width=300,relief=SUNKEN)
 msg7.pack(side=RIGHT, fill=X, padx=1)
 iframe6.pack(expand=1, fill=X, padx=4)
